@@ -2,6 +2,11 @@ import React, { useState } from 'react';
 import axios from 'axios';
 
 const AddProspect = () => {
+  // const [credentials, setCredentials] = ({
+  //   name: '',
+  //   phoneNumber: '',
+  //   interest: '',
+  // })
   // Initialize form state
   const formatBackendDate = (date) => {
     const pad = (num) => num.toString().padStart(2, '0');
@@ -105,7 +110,6 @@ const AddProspect = () => {
       setIsLoading(false);
     }
   };
-
   return (
     <div className="bg-white rounded-lg shadow-md p-4 md:p-6 mb-8 w-full">
       <h2 className="text-xl font-bold text-[#333333] mb-4">Add New Prospect</h2>

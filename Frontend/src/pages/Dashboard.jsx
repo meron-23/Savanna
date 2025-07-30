@@ -55,10 +55,11 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen flex flex-col font-roboto bg-gray-100">
-      <Header toggleSidebar={toggleSidebar} isMobile={isMobile} />
+      <Header  isMobile={isMobile} />
 
       <div className="flex flex-1 flex-col md:flex-row">
         <DesktopSidebar 
+          toggleSidebar={toggleSidebar}
           isSidebarOpen={isSidebarOpen}
           activeItem={activeItem}
           isProspectOpen={isProspectOpen}
