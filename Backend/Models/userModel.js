@@ -12,6 +12,12 @@ const createUser = async (userId, name, email, phoneNumber, gender, role, superv
   }
 };
 
+const findUserByNameAndEmail = async (name, email) => {
+  const [rows] = await mySqlConnection.query("SELECT * FROM users WHERE name = ? AND email = ?", [name, email]);
+  return rows;
+};
+
+
 const viewUser = async () => {
   const viewSqlQuery = "SELECT * FROM users";
   try {
@@ -55,5 +61,6 @@ export {
   createUser,
   viewUser,
   updateUser,
-  deleteUserModel
+  deleteUserModel,
+  findUserByNameAndEmail
 };

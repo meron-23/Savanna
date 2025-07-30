@@ -7,7 +7,7 @@ import {
 import { normalizePhoneNumber } from "../Utils/normalizePhone.js";
 
 export const addProspect = async (req, res, next) => {
-  const { id, name, phoneNumber, interest, method, site, comment, remark, periodTime, date, dateNow, userId } = req.body;
+  const { id, name, phoneNumber, interest, method, site, comment, remark, periodTime,date, dateNow, userId } = req.body;
   const phoneNumberNormalized = normalizePhoneNumber(phoneNumber);
 
   if (!phoneNumberNormalized) {

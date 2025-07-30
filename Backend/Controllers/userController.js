@@ -2,7 +2,8 @@ import {
   createUser,
   updateUser,
   viewUser,
-  deleteUserModel
+  deleteUserModel,
+  findUserByNameAndEmail
 } from "../Models/userModel.js";
 
 export const addUser = async (req, res, next) => {
@@ -16,6 +17,32 @@ export const addUser = async (req, res, next) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+export const loginUser = async (req, res, next) => {
+  const { name, email } = req.body;
+
+  try {
+    const [user] = await findUserByNameAndEmail(name, email);
+    if (!user) {
+      return res.status(401).json({ success: false, message: "Invalid name or email" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Login successful",
+      user: {
+        userId: user.userId,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
 
 export const getUser = async (req, res, next) => {
   try {
