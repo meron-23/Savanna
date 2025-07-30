@@ -1,6 +1,6 @@
 import express from 'express';
 import { addProspect, deleteProspect, getProspect, putProspect } from '../Controllers/prospectController.js';
-import { addUser, deleteUser, getUser, putUser } from '../Controllers/userController.js';
+import { addUser, deleteUser, getUser, loginUser, putUser } from '../Controllers/userController.js';
 
 const router = express.Router();
 
@@ -13,6 +13,7 @@ router.delete('/prospects/:id', deleteProspect);
 
 // User Routes
 router.post('/users', addUser);
+router.post("/users/login", loginUser);
 router.get('/users', getUser);
 router.put('/users/:id', putUser);
 router.delete('/users/:id', deleteUser);
