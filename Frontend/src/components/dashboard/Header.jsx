@@ -1,17 +1,9 @@
 import React from 'react';
 
-const Header = ({ toggleSidebar, isMobile }) => {
+const Header = ({  isMobile }) => {
   return (
     <header className="bg-white p-4 flex justify-between items-center border-b border-gray-200">
-      <div className="hidden md:flex items-center space-x-4 w-full md:w-1/3">
-        <button 
-          onClick={toggleSidebar} 
-          className="text-gray-500 focus:outline-none focus:text-gray-600 hidden md:block"
-        >
-          <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
+      <div className="hidden md:flex items-center space-x-4  md:w-1/3">
         
         <div className="flex items-center flex-1">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">

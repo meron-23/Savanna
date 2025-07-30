@@ -1,6 +1,11 @@
 import React from 'react'
 
 const AddProspect = () => {
+  // const [credentials, setCredentials] = ({
+  //   name: '',
+  //   phoneNumber: '',
+  //   interest: '',
+  // })
   return (
     <div className="bg-white rounded-lg shadow-md p-4 md:p-6 mb-8 w-full">
       <h2 className="text-xl font-bold text-[#333333] mb-4">Add New Prospect</h2>
