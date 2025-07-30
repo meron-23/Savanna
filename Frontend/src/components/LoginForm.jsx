@@ -25,7 +25,7 @@ const LoginForm = () => {
     if (formData.email === 'admin@example.com' && formData.password === 'password') {
       navigate('/dashboard');
     } else {
-      alert('❌ Invalid email or password');
+      alert('Invalid email or password');
     }
   };
 
