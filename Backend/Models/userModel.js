@@ -1,10 +1,10 @@
 import mySqlConnection from "../Config/db.js";
 
 
-const createUser = async (fullName, userName, email) => {
-  const addSqlQuery = "INSERT INTO users (full_name, user_name, email) VALUES (?, ?, ?)";
+const createUser = async (userId, name, email, phoneNumber, gender, role, supervisor, creationTime, lastSignInTime) => {
+  const addSqlQuery = "INSERT INTO users (userId, name, email, phoneNumber, gender, role, supervisor, creationTime, lastSignInTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
   try {
-    const [result] = await mySqlConnection.query(addSqlQuery, [fullName, userName, email]);
+    const [result] = await mySqlConnection.query(addSqlQuery, [userId, name, email, phoneNumber, gender, role, supervisor, creationTime, lastSignInTime]);
     return result;
   } catch (error) {
     console.error("Create error:", error);
@@ -23,13 +23,14 @@ const viewUser = async () => {
   }
 };
 
-const updateUser = async (id, full_name, user_name, email) => {
-  const updateSqlQuery = "UPDATE users SET full_name=?, user_name=?, email=? WHERE id=?";
+const updateUser = async (id, email, phoneNumber, supervisor, lastSignInTime) => {
+  const updateSqlQuery = "UPDATE users SET email=?, phoneNumber=?, supervisor=?, lastSignInTime=? WHERE userId=?";
   try {
     const [result] = await mySqlConnection.query(updateSqlQuery, [
-      full_name,
-      user_name,
       email,
+      phoneNumber,
+      supervisor,
+      lastSignInTime,
       id
     ]);
     return result;
@@ -40,7 +41,7 @@ const updateUser = async (id, full_name, user_name, email) => {
 };
 
 const deleteUserModel = async (id) => {
-  const deleteSqlQuery = "DELETE FROM users WHERE id=?";
+  const deleteSqlQuery = "DELETE FROM users WHERE userId=?";
   try {
     const [result] = await mySqlConnection.query(deleteSqlQuery, [id]);
     return result;

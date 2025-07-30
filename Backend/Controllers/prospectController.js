@@ -4,12 +4,18 @@ import {
   viewProspect,
   deleteProspectModel
 } from "../Models/prospectModel.js";
+import { normalizePhoneNumber } from "../Utils/normalizePhone.js";
 
 export const addProspect = async (req, res, next) => {
-  const { fullName, userName, email } = req.body;
+  const { id, name, phoneNumber, interest, method, site, comment, remark, periodTime, date, dateNow, userId } = req.body;
+  const phoneNumberNormalized = normalizePhoneNumber(phoneNumber);
+
+  if (!phoneNumberNormalized) {
+    return res.status(400).json({ error: 'Invalid phone number format' });
+  }
 
   try {
-    const result = await createProspect(fullName, userName, email);
+    const result = await createProspect(id, name, phoneNumber, phoneNumberNormalized, interest, method, site, comment, remark, periodTime, date, dateNow, userId);
     res.status(201).json({ success: true, message: "Propspect created", id: result.insertId });
   } catch (error) {
     console.error(error);
@@ -28,11 +34,16 @@ export const getProspect = async (req, res, next) => {
 };
 
 export const putProspect = async (req, res, next) => {
-    const {id} = req.params;
-  const { fullName, userName, email } = req.body;
+  const { id } = req.params;
+  const { phoneNumber, interest, method, site, comment, remark, periodTime, date, dateNow } = req.body;
+  const phoneNumberNormalized = normalizePhoneNumber(phoneNumber);
+
+  if (!phoneNumberNormalized) {
+    return res.status(400).json({ error: 'Invalid phone number format' });
+  }
 
   try {
-    const updateRes = await updateProspect(id, fullName, userName, email);
+    const updateRes = await updateProspect(id, phoneNumber, phoneNumberNormalized, interest, method, site, comment, remark, periodTime, date, dateNow);
     if (updateRes.affectedRows === 0) {
       return res.status(404).json({ success: false, message: "Propspect not found" });
     }

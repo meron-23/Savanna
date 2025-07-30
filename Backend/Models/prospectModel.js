@@ -1,10 +1,10 @@
 import mySqlConnection from "../Config/db.js";
 
 
-const createProspect = async (fullName, userName, email) => {
-  const addSqlQuery = "INSERT INTO prospects (full_name, user_name, email) VALUES (?, ?, ?)";
+const createProspect = async (id, name, phoneNumber, phoneNumberNormalized, interest, method, site, comment, remark, periodTime, date, dateNow, userId) => {
+  const addSqlQuery = "INSERT INTO prospects (id, name, phoneNumber, phoneNumber_normalized, interest, method, site, comment, remark, periodTime, date, dateNow, userId) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
   try {
-    const [result] = await mySqlConnection.query(addSqlQuery, [fullName, userName, email]);
+    const [result] = await mySqlConnection.query(addSqlQuery, [id, name, phoneNumber, phoneNumberNormalized, interest, method, site, comment, remark, periodTime, date, dateNow, userId]);
     return result;
   } catch (error) {
     console.error("Create error:", error);
@@ -23,13 +23,20 @@ const viewProspect = async () => {
   }
 };
 
-const updateProspect = async (id, full_name, user_name, email) => {
-  const updateSqlQuery = "UPDATE prospects SET full_name=?, user_name=?, email=? WHERE id=?";
+const updateProspect = async (id, phoneNumber, phoneNumberNormalized, interest, method, site, comment, remark, periodTime, date, dateNow) => {
+  const updateSqlQuery = "UPDATE prospects SET phoneNumber=?, phoneNumber_normalized=?, interest=?, method=?, site=?, comment=?, remark=?, periodTime=?, date=?, dateNow=? WHERE id=?";
   try {
     const [result] = await mySqlConnection.query(updateSqlQuery, [
-      full_name,
-      user_name,
-      email,
+      phoneNumber,
+      phoneNumberNormalized,
+      interest,
+      method,
+      site,
+      comment,
+      remark,
+      periodTime,
+      date,
+      dateNow,
       id
     ]);
     return result;

@@ -21,7 +21,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // used to use static file(images) from the uploads folder
-app.use('/uploads', express.static('Uploads'));
+// app.use('/uploads', express.static('Uploads'));
 
 app.use('/api', router);
 
