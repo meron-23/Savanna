@@ -81,7 +81,7 @@ const Dashboard = () => {
         />
 
         <div className="flex-1 flex flex-col md:ml-64">
-          <main className="flex flex-1 p-4 md:p-8 overflow-auto">
+          <main className={`flex flex-1 p-4 md:p-8 overflow-auto ${isSidebarOpen ? 'ms-0' : '-ml-40'}`}>
             <div className="flex-1 pr-0 md:pr-6 w-full">
               {mainContent === '' && <DashboardOverview />}
               {mainContent === 'AddProspectForm' && <AddProspect />}
