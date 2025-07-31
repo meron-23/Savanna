@@ -2,30 +2,85 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
 import { FaApple } from 'react-icons/fa';
+import axios from 'axios';
 
 const LoginForm = () => {
   const navigate = useNavigate();
+  const [success, setSuccess] = useState(false);
+  const [successMessage, setSuccessMessage] = useState('');
+  const [error, setError] = useState('');
 
   const [formData, setFormData] = useState({
+    name: '',
     email: '',
-    password: '',
   });
 
   const handleChange = (e) => {
-    setFormData((prev) => ({
+    const { name, value } = e.target;
+    setFormData(prev => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [name]: value
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
 
-    // Temporary login check (replace with real backend request later)
-    if (formData.email === 'admin@example.com' && formData.password === 'password') {
-      navigate('/dashboard');
-    } else {
-      alert('Invalid email or password');
+
+  //   if (formData.email === 'admin@example.com' && formData.password === 'password') {
+  //     navigate('/dashboard');
+  //   } else {
+  //     alert('Invalid email or password');
+  //   }
+  // };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setSuccess(false);
+    setSuccessMessage('');
+    setError('');
+
+    try {
+      const response = await axios.post(
+        'http://localhost:5000/api/users/login',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      if (response.data.success) {
+        setSuccess(true);
+        setSuccessMessage(response.data.message);
+        
+        // Reset form with current dates
+        setFormData({
+          name: '',
+          email: ''
+        });
+        navigate('/dashboard');
+        localStorage.setItem('userId', response.data.user.userId);
+        localStorage.setItem('name', response.data.user.name);
+        // console.log(response.data.user.userId);
+      } else {
+        setError(response.data.message || 'Failed to save prospect');
+      }
+    } catch (err) {
+      console.error('API Error:', err);
+
+      if (err.response) {
+        if (err.response.status === 500) {
+          setError('Server error. Please try again later or contact support.');
+        } else {
+          setError(err.response.data?.message || 'Request failed');
+        }
+      } else if (err.request) {
+        setError('Network error. Check your connection.');
+      } else {
+        setError('An unexpected error occurred.');
+      }
     }
   };
 
@@ -38,33 +93,33 @@ const LoginForm = () => {
 
       <form className="space-y-4" onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">
-            Email
+          <label htmlFor="name" className="block text-gray-700 text-sm font-bold mb-2">
+            Name
           </label>
           <input
-            name="email"
-            type="email"
-            id="email"
-            value={formData.email}
+            name="name"
+            type="name"
+            id="name"
+            value={formData.name}
             onChange={handleChange}
-            placeholder="sellostore@company.com"
+            placeholder="sellostore"
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-saffron"
             required
           />
         </div>
 
         <div>
-          <label htmlFor="password" className="block text-gray-700 text-sm font-bold mb-2">
-            Password
+          <label htmlFor="email" className="block text-gray-700 text-sm font-bold mb-2">
+            Email
           </label>
           <div className="relative">
             <input
-              name="password"
-              type="password"
-              id="password"
-              value={formData.password}
+              name="email"
+              type="email"
+              id="email"
+              value={formData.email}
               onChange={handleChange}
-              placeholder="Sellostore."
+              placeholder="sellostore@company.com"
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:ring-2 focus:ring-saffron"
               required
             />

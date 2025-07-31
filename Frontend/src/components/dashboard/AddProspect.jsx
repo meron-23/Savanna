@@ -1,14 +1,15 @@
-import React, { useState, useRef } from 'react'; // Import useRef for file input
+import React, { useRef, useState } from 'react';
 import axios from 'axios';
-import * as XLSX from 'xlsx'; // Import xlsx library
 
 const AddProspect = () => {
+  // Initialize form state
   const formatBackendDate = (date) => {
     const pad = (num) => num.toString().padStart(2, '0');
     const d = new Date(date);
     return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
   };
 
+  // Initialize form state with properly formatted dates
   const now = new Date();
   const [formData, setFormData] = useState({
     name: '',
@@ -21,20 +22,14 @@ const AddProspect = () => {
     periodTime: '',
     date: formatBackendDate(now),
     dateNow: formatBackendDate(now),
-    userId: '' // This should ideally come from auth context
+    userId: ''
   });
 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
-  const [createdId, setCreatedId] = useState(null); // For single prospect creation
-
-  // State for spreadsheet import
-  const [isImporting, setIsImporting] = useState(false);
-  const [importError, setImportError] = useState('');
-  const [importSuccess, setImportSuccess] = useState('');
-  const fileInputRef = useRef(null); // Ref for the hidden file input
+  const [createdId, setCreatedId] = useState(null);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -53,21 +48,15 @@ const AddProspect = () => {
     setCreatedId(null);
 
     try {
+      // Ensure dates are properly formatted before sending
       const dataToSend = {
         ...formData,
         date: formatBackendDate(formData.date),
-        dateNow: formatBackendDate(new Date()),
-        // userId: 'yourAuthUserIdHere' // Ensure userId is populated from actual auth
+        dateNow: formatBackendDate(new Date()) // Always use current time for dateNow
       };
 
-      // Placeholder for userId. In a real app, get this from your auth system.
-      // For demonstration, let's use a static ID or ensure it's set in formData.
-      if (!dataToSend.userId) {
-        dataToSend.userId = 'staticUserId123'; // REMOVE THIS IN PRODUCTION, GET FROM AUTH
-      }
-
       const response = await axios.post(
-        'http://localhost:5000/api/prospects', // Your single prospect endpoint
+        'http://localhost:5000/api/prospects',
         dataToSend,
         {
           headers: {
@@ -81,7 +70,7 @@ const AddProspect = () => {
         setSuccessMessage(response.data.message);
         setCreatedId(response.data.id);
         
-        // Reset form with current dates and clear other fields
+        // Reset form with current dates
         setFormData({
           name: '',
           phoneNumber: '',
@@ -93,15 +82,20 @@ const AddProspect = () => {
           periodTime: '',
           date: formatBackendDate(new Date()),
           dateNow: formatBackendDate(new Date()),
-          userId: formData.userId // Keep userId if it's static or comes from prop
+          userId: ''
         });
       } else {
         setError(response.data.message || 'Failed to save prospect');
       }
     } catch (err) {
-      console.error('API Error (Single Prospect):', err);
+      console.error('API Error:', err);
+
       if (err.response) {
-        setError(err.response.data?.message || `Request failed with status ${err.response.status}`);
+        if (err.response.status === 500) {
+          setError('Server error. Please try again later or contact support.');
+        } else {
+          setError(err.response.data?.message || 'Request failed');
+        }
       } else if (err.request) {
         setError('Network error. Check your connection.');
       } else {
@@ -112,7 +106,14 @@ const AddProspect = () => {
     }
   };
 
-  const handleFileChange = (e) => {
+  
+  // State for spreadsheet import
+  const [isImporting, setIsImporting] = useState(false);
+  const [importError, setImportError] = useState('');
+  const [importSuccess, setImportSuccess] = useState('');
+  const fileInputRef = useRef(null);
+
+   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
       readSpreadsheetFile(file);
@@ -204,7 +205,7 @@ const AddProspect = () => {
     <div className="bg-white rounded-lg shadow-md p-4 md:p-6 mb-8 w-full">
       <h2 className="text-xl font-bold text-[#333333] mb-4">Add New Prospect</h2>
       
-      {/* Single Prospect Status Messages */}
+      {/* Status Messages */}
       {error && (
         <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
           {error}
@@ -212,13 +213,12 @@ const AddProspect = () => {
       )}
       {success && (
         <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md">
-          {successMessage} {createdId && `(ID: ${createdId})`}
+          {successMessage} (ID: {createdId})
         </div>
       )}
 
-      {/* Single Prospect Form */}
-      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4 border-b pb-6 mb-6 border-gray-200">
-        {/* ... (Your existing form fields) ... */}
+      <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Name Field */}
         <div>
           <label htmlFor="prospectName" className="block text-sm font-medium text-gray-700 mb-1">
             Name
@@ -234,6 +234,8 @@ const AddProspect = () => {
             required
           />
         </div>
+
+        {/* Phone Number Field */}
         <div>
           <label htmlFor="phoneNumber" className="block text-sm font-medium text-gray-700 mb-1">
             Phone Number
@@ -249,6 +251,8 @@ const AddProspect = () => {
             required
           />
         </div>
+
+        {/* Interest Field */}
         <div>
           <label htmlFor="interest" className="block text-sm font-medium text-gray-700 mb-1">
             Interest
@@ -264,6 +268,8 @@ const AddProspect = () => {
             required
           />
         </div>
+
+        {/* Contact Method Field */}
         <div>
           <label htmlFor="method" className="block text-sm font-medium text-gray-700 mb-1">
             Contact Method
@@ -280,8 +286,8 @@ const AddProspect = () => {
             <option value="Call">Call</option>
             <option value="Email">Email</option>
             <option value="Meeting">Meeting</option>
-            <option value="Office Visit">Office Visit</option> {/* Added for consistency with metrics */}
-            <option value="Site Visit">Site Visit</option>   {/* Added for consistency with metrics */}
+            <option value="Office Visit">Office Visit</option>
+            <option value="Site Visit">Site Visit</option>
             <option value="Telemarketing">Telemarketing</option>
             <option value="Social Media">Social Media</option>
             <option value="Survey">Survey</option>
@@ -289,6 +295,8 @@ const AddProspect = () => {
             <option value="Other">Other</option>
           </select>
         </div>
+
+        {/* Site Field */}
         <div className="col-span-1 md:col-span-2">
           <label htmlFor="site" className="block text-sm font-medium text-gray-700 mb-1">
             Site
@@ -300,10 +308,12 @@ const AddProspect = () => {
             value={formData.site}
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
-            placeholder="e.g., Website, Referral, Social Media, Visited"
+            placeholder="e.g., Website, Referral, Social Media"
             required
           />
         </div>
+
+        {/* Comment Field */}
         <div className="col-span-1 md:col-span-2">
           <label htmlFor="comment" className="block text-sm font-medium text-gray-700 mb-1">
             Comment
@@ -318,6 +328,8 @@ const AddProspect = () => {
             placeholder="Add any relevant comments"
           ></textarea>
         </div>
+
+        {/* Remark Field */}
         <div className="col-span-1 md:col-span-2">
           <label htmlFor="remark" className="block text-sm font-medium text-gray-700 mb-1">
             Remark
@@ -329,9 +341,11 @@ const AddProspect = () => {
             onChange={handleChange}
             rows="3"
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
-            placeholder="Add any additional remarks (e.g., Closed-Won)"
+            placeholder="Add any additional remarks"
           ></textarea>
         </div>
+
+        {/* Preferred Contact Time */}
         <div>
           <label htmlFor="periodTime" className="block text-sm font-medium text-gray-700 mb-1">
             Preferred Contact Time
@@ -357,7 +371,7 @@ const AddProspect = () => {
             value={formData.userId}
             onChange={handleChange}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
-            placeholder="e.g., user_abc123"
+            placeholder="e.g., 123"
             required
           />
         </div>
@@ -379,7 +393,7 @@ const AddProspect = () => {
       {/* Spreadsheet Import Section */}
       <div className="mt-6 pt-6 border-t border-gray-200">
         <h3 className="text-lg font-bold text-[#333333] mb-3">Upload Excel or CSV file with prospect data</h3>
-        
+
         {/* Import Status Messages */}
         {importError && (
           <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
