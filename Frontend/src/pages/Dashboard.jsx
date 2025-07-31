@@ -6,7 +6,6 @@ import DesktopSidebar from '../components/dashboard/DesktopSidebar';
 import MobileBottomNav from '../components/dashboard/MobileBottomNav';
 import Footer from '../components/dashboard/Footer';
 import DashboardOverview from '../components/dashboard/DashboardOverview';
-// import ProfilePage from '../components/dashboard/ProfilePage';
 
 const Dashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -88,7 +87,6 @@ const Dashboard = () => {
               {mainContent === '' && <DashboardOverview />}
               {mainContent === 'AddProspectForm' && <AddProspect />}
               {mainContent === 'ViewProspectsComponent' && <ViewProspect />}
-              {mainContent === 'ProfilePage' && <ProfilePage />}
             </div>
           </main>
         </div>

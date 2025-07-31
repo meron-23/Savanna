@@ -8,12 +8,18 @@ const DashboardOverview = () => {
   const [prospectsData, setProspectsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
- 
+  
+  const salesName = localStorage.getItem('name');
 
   const [followUpNumberInput, setFollowUpNumberInput] = useState('');
 
-  
-
+  const currentDate = new Date();
+  const formattedDate = currentDate.toLocaleDateString('en-US', { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  });
 
   const handleSubmitFollowUpInput = () => {
     console.log("Submitting daily follow-up number:", followUpNumberInput);
@@ -63,14 +69,14 @@ const DashboardOverview = () => {
         label: 'Prospects Count',
         data: [dailyProspects, weeklyProspects, totalProspects],
         backgroundColor: [
-          'rgba(75, 192, 192, 0.6)', 
-          'rgba(255, 159, 64, 0.6)', 
-          'rgba(54, 162, 235, 0.6)'  
+          '#737373', 
+          '#262626', 
+          '#404040'  
         ],
         borderColor: [
-          'rgba(75, 192, 192, 1)',
-          'rgba(255, 159, 64, 1)',
-          'rgba(54, 162, 235, 1)'
+          '#262626',
+          '#404040',
+          '#737373'
         ],
         borderWidth: 1,
       },
@@ -93,22 +99,10 @@ const DashboardOverview = () => {
       {
         data: pieChartDataValues,
         backgroundColor: [
-          '#FF6384', 
-          '#FFCE56', 
-          '#8A2BE2', 
-          '#00CED1', 
-          '#36A2EB', 
-          '#4CAF50', 
-          '#FF9800',
+          '#E8B10C'
         ],
         hoverBackgroundColor: [
-          '#FF6384',
-          '#FFCE56',
-          '#8A2BE2',
-          '#00CED1',
-          '#36A2EB',
-          '#4CAF50',
-          '#FF9800',
+          '#FFA500',
         ],
       },
     ],
@@ -156,7 +150,7 @@ const DashboardOverview = () => {
           />
           <button 
             onClick={handleSubmitFollowUpInput}
-            className="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-6 rounded-md transition duration-200 w-full sm:w-auto"
+            className="bg-[#F4A300] hover:bg-yellow-600 text-white font-medium py-2 px-6 rounded-md transition duration-200 w-full sm:w-auto"
           >
             Submit
           </button>
@@ -167,7 +161,7 @@ const DashboardOverview = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Prospects Card */}
         <div className="bg-white p-4 rounded-lg shadow-sm flex items-center space-x-4">
-          <div className="bg-blue-100 p-3 rounded-full text-blue-600">
+          <div className="bg-blue-100 p-3 rounded-full text-[#FFDB0D]">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-2.625-2.625C15.447 14.126 13.012 12.5 10 12.5S4.553 14.126 2.5 16.503c-.24.78-.292 1.58-.15 2.385.122.754.542 1.487 1.157 2.083A9.338 9.338 0 0010 21c2.257 0 4.368-.618 6.128-1.672zM12 11.25a3.25 3.25 0 100-6.5 3.25 3.25 0 000 6.5z" />
             </svg>
@@ -180,7 +174,7 @@ const DashboardOverview = () => {
 
         {/* Office Visits card */}
         <div className="bg-white p-4 rounded-lg shadow-sm flex items-center space-x-4">
-            <div className="bg-red-100 p-3 rounded-full text-red-600">
+            <div className="bg-red-100 p-3 rounded-full text-[#E8B10C]">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 21h19.5m-18-2v-4.724A2.25 2.25 0 0 1 5.405 12H10.5M7.5 7.5v.008v-.008Zm2.25 0v.008v-.008Zm2.25 0v.008v-.008Zm2.25 0v.008v-.008Zm2.25 0v.008v-.008Zm2.25 0v.008v-.008Zm-15 1.5H6M12 12H6m6 2.25H6M12 14.25H6m6-6.75h.008v.008H12ZM15.75 7.5h.008v.008h-.008ZM18.75 7.5h.008v.008h-.008ZM15.75 12h.008v.008h-.008ZM18.75 12h.008v.008h-.008ZM15.75 16.5h.008v.008h-.008ZM18.75 16.5h.008v.008h-.008Z" />
                 </svg>
@@ -193,7 +187,7 @@ const DashboardOverview = () => {
 
         {/* Site Visits card */}
         <div className="bg-white p-4 rounded-lg shadow-sm flex items-center space-x-4">
-            <div className="bg-green-100 p-3 rounded-full text-green-600">
+            <div className="bg-green-100 p-3 rounded-full text-[#FFA500]">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
@@ -207,7 +201,7 @@ const DashboardOverview = () => {
 
         {/* Sales card */}
         <div className="bg-white p-4 rounded-lg shadow-sm flex items-center space-x-4">
-            <div className="bg-purple-100 p-3 rounded-full text-purple-600">
+            <div className="bg-purple-100 p-3 rounded-full text-[#E8810C]">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12c0 1.25-.8 2.296-2 2.766V15a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-.234c-1.2-.47-2-1.516-2-2.766 0-1.25.8-2.296 2-2.766V9a2 2 0 0 1 2-2h7.5a2 2 0 0 1 2 2v.234c1.2.47 2 1.516 2 2.766Z" />
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v6m-3-3h6" />
@@ -221,7 +215,7 @@ const DashboardOverview = () => {
 
         {/* Follow-ups metric card */}
         <div className="bg-white p-4 rounded-lg shadow-sm flex items-center space-x-4">
-          <div className="bg-yellow-100 p-3 rounded-full text-yellow-600">
+          <div className="bg-yellow-100 p-3 rounded-full text-[#FF6B0D]">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 6.75h12M8.25 10.5h12M8.25 14.25h12M8.25 18h12M3.75 6.75h.008v.008H3.75V6.75ZM3.75 10.5h.008v.008H3.75V10.5ZM3.75 14.25h.008v.008H3.75V14.25ZM3.75 18h.008v.008H3.75V18Z" />
             </svg>
