@@ -1,3 +1,4 @@
+import React, { useRef} from 'react';
 import React, { useState, useRef } from 'react'; // Import useRef for file input
 import axios from 'axios';
 import * as XLSX from 'xlsx'; // Import xlsx library
@@ -112,6 +113,13 @@ const AddProspect = () => {
     }
   };
 
+
+  
+  // State for spreadsheet import
+  const [isImporting, setIsImporting] = useState(false);
+  const [importError, setImportError] = useState('');
+  const [importSuccess, setImportSuccess] = useState('');
+  const fileInputRef = useRef(null);
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -379,7 +387,6 @@ const AddProspect = () => {
       {/* Spreadsheet Import Section */}
       <div className="mt-6 pt-6 border-t border-gray-200">
         <h3 className="text-lg font-bold text-[#333333] mb-3">Upload Excel or CSV file with prospect data</h3>
-        
         {/* Import Status Messages */}
         {importError && (
           <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">

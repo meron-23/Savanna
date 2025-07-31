@@ -1,5 +1,6 @@
 import React from 'react';
 import NavItem from './NavItem';
+import Header from './Header';
 
 const DesktopSidebar = ({
   isSidebarOpen,
