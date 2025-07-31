@@ -3,7 +3,8 @@ import {
   updateUser,
   viewUser,
   deleteUserModel,
-  findUserByNameAndEmail
+  findUserByNameAndEmail,
+  getUserById
 } from "../Models/userModel.js";
 
 export const addUser = async (req, res, next) => {
@@ -54,8 +55,20 @@ export const getUser = async (req, res, next) => {
   }
 };
 
+export const fetchUserById = async (req, res, next) => {
+  const {id} = req.params;
+
+  try {
+    const viewRes = await getUserById(id);
+    res.status(200).json({ success: true, message: "Success", data: viewRes });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
 export const putUser = async (req, res, next) => {
-    const {id} = req.params;
+  const {id} = req.params;
   const { email, phoneNumber, supervisor, lastSignInTime } = req.body;
 
   try {

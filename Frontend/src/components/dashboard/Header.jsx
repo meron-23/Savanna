@@ -1,12 +1,17 @@
 import React from 'react';
 
-const Header = ({  isMobile, isSidebarOpen }) => {
+const Header = ({
+  isMobile,
+  isSidebarOpen,
+  handleItemClick,
+  // id
+}) => {
   const salesName = localStorage.getItem('name');
+
   return (
     <header className={`bg-white p-4 flex justify-between items-center border-b border-gray-200
       ${isSidebarOpen ? 'md:ms-64' : 'md:ms-20'} `}>
       <div className="hidden md:flex items-center space-x-4 md:w-1/3">
-        
         <div className="flex items-center flex-1">
           <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -29,7 +34,12 @@ const Header = ({  isMobile, isSidebarOpen }) => {
         </button>
         <div className="flex items-center space-x-2">
           <img src="https://via.placeholder.com/32/charcoal/ffffff?text=JR" alt="Jason Ranti" className="w-8 h-8 rounded-full" />
-          <span className="text-sm font-medium text-[#333333]">{salesName}</span>
+          <button 
+            onClick={() => handleItemClick('Profile')}
+            className='cursor-pointer'
+          >
+            <span className="text-sm font-medium text-[#333333]">{salesName}</span>
+          </button>
           <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
           </svg>

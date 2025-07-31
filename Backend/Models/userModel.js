@@ -18,10 +18,22 @@ const findUserByNameAndEmail = async (name, email) => {
 };
 
 
+
 const viewUser = async () => {
   const viewSqlQuery = "SELECT * FROM users";
   try {
     const [result] = await mySqlConnection.query(viewSqlQuery);
+    return result;
+  } catch (error) {
+    console.error("View error:", error);
+    throw error;
+  }
+};
+
+const getUserById = async (id) => {
+  const viewSqlQuery = "SELECT * FROM users where userId = ?";
+  try {
+    const [result] = await mySqlConnection.query(viewSqlQuery, [id]);
     return result;
   } catch (error) {
     console.error("View error:", error);
@@ -62,5 +74,6 @@ export {
   viewUser,
   updateUser,
   deleteUserModel,
-  findUserByNameAndEmail
+  findUserByNameAndEmail,
+  getUserById
 };
