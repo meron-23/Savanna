@@ -68,3 +68,81 @@ export const deleteProspect = async (req, res, next) => {
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+export const bulkAddProspects = async (req, res, next) => {
+  const { prospects } = req.body; // Expect an array of prospect objects
+  const importedCount = 0;
+  const failedImports = [];
+
+  if (!Array.isArray(prospects) || prospects.length === 0) {
+    return res.status(400).json({ success: false, message: "No prospects data provided for bulk import." });
+  }
+
+  // Assuming userId is passed for each prospect or derived from auth context on backend
+  // If userId is always the same for a bulk import, you might get it from req.user (if authenticated)
+  // or a common field in the request body. For now, we expect it in each prospect object.
+
+  for (const prospect of prospects) {
+    const { 
+      name, phoneNumber, interest, method, site, comment, remark, periodTime, userId 
+    } = prospect;
+
+    // Backend-side normalization and date generation
+    const phoneNumberNormalized = normalizePhoneNumber(phoneNumber);
+    const date = formatBackendDate(new Date()); // Use backend's current time for consistency
+    const dateNow = formatBackendDate(new Date()); // Use backend's current time for consistency
+
+    if (!phoneNumberNormalized) {
+      failedImports.push({ prospect, reason: 'Invalid phone number format' });
+      continue; // Skip to next prospect
+    }
+
+    try {
+      // Note: The 'id' in createProspect is usually AUTO_INCREMENT, so you shouldn't pass it.
+      // If your createProspect function requires 'id', you might need to adjust it
+      // or ensure it's handled as null/undefined for auto-increment.
+      // Let's assume 'id' should be omitted for new creations.
+      await createProspect(
+        null, // Pass null or undefined for auto-increment ID
+        name, 
+        phoneNumber, 
+        phoneNumberNormalized, 
+        interest, 
+        method, 
+        site, 
+        comment, 
+        remark, 
+        periodTime, 
+        date, 
+        dateNow, 
+        userId // Ensure userId is present in each prospect object from frontend
+      );
+      importedCount++;
+    } catch (error) {
+      console.error("Bulk import error for prospect:", prospect.name, error);
+      failedImports.push({ prospect, reason: error.message });
+    }
+  }
+
+  if (importedCount > 0) {
+    res.status(200).json({ 
+      success: true, 
+      message: `Bulk import completed. Successfully imported ${importedCount} prospects.`,
+      importedCount,
+      failedImports 
+    });
+  } else {
+    res.status(400).json({ 
+      success: false, 
+      message: `Bulk import failed. No prospects were imported.`,
+      failedImports 
+    });
+  }
+};
+
+// Also, you need a formatBackendDate function in your backend utility if not already present
+const formatBackendDate = (date) => {
+  const pad = (num) => num.toString().padStart(2, '0');
+  const d = new Date(date);
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+};

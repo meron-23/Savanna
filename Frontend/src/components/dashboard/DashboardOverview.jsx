@@ -8,6 +8,7 @@ const DashboardOverview = () => {
   const [prospectsData, setProspectsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
   const salesName = localStorage.getItem('name');
 
   const [followUpNumberInput, setFollowUpNumberInput] = useState('');
@@ -19,8 +20,6 @@ const DashboardOverview = () => {
     month: 'long', 
     day: 'numeric' 
   });
-
-
   const handleSubmitFollowUpInput = () => {
     console.log("Submitting daily follow-up number:", followUpNumberInput);
     alert(`Daily follow-up count submitted: ${followUpNumberInput}`);
@@ -30,7 +29,7 @@ const DashboardOverview = () => {
   useEffect(() => {
     const fetchProspects = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/prospects'); 
+        const response = await fetch('http://localhost:3000/api/prospects'); 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -147,7 +146,6 @@ const DashboardOverview = () => {
           <span>{formattedDate}</span>
         </div>
       </div>
-
       {/* Today's Follow-ups Section (input field) */}
       <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
         <h2 className="text-lg font-semibold text-gray-800 mb-4 flex items-center">
@@ -170,7 +168,62 @@ const DashboardOverview = () => {
           </button>
         </div>
       </div>
-      
+
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {/* Prospects Overview Bar Chart */}
+        <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Prospects Overview</h3>
+          <div className="w-full h-80"> 
+            <ProspectsBarChart chartData={barChartData} />
+          </div>
+        </div>
+
+        {/* Methods Distribution Pie Chart */}
+        <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Methods Distribution</h3>
+          <div className="w-full h-80 flex justify-center items-center"> 
+            <MethodsPieChart chartData={pieChartData} />
+          </div>
+        </div>
+      </div>
+
+      {/* "Filter By Date" section */}
+      <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
+        <h3 className="text-lg font-semibold text-gray-800 mb-4">Filter By Date</h3>
+        <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+          <div className="flex-1">
+            <label htmlFor="fromDate" className="block text-sm font-medium text-gray-700 mb-1">From Date :</label>
+            <div className="relative">
+              <input
+                type="date" 
+                id="fromDate"
+                className="w-full p-2 border border-gray-300 rounded-md pr-10 focus:outline-none focus:ring-2 focus:ring-saffron focus:border-transparent text-gray-700"
+              />
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h.01M7 12h.01M7 15h.01M15 11h.01M15 12h.01M15 15h.01M4 19h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+          <div className="flex-1">
+            <label htmlFor="toDate" className="block text-sm font-medium text-gray-700 mb-1">To Date :</label>
+            <div className="relative">
+              <input
+                type="date" 
+                id="toDate"
+                className="w-full p-2 border border-gray-300 rounded-md pr-10 focus:outline-none focus:ring-2 focus:ring-saffron focus:border-transparent text-gray-700"
+              />
+              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h.01M7 12h.01M7 15h.01M15 11h.01M15 12h.01M15 15h.01M4 19h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
       {/* Metric Cards Grid (same as before) */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Prospects Card */}
@@ -185,7 +238,6 @@ const DashboardOverview = () => {
             <p className="text-2xl font-bold text-gray-800">{totalProspects}</p> 
           </div>
         </div>
-
         {/* Office Visits card */}
         <div className="bg-white p-4 rounded-lg shadow-sm flex items-center space-x-4">
             <div className="bg-red-100 p-3 rounded-full text-red-600">
@@ -198,7 +250,6 @@ const DashboardOverview = () => {
                 <p className="text-2xl font-bold text-gray-800">{officeVisits}</p> 
             </div>
         </div>
-
         {/* Site Visits card */}
         <div className="bg-white p-4 rounded-lg shadow-sm flex items-center space-x-4">
             <div className="bg-green-100 p-3 rounded-full text-green-600">
@@ -240,7 +291,6 @@ const DashboardOverview = () => {
           </div>
         </div>
       </div>
-
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
         {/* Prospects Overview Bar Chart */}
