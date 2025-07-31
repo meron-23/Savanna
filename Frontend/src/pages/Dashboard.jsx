@@ -6,6 +6,7 @@ import DesktopSidebar from '../components/dashboard/DesktopSidebar';
 import MobileBottomNav from '../components/dashboard/MobileBottomNav';
 import Footer from '../components/dashboard/Footer';
 import DashboardOverview from '../components/dashboard/DashboardOverview';
+import AssignedLeadsTable from '../components/dashboard/AssignedLeadsTable';
 
 const Dashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -35,10 +36,12 @@ const Dashboard = () => {
 
   const handleItemClick = (item) => {
     setActiveItem(item);
+    
+    // Reset prospect submenu state when clicking on any main item
+    setIsProspectOpen(false);
+
     if (item === 'Prospect') {
       setIsProspectOpen(!isProspectOpen);
-      // setMainContent('DashboardOverview');
-
       if (!isProspectOpen && !mainContent) {
         // If Prospect menu is closed and no content is set, default to overview
         setMainContent('');
@@ -46,11 +49,14 @@ const Dashboard = () => {
         // If Prospect menu is open and we click it again to close, show overview
         setMainContent('');
       }
+    } else if (item === 'Leads') { // <-- NEW CONDITION for the Leads button
+      setMainContent('Leads'); // <-- This will set the state to 'Leads'
     } else {
-      setIsProspectOpen(false);
+      // For any other non-submenu main items (e.g., Inbox, Lesson)
       setMainContent(''); 
     }
   };
+  
 
   const handleSubItemClick = (subItem) => {
     if (subItem === 'Add') {
@@ -87,6 +93,7 @@ const Dashboard = () => {
               {mainContent === '' && <DashboardOverview />}
               {mainContent === 'AddProspectForm' && <AddProspect />}
               {mainContent === 'ViewProspectsComponent' && <ViewProspect />}
+              {mainContent === 'Leads' && <AssignedLeadsTable />}
             </div>
           </main>
         </div>

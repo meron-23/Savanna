@@ -110,6 +110,15 @@ const DesktopSidebar = ({
               </ul>
             )}
           </NavItem>
+          <NavItem
+            name="Leads"
+            icon={
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h2a2 2 0 002-2V4a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h2m0 0a2 2 0 100 4 2 2 0 000-4zm0 0l-2.5-2.5M17 20h2a2 2 0 002-2V4a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h2m0 0a2 2 0 100 4 2 2 0 000-4zm0 0l-2.5-2.5M7 13h10v4H7v-4zm0 0a2 2 0 100-4 2 2 0 000 4zm0 0l-2.5-2.5M17 13h10v4H7v-4zm0 0a2 2 0 100-4 2 2 0 000 4zm0 0l-2.5-2.5M7 7h10v4H7V7zm0 0a2 2 0 100-4 2 2 0 000 4zm0 0l-2.5-2.5M17 7h10v4H7V7zm0 0a2 2 0 100-4 2 2 0 000 4zm0 0l-2.5-2.5" />
+            }
+            isActive={activeItem === 'Leads'}
+            isSidebarOpen={isSidebarOpen}
+            onClick={() => handleItemClick('Leads')} // Direct click handler
+          />
         </ul>
       </nav>
         <h1 className={`font-bold ${isSidebarOpen ? 'text-base' : 'hidden'} mb-5 text-gray-300`}>{salesName}</h1>
