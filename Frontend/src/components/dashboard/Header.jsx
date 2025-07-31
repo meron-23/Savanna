@@ -12,25 +12,22 @@ const Header = ({ isMobile }) => {
   const notifications = []; // No demo notifications
 
   return (
-    <header className="bg-[#333333] text-white p-4 flex justify-between items-center border-b border-gray-200 h-32 md:h-24">
+    <header className=" text-white  p-4 flex justify-between items-center  border-gray-200 h-32 md:h-16">
       {/* Welcome Section */}
       <div className="flex flex-col justify-center items-start pl-4 sm:pl-6 h-full">
-        <h1 className="text-xl sm:text-2xl font-bold text-[#F4C430]">Welcome, {userName}!</h1>
+        {/* <h1 className="text-xl sm:text-2xl font-bold text-[#F4C430]">Welcome, {userName}!</h1>
         <p className="text-sm sm:text-md mt-1">Role: {userRole}</p>
-        <p className="text-xs sm:text-sm text-gray-300">{formattedDate}</p>
+        <p className="text-xs sm:text-sm text-gray-300">{formattedDate}</p> */}
       </div>
 
       {/* Right Section */}
-      <div className="flex items-center space-x-4 sm:space-x-6 pr-4 sm:pr-6">
+      <div className="flex items-center space-x-4 sm:space-x-6 pr-4 sm:pr-6 md:pt-8">
         <NotificationBell notifications={notifications} />
 
         {/* User Profile */}
-        <div className="hidden md:flex items-center space-x-2">
-          <img src="https://via.placeholder.com/32/charcoal/ffffff?text=HA" alt={userName} className="w-8 h-8 rounded-full" />
-          <span className="text-sm font-medium text-white">{userName}</span>
-          <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
+        <div className="flex items-center space-x-2">
+          <span className="text-sm font-medium text-black">{userName}</span>
+          <img src="" alt={userName} className="w-8 h-8 rounded-full" />
         </div>
       </div>
     </header>
