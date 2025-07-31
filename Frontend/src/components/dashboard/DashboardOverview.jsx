@@ -8,6 +8,7 @@ const DashboardOverview = () => {
   const [prospectsData, setProspectsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  
   const salesName = localStorage.getItem('name');
 
   const [followUpNumberInput, setFollowUpNumberInput] = useState('');
@@ -19,7 +20,6 @@ const DashboardOverview = () => {
     month: 'long', 
     day: 'numeric' 
   });
-
 
   const handleSubmitFollowUpInput = () => {
     console.log("Submitting daily follow-up number:", followUpNumberInput);
@@ -128,11 +128,9 @@ const DashboardOverview = () => {
   return (
     <div className="flex flex-col space-y-6 w-full">
       <div className="bg-white p-6 rounded-lg shadow-sm mb-6">
-        <h1 className="text-2xl font-bold text-gray-800">Welcome, {salesName}</h1>
+        <h1 className="text-3xl font-bold text-gray-800">Welcome</h1>
         <div className="flex flex-col mt-2 text-gray-600">
           <span>Role: Sales Agent</span>
-          {/* <span>•</span> */}
-          <span>{formattedDate}</span>
         </div>
       </div>
 

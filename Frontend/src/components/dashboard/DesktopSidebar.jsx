@@ -2,6 +2,15 @@ import React from 'react';
 import NavItem from './NavItem';
 import Header from './Header';
 
+ const salesName = localStorage.getItem('name');
+ const currentDate = new Date();
+  const formattedDate = currentDate.toLocaleDateString('en-US', { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  });
+
 const DesktopSidebar = ({
   isSidebarOpen,
   activeItem,
@@ -103,7 +112,8 @@ const DesktopSidebar = ({
           </NavItem>
         </ul>
       </nav>
-      
+        <h1 className={`font-bold ${isSidebarOpen ? 'text-base' : 'hidden'} mb-5 text-gray-300`}>{salesName}</h1>
+
     </aside>
   );
 };
