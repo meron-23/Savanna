@@ -2,6 +2,15 @@ import React from 'react';
 import NavItem from './NavItem';
 import Header from './Header';
 
+ const salesName = localStorage.getItem('name');
+ const currentDate = new Date();
+  const formattedDate = currentDate.toLocaleDateString('en-US', { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  });
+
 const DesktopSidebar = ({
   isSidebarOpen,
   activeItem,
@@ -11,10 +20,15 @@ const DesktopSidebar = ({
   toggleSidebar,
 }) => {
   return (
+    // <aside
+    //   className={`hidden md:flex -mt-[61px] pt-8 flex-col bg-[#333333] border-r border-gray-200 shadow-md 
+    //     ${isSidebarOpen ? 'w-64' : 'w-20'} 
+    //     p-4 transition-all duration-300 ease-in-out overflow-hidden`}
+    // >
     <aside
-      className={`hidden md:flex flex-col bg-[#333333] border-r border-gray-200 shadow-md 
-        ${isSidebarOpen ? 'w-64' : 'w-20'} 
-        p-4 transition-all duration-300 ease-in-out overflow-hidden`}
+      className={`fixed top-0 left-0 h-screen pt-10 z-50 hidden md:flex flex-col bg-[#333333] border-r border-gray-200 shadow-md 
+      ${isSidebarOpen ? 'w-64' : 'w-20'} 
+      p-4 transition-all duration-300 ease-in-out overflow-hidden`}
     >
       {/* Header Section */}
       <div className={`flex ${isSidebarOpen ? 'justify-around' : 'flex-col'}  items-center ${isSidebarOpen ? 'mb-10' : 'mb-5'}`}>
@@ -158,6 +172,7 @@ const DesktopSidebar = ({
           ))}
         </ul>
       </nav>
+        <h1 className={`font-bold ${isSidebarOpen ? 'text-base' : 'hidden'} mb-5 text-gray-300`}>{salesName}</h1>
     </aside>
   );
 };

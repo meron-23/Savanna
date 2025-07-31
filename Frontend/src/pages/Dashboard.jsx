@@ -5,16 +5,15 @@ import Header from '../components/dashboard/Header';
 import DesktopSidebar from '../components/dashboard/DesktopSidebar';
 import MobileBottomNav from '../components/dashboard/MobileBottomNav';
 import Footer from '../components/dashboard/Footer';
-
-import DashboardOverview from '../components/dashboard/DashboardOverview'; // Import the new overview component
-
+import DashboardOverview from '../components/dashboard/DashboardOverview';
+// import ProfilePage from '../components/dashboard/ProfilePage';
 
 const Dashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [activeItem, setActiveItem] = useState('Prospect');
   const [isProspectOpen, setIsProspectOpen] = useState(false);
-  const [mainContent, setMainContent] = useState(''); // Default to empty string to show overview
+  const [mainContent, setMainContent] = useState('');
 
   useEffect(() => {
     const handleResize = () => {
@@ -39,19 +38,18 @@ const Dashboard = () => {
     setActiveItem(item);
     if (item === 'Prospect') {
       setIsProspectOpen(!isProspectOpen);
+      // setMainContent('DashboardOverview');
 
-      // If clicking 'Prospect' and it has sub-items, we don't immediately change mainContent.
-      // The sub-item click will determine the mainContent.
-      // If it's a direct navigation item without sub-items, you might set mainContent directly here.
-      if (!isProspectOpen && !mainContent) { // If Prospect menu is closed and no content is set, default to overview
+      if (!isProspectOpen && !mainContent) {
+        // If Prospect menu is closed and no content is set, default to overview
         setMainContent('');
-      } else if (isProspectOpen) { // If Prospect menu is open and we click it again to close, show overview
+      } else if (isProspectOpen) {
+        // If Prospect menu is open and we click it again to close, show overview
         setMainContent('');
       }
     } else {
       setIsProspectOpen(false);
-      setMainContent(''); // Show overview when other main items are clicked
-
+      setMainContent(''); 
     }
   };
 
@@ -68,10 +66,10 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen flex flex-col font-roboto bg-gray-100">
-
       <Header
         isMobile={isMobile}
         isSidebarOpen={isSidebarOpen}
+        handleItemClick={handleItemClick}
       />
 
       <div className="flex flex-1 flex-col md:flex-row">
@@ -90,8 +88,7 @@ const Dashboard = () => {
               {mainContent === '' && <DashboardOverview />}
               {mainContent === 'AddProspectForm' && <AddProspect />}
               {mainContent === 'ViewProspectsComponent' && <ViewProspect />}
-              {/* Render DashboardOverview if no specific form is active */}
-              {mainContent === '' && <DashboardOverview />}
+              {mainContent === 'ProfilePage' && <ProfilePage />}
             </div>
           </main>
         </div>
