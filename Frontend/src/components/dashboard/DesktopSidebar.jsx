@@ -26,7 +26,7 @@ const DesktopSidebar = ({
     //     p-4 transition-all duration-300 ease-in-out overflow-hidden`}
     // >
     <aside
-      className={`fixed top-0 left-0 h-screen pt-10 z-50 hidden md:flex flex-col bg-[#333333] border-r border-gray-200 shadow-md 
+      className={`fixed top-0 left-0 h-screen pt-10 z-50 hidden md:flex flex-col bg-[#333333]
       ${isSidebarOpen ? 'w-64' : 'w-20'} 
       p-4 transition-all duration-300 ease-in-out overflow-hidden`}
     >
