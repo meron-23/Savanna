@@ -12,6 +12,15 @@ import { UserContext } from '../../context/UserContext';
     day: 'numeric' 
   });
 
+ const salesName = localStorage.getItem('name');
+ const currentDate = new Date();
+  const formattedDate = currentDate.toLocaleDateString('en-US', { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  });
+
 const DesktopSidebar = ({
   isSidebarOpen,
   activeItem,
@@ -124,7 +133,6 @@ const DesktopSidebar = ({
         </ul>
       </nav>
         <h1 className={`font-bold ${isSidebarOpen ? 'text-base' : 'hidden'} mb-5 text-gray-300`}>{user}</h1>
-
     </aside>
   );
 };

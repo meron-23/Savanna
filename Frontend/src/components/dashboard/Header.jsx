@@ -1,4 +1,3 @@
-
 import React, { useContext } from 'react';
 import NotificationBell from './NotificationBell'; // Adjust the path if needed
 import { UserContext } from '../../context/UserContext';
@@ -20,7 +19,6 @@ const Header = ({
   const formattedDate = today.toLocaleDateString('en-US', options);
 
   const notifications = []; // No demo notifications
-
   return (
     <header className=" text-white  p-4 flex justify-between items-center  border-gray-200 h-32 md:h-16">
       {/* Welcome Section */}
