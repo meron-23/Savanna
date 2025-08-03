@@ -1,5 +1,5 @@
 import express from 'express';
-import { addProspect, deleteProspect, getProspect, putProspect } from '../Controllers/prospectController.js';
+import { addProspect, bulkAddProspects, deleteProspect, getProspect, putProspect } from '../Controllers/prospectController.js';
 import { addUser, deleteUser, fetchUserById, getUser, loginUser, putUser } from '../Controllers/userController.js';
 
 const router = express.Router();
@@ -9,6 +9,7 @@ router.post('/prospects', addProspect);
 router.get('/prospects', getProspect);
 router.put('/prospects/:id', putProspect);
 router.delete('/prospects/:id', deleteProspect);
+router.post('/bulk', bulkAddProspects);
 
 
 // User Routes

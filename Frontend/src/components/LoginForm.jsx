@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FcGoogle } from 'react-icons/fc';
 import { FaApple } from 'react-icons/fa';
 import axios from 'axios';
+import { UserContext } from '../context/UserContext';
 
 const LoginForm = () => {
   const navigate = useNavigate();
   const [success, setSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [error, setError] = useState('');
+  const { setUser } = useContext(UserContext);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -62,7 +64,9 @@ const LoginForm = () => {
         });
         navigate('/dashboard');
         localStorage.setItem('userId', response.data.user.userId);
-        localStorage.setItem('name', response.data.user.name);
+
+        // set the name using context
+        setUser(response.data.user.name)
         // console.log(response.data.user.userId);
       } else {
         setError(response.data.message || 'Failed to save prospect');

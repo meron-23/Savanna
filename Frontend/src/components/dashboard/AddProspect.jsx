@@ -417,7 +417,7 @@ const AddProspect = () => {
           onClick={() => fileInputRef.current.click()} // Trigger hidden input click
           disabled={isImporting}
           className={`inline-flex items-center justify-center py-2 px-6 border border-transparent shadow-sm text-sm font-medium rounded-md text-white ${
-            isImporting ? 'bg-gray-400' : 'bg-green-600 hover:bg-green-700'
+            isImporting ? 'bg-gray-400' : 'bg-[#F4A300] hover:bg-yellow-600'
           } focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500`}
         >
           {isImporting ? (

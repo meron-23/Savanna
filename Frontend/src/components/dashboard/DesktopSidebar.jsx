@@ -1,6 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import NavItem from './NavItem';
 import Header from './Header';
+import { UserContext } from '../../context/UserContext';
+
+//  const salesName = localStorage.getItem('name');
+ const currentDate = new Date();
+  const formattedDate = currentDate.toLocaleDateString('en-US', { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  });
 
 const DesktopSidebar = ({
   isSidebarOpen,
@@ -10,6 +20,7 @@ const DesktopSidebar = ({
   handleSubItemClick,
   toggleSidebar,
 }) => {
+  const { user } = useContext(UserContext);
   return (
     // <aside
     //   className={`hidden md:flex -mt-[61px] pt-8 flex-col bg-[#333333] border-r border-gray-200 shadow-md 
@@ -17,7 +28,7 @@ const DesktopSidebar = ({
     //     p-4 transition-all duration-300 ease-in-out overflow-hidden`}
     // >
     <aside
-      className={`fixed top-0 left-0 h-screen pt-10 z-50 hidden md:flex flex-col bg-[#333333] border-r border-gray-200 shadow-md 
+      className={`fixed top-0 left-0 h-screen pt-10 z-50 hidden md:flex flex-col bg-[#333333]
       ${isSidebarOpen ? 'w-64' : 'w-20'} 
       p-4 transition-all duration-300 ease-in-out overflow-hidden`}
     >
@@ -101,68 +112,19 @@ const DesktopSidebar = ({
               </ul>
             )}
           </NavItem>
-
-          {[
-            {
-              name: 'Inbox',
-              icon: (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                  d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-1 
-                  13a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 
-                  2 0 012-2h16a2 2 0 012 2v13z"
-                />
-              ),
-            },
-            {
-              name: 'Lesson',
-              icon: (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                  d="M12 6.253v13m0-13C10.832 5.477 9.246 
-                  5 7.5 5S4.168 5.477 3 6.253v13C4.168 
-                  18.523 5.754 18 7.5 18s3.332.477 
-                  4.5 1.253m0-13C13.168 5.477 14.754 
-                  5 16.5 5s3.332.477 4.5 1.253v13C19.832 
-                  18.523 18.246 18 16.5 18s-3.332.477-4.5 
-                  1.253"
-                />
-              ),
-            },
-            {
-              name: 'Task',
-              icon: (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                  d="M9 5H7a2 2 0 00-2 2v12a2 2 
-                  0 002 2h10a2 2 0 002-2V7a2 2 
-                  0 00-2-2h-2M9 5a2 2 0 002 2h2a2 
-                  2 0 002-2M9 5a2 2 0 012-2h2a2 
-                  2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
-                />
-              ),
-            },
-            {
-              name: 'Group',
-              icon: (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2}
-                  d="M17 20h2a2 2 0 002-2V4a2 2 
-                  0 00-2-2H5a2 2 0 00-2 2v14a2 2 
-                  0 002 2h2m0 0a2 2 0 100 4 2 2 
-                  0 000-4zm0 0l-2.5-2.5M7 13h10v4H7v-4zm0 
-                  0a2 2 0 100-4 2 2 0 000 4zm0 0l-2.5-2.5"
-                />
-              ),
-            },
-          ].map((item) => (
-            <NavItem
-              key={item.name}
-              name={item.name}
-              icon={item.icon}
-              isActive={activeItem === item.name}
-              isSidebarOpen={isSidebarOpen}
-              onClick={() => handleItemClick(item.name)}
-            />
-          ))}
+          <NavItem
+            name="Leads"
+            icon={
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h2a2 2 0 002-2V4a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h2m0 0a2 2 0 100 4 2 2 0 000-4zm0 0l-2.5-2.5M17 20h2a2 2 0 002-2V4a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h2m0 0a2 2 0 100 4 2 2 0 000-4zm0 0l-2.5-2.5M7 13h10v4H7v-4zm0 0a2 2 0 100-4 2 2 0 000 4zm0 0l-2.5-2.5M17 13h10v4H7v-4zm0 0a2 2 0 100-4 2 2 0 000 4zm0 0l-2.5-2.5M7 7h10v4H7V7zm0 0a2 2 0 100-4 2 2 0 000 4zm0 0l-2.5-2.5M17 7h10v4H7V7zm0 0a2 2 0 100-4 2 2 0 000 4zm0 0l-2.5-2.5" />
+            }
+            isActive={activeItem === 'Leads'}
+            isSidebarOpen={isSidebarOpen}
+            onClick={() => handleItemClick('Leads')} // Direct click handler
+          />
         </ul>
       </nav>
+        <h1 className={`font-bold ${isSidebarOpen ? 'text-base' : 'hidden'} mb-5 text-gray-300`}>{user}</h1>
+
     </aside>
   );
 };

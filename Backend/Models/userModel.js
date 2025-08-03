@@ -41,14 +41,13 @@ const getUserById = async (id) => {
   }
 };
 
-const updateUser = async (id, email, phoneNumber, supervisor, lastSignInTime) => {
-  const updateSqlQuery = "UPDATE users SET email=?, phoneNumber=?, supervisor=?, lastSignInTime=? WHERE userId=?";
+const updateUser = async (id, name, email, phoneNumber) => {
+  const updateSqlQuery = "UPDATE users SET name = ?, email=?, phoneNumber=? WHERE userId=?";
   try {
     const [result] = await mySqlConnection.query(updateSqlQuery, [
+      name,
       email,
       phoneNumber,
-      supervisor,
-      lastSignInTime,
       id
     ]);
     return result;
