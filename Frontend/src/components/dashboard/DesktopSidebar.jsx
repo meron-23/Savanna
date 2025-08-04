@@ -3,23 +3,13 @@ import NavItem from './NavItem';
 import Header from './Header';
 import { UserContext } from '../../context/UserContext';
 
-//  const salesName = localStorage.getItem('name');
- const currentDate = new Date();
-  const formattedDate = currentDate.toLocaleDateString('en-US', { 
-    weekday: 'long', 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
-  });
-
- const salesName = localStorage.getItem('name');
- const currentDate = new Date();
-  const formattedDate = currentDate.toLocaleDateString('en-US', { 
-    weekday: 'long', 
-    year: 'numeric', 
-    month: 'long', 
-    day: 'numeric' 
-  });
+const currentDate = new Date();
+const formattedDate = currentDate.toLocaleDateString('en-US', { 
+  weekday: 'long', 
+  year: 'numeric', 
+  month: 'long', 
+  day: 'numeric' 
+});
 
 const DesktopSidebar = ({
   isSidebarOpen,
@@ -30,12 +20,8 @@ const DesktopSidebar = ({
   toggleSidebar,
 }) => {
   const { user } = useContext(UserContext);
+  
   return (
-    // <aside
-    //   className={`hidden md:flex -mt-[61px] pt-8 flex-col bg-[#333333] border-r border-gray-200 shadow-md 
-    //     ${isSidebarOpen ? 'w-64' : 'w-20'} 
-    //     p-4 transition-all duration-300 ease-in-out overflow-hidden`}
-    // >
     <aside
       className={`fixed top-0 left-0 h-screen pt-10 z-50 hidden md:flex flex-col bg-[#333333]
       ${isSidebarOpen ? 'w-64' : 'w-20'} 
@@ -81,6 +67,18 @@ const DesktopSidebar = ({
           </h3>
         )}
         <ul className="space-y-2">
+          {/* Dashboard Item - Will be the default view */}
+          <NavItem
+            name="Dashboard"
+            icon={
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+            }
+            isActive={activeItem === 'Dashboard'}
+            isSidebarOpen={isSidebarOpen}
+            onClick={() => handleItemClick('Dashboard')}
+          />
+
+          {/* Prospect Item - Now just a dropdown */}
           <NavItem
             name="Prospect"
             icon={
@@ -121,6 +119,7 @@ const DesktopSidebar = ({
               </ul>
             )}
           </NavItem>
+
           <NavItem
             name="Leads"
             icon={
@@ -128,11 +127,11 @@ const DesktopSidebar = ({
             }
             isActive={activeItem === 'Leads'}
             isSidebarOpen={isSidebarOpen}
-            onClick={() => handleItemClick('Leads')} // Direct click handler
+            onClick={() => handleItemClick('Leads')}
           />
         </ul>
       </nav>
-        <h1 className={`font-bold ${isSidebarOpen ? 'text-base' : 'hidden'} mb-5 text-gray-300`}>{user}</h1>
+      <h1 className={`font-bold ${isSidebarOpen ? 'text-base' : 'hidden'} mb-5 text-gray-300`}>{user}</h1>
     </aside>
   );
 };
