@@ -1,6 +1,16 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import NavItem from './NavItem';
 import Header from './Header';
+import { UserContext } from '../../context/UserContext';
+
+//  const salesName = localStorage.getItem('name');
+ const currentDate = new Date();
+  const formattedDate = currentDate.toLocaleDateString('en-US', { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  });
 
  const salesName = localStorage.getItem('name');
  const currentDate = new Date();
@@ -19,6 +29,7 @@ const DesktopSidebar = ({
   handleSubItemClick,
   toggleSidebar,
 }) => {
+  const { user } = useContext(UserContext);
   return (
     // <aside
     //   className={`hidden md:flex -mt-[61px] pt-8 flex-col bg-[#333333] border-r border-gray-200 shadow-md 
@@ -121,8 +132,7 @@ const DesktopSidebar = ({
           />
         </ul>
       </nav>
-        <h1 className={`font-bold ${isSidebarOpen ? 'text-base' : 'hidden'} mb-5 text-gray-300`}>{salesName}</h1>
-
+        <h1 className={`font-bold ${isSidebarOpen ? 'text-base' : 'hidden'} mb-5 text-gray-300`}>{user}</h1>
     </aside>
   );
 };

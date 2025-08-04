@@ -7,6 +7,7 @@ import MobileBottomNav from '../components/dashboard/MobileBottomNav';
 import Footer from '../components/dashboard/Footer';
 import DashboardOverview from '../components/dashboard/DashboardOverview';
 import AssignedLeadsTable from '../components/dashboard/AssignedLeadsTable';
+import ProfilePage from '../components/dashboard/ProfilePage';
 
 const Dashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -69,12 +70,22 @@ const Dashboard = () => {
     }
   };
 
+  const handleProfileClick = (item) => {
+    if (item === 'Profile') {
+      setMainContent('ProfilePage');
+      setIsProspectOpen(false);
+    } else {
+       setMainContent('');
+    }
+  }
+
   return (
     <div className="min-h-screen flex flex-col font-roboto bg-gray-100">
       <Header
         isMobile={isMobile}
         isSidebarOpen={isSidebarOpen}
         handleItemClick={handleItemClick}
+        handleProfileClick={handleProfileClick}
       />
 
       <div className="flex flex-1 flex-col md:flex-row">
@@ -94,6 +105,7 @@ const Dashboard = () => {
               {mainContent === 'AddProspectForm' && <AddProspect />}
               {mainContent === 'ViewProspectsComponent' && <ViewProspect />}
               {mainContent === 'Leads' && <AssignedLeadsTable />}
+              {mainContent === 'ProfilePage' && <ProfilePage />}
             </div>
           </main>
         </div>

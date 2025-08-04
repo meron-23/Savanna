@@ -51,4 +51,3 @@ const NotificationBell = ({ notifications = [] }) => {
 };
 
 export default NotificationBell;
-

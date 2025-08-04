@@ -1,16 +1,24 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import NotificationBell from './NotificationBell'; // Adjust the path if needed
+import { UserContext } from '../../context/UserContext';
 
-const Header = ({ isMobile }) => {
-  const userName = "Hana Abebawu";
-  const userRole = "Sales Agent";
+
+
+const Header = ({
+    isMobile,
+    isSidebarOpen,
+    handleProfileClick
+  }) => {
+  // const userName = "Hana Abebawu";
+  // const userRole = "Sales Agent";
+
+  const { user } = useContext(UserContext);
 
   const today = new Date();
   const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
   const formattedDate = today.toLocaleDateString('en-US', options);
 
   const notifications = []; // No demo notifications
-
   return (
     <header className=" text-white  p-4 flex justify-between items-center  border-gray-200 h-32 md:h-16">
       {/* Welcome Section */}
@@ -26,8 +34,16 @@ const Header = ({ isMobile }) => {
 
         {/* User Profile */}
         <div className="flex items-center space-x-2">
-          <span className="text-sm font-medium text-black">{userName}</span>
-          <img src="" alt={userName} className="w-8 h-8 rounded-full" />
+          {/* <img src="https://via.placeholder.com/32/charcoal/ffffff?text=JR" alt="Jason Ranti" className="w-8 h-8 rounded-full" /> */}
+          <button 
+            onClick={() => handleProfileClick('Profile')}
+            className='cursor-pointer'
+          >
+            <span className="text-sm font-medium text-[#333333]">{user}</span>
+          </button>
+          {/* <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg> */}
         </div>
       </div>
     </header>
@@ -35,4 +51,3 @@ const Header = ({ isMobile }) => {
 };
 
 export default Header;
-
