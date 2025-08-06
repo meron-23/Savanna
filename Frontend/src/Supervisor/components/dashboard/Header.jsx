@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const Header = ({ isMobile, toggleSidebar, isSidebarOpen }) => {
+const Header = ({ isMobile, toggleSidebar, isSidebarOpen, handleProfileClick }) => {
   return (
     <header className="bg-[#333333] text-white shadow-md">
       <div className="flex items-center justify-between px-4 py-3 md:px-6">
@@ -41,12 +41,15 @@ const Header = ({ isMobile, toggleSidebar, isSidebarOpen }) => {
             </svg>
             <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>
           </button>
-
+          <button 
+            onClick={() => handleProfileClick('Profile')}
+            className='cursor-pointer'
+          >
+            <span className="text-sm font-medium text-white">U</span>
+          </button>
+          
           <div className="relative">
             <button className="flex items-center space-x-2 focus:outline-none">
-              <div className="h-8 w-8 rounded-full bg-gray-600 flex items-center justify-center">
-                <span className="text-white font-medium">U</span>
-              </div>
               {!isMobile && (
                 <span className="text-gray-300 hover:text-white">
                   <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -56,7 +59,6 @@ const Header = ({ isMobile, toggleSidebar, isSidebarOpen }) => {
               )}
             </button>
 
-            {/* Dropdown menu - would be shown/hidden with state */}
             <div className="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
               <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Your Profile</Link>
               <Link to="/settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</Link>

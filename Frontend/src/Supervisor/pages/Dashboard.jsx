@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import DashboardOverview from '../components/dashboard/DashboardOverview';
-import Header from '../../components/dashboard/Header';
+// import Header from '../../components/dashboard/Header';
 import DesktopSidebar from '../components/dashboard/DesktopSidebar';
 // import MobileBottomNav from './MobileBottomNav';
 import AddProspect from '../components/AddProspectSupervisor';
@@ -11,6 +11,10 @@ import { UserContext } from '../../context/UserContext';
 import RegisterAgents from '../components/RegisterAgents';
 import VisitsManagement  from '../components/OfficeSiteVisits';
 import SalesManagement from '../components/RegiseterSalesData';
+import Header from '../components/dashboard/Header';
+import ProfilePage from '../components/dashboard/ProfilePage';
+import MobileBottomNav from '../../components/dashboard/MobileBottomNav';
+
 
 const API_BASE_URL = 'http://localhost:3000/api';
 
@@ -81,8 +85,9 @@ const Dashboard = () => {
       case 'ViewProspects':
         return <ViewProspects />;
       case 'SiteVisits':
-        return <VisitsManagement 
-        />;
+        return <VisitsManagement />;
+      case 'Profile':
+        return <ProfilePage />;
       case 'Sales':
         return <SalesManagement />;
       default:
@@ -90,9 +95,20 @@ const Dashboard = () => {
     }
   };
 
+  const handleProfileClick = (item) => {
+    setActiveItem(item);
+    if (item === 'Profile') {
+      // setMainContent('ProfilePage');
+      // setIsProspectOpen(!isProspectOpen);
+    }
+    // } else {
+    //    setMainContent('');
+    // }
+  }
+
   return (
     <div className="min-h-screen flex flex-col font-roboto bg-gray-100">
-      <Header isMobile={isMobile} toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} />
+      <Header isMobile={isMobile} toggleSidebar={toggleSidebar} isSidebarOpen={isSidebarOpen} handleProfileClick={handleProfileClick} />
 
       <div className="flex flex-1 flex-col md:flex-row">
         <DesktopSidebar 

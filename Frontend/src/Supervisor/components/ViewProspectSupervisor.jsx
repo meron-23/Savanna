@@ -21,7 +21,7 @@ const ViewProspectSupervisor = () => {
       setError(null);
       
       try {
-        const response = await fetch('http://localhost:3000/api/prospects');
+        const response = await fetch('http://localhost:5000/api/prospects');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
