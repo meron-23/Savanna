@@ -1,5 +1,10 @@
 import mySqlConnection from "../Config/db.js";
 
+const generateUserId = () => {
+    // Generates a random string that can serve as a unique ID
+    return 'user_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+};
+
 
 const createUser = async (userId, name, email, phoneNumber, gender, role, supervisor, creationTime, lastSignInTime) => {
   const addSqlQuery = "INSERT INTO users (userId, name, email, phoneNumber, gender, role, supervisor, creationTime, lastSignInTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -68,11 +73,15 @@ const deleteUserModel = async (id) => {
   }
 };
 
+
+
+// Add these to your exports
 export {
   createUser,
   viewUser,
   updateUser,
   deleteUserModel,
   findUserByNameAndEmail,
-  getUserById
+  getUserById,
+  generateUserId 
 };
