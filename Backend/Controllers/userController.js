@@ -4,7 +4,7 @@ import {
   viewUser,
   deleteUserModel,
   findUserByNameAndEmail,
-  getUserById
+  getUserById,
 } from "../Models/userModel.js";
 
 export const addUser = async (req, res, next) => {

@@ -24,7 +24,7 @@ const ProfilePage = () => {
   const fetchProfile = async () => {
   const userId = localStorage.getItem('userId');
   try {
-    const response = await fetch(`http://localhost:3000/api/users/${userId}`);
+    const response = await fetch(`http://localhost:3git 000/api/users/${userId}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
