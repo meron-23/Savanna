@@ -176,7 +176,7 @@ const AddProspectSupervisor = () => {
   const importProspectsBulk = async (prospects) => {
     try {
       const response = await axios.post(
-        'http://localhost:5000/api/prospects/bulk',
+        'http://localhost:3000/api/prospects/bulk',
         { prospects },
         {
           headers: {

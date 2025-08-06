@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react';
 import axios from 'axios';
 import DashboardOverview from '../components/dashboard/DashboardOverview';
-import Header from '../../components/dashboard/Header';
+import Header from '../components/dashboard/Header';
 import DesktopSidebar from '../components/dashboard/DesktopSidebar';
 // import MobileBottomNav from './MobileBottomNav';
 import AddProspect from '../components/AddProspectSupervisor';
