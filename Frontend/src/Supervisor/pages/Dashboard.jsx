@@ -3,7 +3,7 @@ import axios from 'axios';
 import DashboardOverview from '../components/dashboard/DashboardOverview';
 import Header from '../components/dashboard/Header';
 import DesktopSidebar from '../components/dashboard/DesktopSidebar';
-import MobileBottomNav from '../components/dashboard/MobileBottomNav'; // Uncommented and make sure this exists
+import MobileBottomNav from '../components/dashboard/MobileBottomNav';
 import AddProspect from '../components/AddProspectSupervisor';
 import ViewProspects from '../components/ViewProspectSupervisor';
 import Footer from '../../components/dashboard/Footer';
@@ -15,7 +15,7 @@ import SalesManagement from '../components/RegiseterSalesData';
 const API_BASE_URL = 'http://localhost:3000/api';
 
 const Dashboard = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // Start closed on mobile
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [activeItem, setActiveItem] = useState('Dashboard');
   const [isProspectOpen, setIsProspectOpen] = useState(false);
@@ -28,7 +28,6 @@ const Dashboard = () => {
       const isNowMobile = window.innerWidth < mobileBreakpoint;
       setIsMobile(isNowMobile);
       
-      // Auto-close sidebar on mobile, auto-open on desktop
       if (isNowMobile) {
         setIsSidebarOpen(false);
       } else {
@@ -36,7 +35,7 @@ const Dashboard = () => {
       }
     };
 
-    handleResize(); // Initialize on first render
+    handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
@@ -62,21 +61,42 @@ const Dashboard = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const handleItemClick = (item) => {
+  const toggleProspectDropdown = (e) => {
+    e?.stopPropagation();
+    const newIsProspectOpen = !isProspectOpen;
+    setIsProspectOpen(newIsProspectOpen);
+    
+    // When opening the dropdown, default to ViewProspects if no prospect item is selected
+    if (newIsProspectOpen && !['AddProspect', 'ViewProspects'].includes(activeItem)) {
+      setActiveItem('ViewProspects');
+    }
+  };
+
+  const handleItemClick = (item, e) => {
+    e?.stopPropagation();
     setActiveItem(item);
+
+    // Handle Prospect dropdown state
     if (item === 'Prospect') {
-      setIsProspectOpen(!isProspectOpen);
+      return; // Let toggleProspectDropdown handle this
+    } else if (item === 'AddProspect' || item === 'ViewProspects') {
+      setIsProspectOpen(true);
     } else {
       setIsProspectOpen(false);
     }
-    
-    // Close sidebar when an item is clicked on mobile
-    if (isMobile) {
+
+    // Close sidebar on mobile for all items except Prospect toggle
+    if (isMobile && item !== 'Prospect') {
       setIsSidebarOpen(false);
     }
   };
 
   const renderContent = () => {
+    // If prospect dropdown is open but no prospect item is selected, default to ViewProspects
+    if (isProspectOpen && !['AddProspect', 'ViewProspects'].includes(activeItem)) {
+      return <ViewProspects />;
+    }
+
     switch (activeItem) {
       case 'Dashboard':
         return <DashboardOverview supervisorId={user?.userId || 'pdHpZXgh03gM5Jslp4A7jstFyeb2'} />;
@@ -104,7 +124,7 @@ const Dashboard = () => {
       />
 
       <div className="flex flex-1 flex-col md:flex-row">
-        {/* Desktop Sidebar - hidden on mobile */}
+        {/* Desktop Sidebar */}
         {!isMobile && (
           <DesktopSidebar 
             isSidebarOpen={isSidebarOpen}
@@ -112,11 +132,12 @@ const Dashboard = () => {
             isProspectOpen={isProspectOpen}
             handleItemClick={handleItemClick}
             toggleSidebar={toggleSidebar}
+            toggleProspectDropdown={toggleProspectDropdown}
             user={user}
           />
         )}
 
-        {/* Mobile Sidebar Overlay - only shown on mobile when sidebar is open */}
+        {/* Mobile Sidebar Overlay */}
         {isMobile && isSidebarOpen && (
           <div 
             className="fixed inset-0 bg-black bg-opacity-50 z-40"
@@ -124,24 +145,31 @@ const Dashboard = () => {
           />
         )}
 
-        {/* Mobile Sidebar - slides in from left */}
+        {/* Mobile Sidebar */}
         {isMobile && (
           <div 
             className={`fixed top-0 left-0 h-full z-50 transform transition-transform duration-300 ease-in-out 
               ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}
           >
             <DesktopSidebar 
-              isSidebarOpen={true} // Always show full sidebar on mobile when open
+              isSidebarOpen={true}
               activeItem={activeItem}
               isProspectOpen={isProspectOpen}
-              handleItemClick={handleItemClick}
+              handleItemClick={(item, e) => {
+                handleItemClick(item, e);
+                // Close sidebar for all items except Prospect toggle
+                if (item !== 'Prospect') {
+                  setIsSidebarOpen(false);
+                }
+              }}
               toggleSidebar={toggleSidebar}
+              toggleProspectDropdown={toggleProspectDropdown}
               user={user}
             />
           </div>
         )}
 
-        {/* Main Content Area */}
+        {/* Main Content */}
         <main className={`flex-1 flex flex-col transition-all duration-300 ease-in-out
           ${isSidebarOpen && !isMobile ? 'md:ml-64' : 'md:ml-20'}
           ${isMobile ? 'mt-16' : ''}`}

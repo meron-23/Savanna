@@ -106,7 +106,7 @@ const ViewProspectSupervisor = () => {
   };
   
   return (
-    <div className="bg-gray-100 min-h-screen flex items-center justify-center p-4 font-sans">
+    <div className="bg-gray-100 min-h-screen flex justify-center p-4 font-sans">
       <div className="bg-white rounded-lg shadow-xl max-w-7xl w-full">
 
         {/* Header */}

@@ -7,6 +7,7 @@ const DesktopSidebar = ({
   isProspectOpen,
   handleItemClick,
   toggleSidebar,
+  toggleProspectDropdown,
   user
 }) => {
   return (
@@ -48,7 +49,8 @@ const DesktopSidebar = ({
             }
             isActive={activeItem === 'Dashboard'}
             isSidebarOpen={isSidebarOpen}
-            onClick={() => handleItemClick('Dashboard')}
+            onClick={(e) => handleItemClick('Dashboard', e)}
+            className="nav-item"
           />
           
           {/* Register Sales Agents */}
@@ -59,7 +61,8 @@ const DesktopSidebar = ({
             }
             isActive={activeItem === 'RegisterAgents'}
             isSidebarOpen={isSidebarOpen}
-            onClick={() => handleItemClick('RegisterAgents')}
+            onClick={(e) => handleItemClick('RegisterAgents', e)}
+            className="nav-item"
           />
 
           {/* Prospect */}
@@ -68,31 +71,43 @@ const DesktopSidebar = ({
             icon={
               <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z" />
             }
-            isActive={activeItem === 'Prospect'}
+            isActive={activeItem === 'Prospect' || activeItem === 'AddProspect' || activeItem === 'ViewProspects'}
             isSidebarOpen={isSidebarOpen}
             hasSubmenu={true}
             isSubmenuOpen={isProspectOpen}
+            onClick={toggleProspectDropdown}
+            className="nav-item"
           >
-            {isProspectOpen && (
-              <ul className={`ml-${isSidebarOpen ? '8' : '0'} mt-2 space-y-2`}>
+            {isProspectOpen && isSidebarOpen && (
+              <ul className="ml-8 mt-2 space-y-2">
                 <li
-                  className="flex items-center gap-2 text-gray-300 hover:text-[#F4A300] cursor-pointer px-2 py-2 rounded-lg"
-                  onClick={() => handleItemClick('AddProspect')}
+                  className={`flex items-center gap-2 px-2 py-2 rounded-lg cursor-pointer ${
+                    activeItem === 'AddProspect' ? 'text-[#F4A300]' : 'text-gray-300 hover:text-[#F4A300]'
+                  }`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleItemClick('AddProspect', e);
+                  }}
                 >
-                  <svg className="w-4 h-4 ms-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
                   </svg>
-                  {isSidebarOpen && <span>Add Prospect</span>}
+                  <span>Add Prospect</span>
                 </li>
                 <li
-                  className="flex items-center gap-2 text-gray-300 hover:text-[#F4A300] cursor-pointer px-2 py-2 rounded-lg"
-                  onClick={() => handleItemClick('ViewProspects')}
+                  className={`flex items-center gap-2 px-2 py-2 rounded-lg cursor-pointer ${
+                    activeItem === 'ViewProspects' ? 'text-[#F4A300]' : 'text-gray-300 hover:text-[#F4A300]'
+                  }`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleItemClick('ViewProspects', e);
+                  }}
                 >
-                  <svg className="w-4 h-4 ms-1" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.478 0-8.268-2.943-9.542-7z" />
                   </svg>
-                  {isSidebarOpen && <span>View Prospects</span>}
+                  <span>View Prospects</span>
                 </li>
               </ul>
             )}
@@ -106,7 +121,8 @@ const DesktopSidebar = ({
             }
             isActive={activeItem === 'SiteVisits'}
             isSidebarOpen={isSidebarOpen}
-            onClick={() => handleItemClick('SiteVisits')}
+            onClick={(e) => handleItemClick('SiteVisits', e)}
+            className="nav-item"
           />
 
           {/* Sales */}
@@ -117,7 +133,8 @@ const DesktopSidebar = ({
             }
             isActive={activeItem === 'Sales'}
             isSidebarOpen={isSidebarOpen}
-            onClick={() => handleItemClick('Sales')}
+            onClick={(e) => handleItemClick('Sales', e)}
+            className="nav-item"
           />
         </ul>
       </nav>
