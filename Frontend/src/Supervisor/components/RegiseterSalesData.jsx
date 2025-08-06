@@ -281,7 +281,7 @@ const RegisterSalesData = () => {
           <h2 className="text-2xl font-bold text-gray-800">Sales Dashboard</h2>
           <button
             onClick={openModal}
-            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#F4A300] hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+            className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-[#F4A300] hover:bg-[#333333] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
           >
             Register New Sale
           </button>
@@ -421,7 +421,7 @@ const RegisterSalesData = () => {
                       <td className="px-4 py-4 text-sm text-gray-500 align-middle whitespace-nowrap">
                         <button
                           onClick={() => handleEditClick(sale)}
-                          className="text-teal-600 hover:text-teal-900 font-medium"
+                          className="text-[#F4A300] hover:text-[#333333] font-medium"
                         >
                           Edit
                         </button>
@@ -635,7 +635,7 @@ const RegisterSalesData = () => {
                 <div className="pt-4">
                   <button
                     type="submit"
-                    className="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[#F4A300] hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+                    className="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[#F4A300] hover:bg-[#333333] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
                   >
                     Register Sale
                   </button>
