@@ -11,6 +11,7 @@ import { UserContext } from '../../context/UserContext';
 import RegisterAgents from '../components/RegisterAgents';
 import VisitsManagement from '../components/OfficeSiteVisits';
 import SalesManagement from '../components/RegiseterSalesData';
+import ProfilePage from '../components/dashboard/ProfilePage'
 
 const API_BASE_URL = 'http://localhost:3000/api';
 
@@ -110,17 +111,25 @@ const Dashboard = () => {
         return <VisitsManagement />;
       case 'Sales':
         return <SalesManagement />;
+      case 'Profile':
+        return <ProfilePage />;
       default:
         return <DashboardOverview supervisorId={user?.userId} />;
     }
   };
+  const handleProfileClick = (item) => {
+    setActiveItem(item);
+    if (item === 'Profile') {
+    }
+  }
 
   return (
     <div className="min-h-screen flex flex-col font-roboto bg-gray-100">
       <Header 
         isMobile={isMobile} 
         toggleSidebar={toggleSidebar} 
-        isSidebarOpen={isSidebarOpen} 
+        isSidebarOpen={isSidebarOpen}
+        handleProfileClick={handleProfileClick}
       />
 
       <div className="flex flex-1 flex-col md:flex-row">

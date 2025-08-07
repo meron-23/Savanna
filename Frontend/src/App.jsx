@@ -1,8 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 //import Dashboard from './pages/Dashboard';
-import Dashboard from './Supervisor/pages/Dashboard';
+// import Dashboard from './Supervisor/pages/Dashboard';
+import ManagerLayout from './Manager/pages/ManagerLayout';
 import { UserProvider } from './context/UserContext';
+import ProfilePage from './Supervisor/components/dashboard/ProfilePage';
 
 
 function App() {
@@ -12,7 +14,8 @@ function App() {
       <Router>
         <Routes>
           <Route path="/" element={<Login />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/dashboard" element={<ManagerLayout/>} />
+          <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </Router>
     </UserProvider>
