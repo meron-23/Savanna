@@ -1,10 +1,10 @@
 import express from 'express';
-import { addProspect, bulkAddProspects, deleteProspect, getProspect, putProspect } from '../Controllers/prospectController.js';
+import { addProspect, bulkAddProspects, deleteProspect, fetchProspectsWithAgents, getProspect, putProspect } from '../Controllers/prospectController.js';
 import { addUser, deleteUser, fetchUserById, getUser, loginUser, putUser,} from '../Controllers/userController.js';
 import {getSupervisorAgents,
   getDashboardStats,
   registerAgent} from '../Controllers/supervisorController.js';
-import { addVisit, getVisits, putVisit, deleteVisitRecord } from "../Controllers/visitsAndSalesController.js";
+import { addVisit, getVisits, putVisit, deleteVisitRecord, fetchVisitsWithProspectsAndAgents } from "../Controllers/visitsAndSalesController.js";
 
 
 const router = express.Router();
@@ -12,6 +12,7 @@ const router = express.Router();
 // Prospect Routes
 router.post('/prospects', addProspect);
 router.get('/prospects', getProspect);
+router.get('/prospects-with-agents', fetchProspectsWithAgents);
 router.put('/prospects/:id', putProspect);
 router.delete('/prospects/:id', deleteProspect);
 router.post('/bulk', bulkAddProspects);
@@ -20,7 +21,7 @@ router.post('/bulk', bulkAddProspects);
 // User Routes
 router.post('/users', addUser);
 router.post('/users/login', loginUser);
-router.get('/users', getUser);
+// router.get('/users', getUser);
 router.get('/users', getUser);
 router.get('/users/:id', fetchUserById)
 router.put('/users/:id', putUser);
@@ -29,6 +30,7 @@ router.delete('/users/:id', deleteUser);
 //visit routes
 router.post("/visits", addVisit);
 router.get("/visits", getVisits);
+router.get('/visits-with-prospects-and-agents', fetchVisitsWithProspectsAndAgents);
 router.put("/visits/:visitId", putVisit);
 router.delete("/visits/:visitId", deleteVisitRecord);
 

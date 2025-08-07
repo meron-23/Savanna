@@ -8,14 +8,20 @@ export const UserProvider = ({ children }) => {
     return storedUser ? storedUser : null;
   });
 
+  const [role, setRole] = useState(() => {
+    const storedRole = localStorage.getItem('role');
+    return storedRole ? storedRole : null;
+  });
+
   useEffect(() => {
     if (user) {
       localStorage.setItem('name', user);
+      localStorage.setItem('role', role)
     }
-  }, [user]);
+  }, [user, role]);
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, role, setRole }}>
       {children}
     </UserContext.Provider>
   );

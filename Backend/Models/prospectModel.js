@@ -23,6 +23,37 @@ const viewProspect = async () => {
   }
 };
 
+const getProspectsWithAgents = async () => {
+  const query = `
+    SELECT 
+      p.id AS prospect_id,
+      p.name AS prospect_name,
+      p.phoneNumber,
+      p.phoneNumber_normalized,
+      p.interest,
+      p.method,
+      p.site,
+      p.comment,
+      p.remark,
+      p.periodTime,
+      p.date,
+      p.dateNow,
+      u.userId AS agent_id,
+      u.name AS agent_name,
+      u.email AS agent_email,
+      u.phoneNumber AS agent_phone,
+      u.gender AS agent_gender,
+      u.role AS agent_role,
+      u.supervisor,
+      u.creationTime,
+      u.lastSignInTime
+    FROM prospects p
+    JOIN users u ON p.userId = u.userId
+  `;
+  const [rows] = await mySqlConnection.query(query);
+  return rows;
+};
+
 const updateProspect = async (id, phoneNumber, phoneNumberNormalized, interest, method, site, comment, remark, periodTime, date, dateNow) => {
   const updateSqlQuery = "UPDATE prospects SET phoneNumber=?, phoneNumber_normalized=?, interest=?, method=?, site=?, comment=?, remark=?, periodTime=?, date=?, dateNow=? WHERE id=?";
   try {
@@ -60,6 +91,7 @@ const deleteProspectModel = async (id) => {
 export {
   createProspect,
   viewProspect,
+  getProspectsWithAgents,
   updateProspect,
   deleteProspectModel
 };

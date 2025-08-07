@@ -1,10 +1,15 @@
-import React, { useContext, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useContext, useEffect, useState } from 'react';
+// import { useNavigate } from 'react-router-dom';
 // import { UserContext } from '../../context/UserContext';
 
+
+
 const ProfilePage = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('profile');
+  const [profile, setProfile] = useState([]);
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [profilePhoto, setProfilePhoto] = useState("https://randomuser.me/api/portraits/men/1.jpg");
   // const { setUser } = useContext(UserContext);
 
@@ -16,29 +21,48 @@ const ProfilePage = () => {
   const [editFormData, setEditFormData] = useState({});
   const [selectedFile, setSelectedFile] = useState(null);
 
-  // Demo profile data
-  const demoProfile = {
-    name: "John Doe",
-    email: "john.doe@example.com",
-    phoneNumber: "+1 (555) 123-4567",
-    role: "Administrator",
-    creationTime: "2023-05-15T10:30:00Z"
+  const fetchProfile = async () => {
+  const userId = localStorage.getItem('userId');
+  try {
+    const response = await fetch(`http://localhost:5000/api/users/${userId}`);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const responseData = await response.json();
+
+      if (!Array.isArray(responseData.data)) {
+        throw new Error('API response data is not an array.');
+      }
+
+      // localStorage.setItem('name', responseData.data[0].name)
+      // setUser to the context
+      // setUser(responseData.data[0].name)
+      setProfile(responseData.data[0]);
+      setError(null);
+    } catch (error) {
+      console.error("Failed to fetch profile:", error);
+      setError("Failed to load profile. Please try again later.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // Initialize profile with demo data
-  const [profile, setProfile] = useState(demoProfile);
-  
-  // Set user context
-  // setUser(demoProfile.name);
+  useEffect(() => {
+    fetchProfile();
+  }, []);
+
 
   // Handler for opening the edit profile modal and populating form data
   const handleEditClick = () => {
-    setEditFormData({
-      name: profile.name,
-      email: profile.email,
-      phoneNumber: profile.phoneNumber,
-      role: profile.role,
-    });
+    if (profile) {
+      setEditFormData({
+        name: profile.name,
+        email: profile.email,
+        phoneNumber: profile.phoneNumber,
+        role: profile.role,
+      });
+    }
     setShowEditProfileModal(true);
   };
   
@@ -48,18 +72,45 @@ const ProfilePage = () => {
     setEditFormData(prevData => ({ ...prevData, [name]: value }));
   };
 
-  // Handler for form submission (updating profile)
-  const handleUpdateProfile = (e) => {
+  // Handler for form submission (e.g., updating profile)
+  const handleUpdateProfile = async (e) => {
     e.preventDefault();
-    // Update the profile with the edited data
-    setProfile(prevProfile => ({
-      ...prevProfile,
-      ...editFormData
-    }));
-    alert('Profile updated successfully!');
-    setShowEditProfileModal(false);
-    navigate('/dashboard');
+    const userId = localStorage.getItem('userId');
+    try {
+      const response = await fetch(`http://localhost:5000/api/users/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(editFormData),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to update profile: ${response.status}`);
+      }
+
+      const updatedProfile = await response.json();
+      // Update the local state with the new profile data
+      // setProfile(updatedProfile.data);
+      await fetchProfile();
+      alert('Profile updated successfully!');
+      // navigate('/dashboard');
+      
+      setShowEditProfileModal(false);
+    } catch (err) {
+      console.error("Error updating profile:", err);
+    }
   };
+
+  if (isLoading) {
+    return <div className="p-8 text-gray-600">Loading profile...</div>;
+  }
+
+  if (error) {
+    return <div className="p-8 text-red-600">{error}</div>;
+  }
+
+  // const userData = profile[0];
 
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
@@ -68,6 +119,7 @@ const ProfilePage = () => {
       setProfilePhoto(imageUrl);
     }
   };
+
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -205,7 +257,7 @@ const ProfilePage = () => {
             <div className="flex flex-col items-center">
               <div className="w-24 h-24 rounded-full bg-gray-200 mb-4 overflow-hidden">
                 <img 
-                  src={profilePhoto}
+                  src="https://randomuser.me/api/portraits/men/1.jpg" 
                   alt="Current Profile" 
                   className="w-full h-full object-cover"
                 />

@@ -2,7 +2,8 @@ import {
   createProspect,
   updateProspect,
   viewProspect,
-  deleteProspectModel
+  deleteProspectModel,
+  getProspectsWithAgents
 } from "../Models/prospectModel.js";
 import { normalizePhoneNumber } from "../Utils/normalizePhone.js";
 
@@ -30,6 +31,16 @@ export const getProspect = async (req, res, next) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const fetchProspectsWithAgents = async (req, res) => {
+  try {
+    const fetchRes = await getProspectsWithAgents();
+    res.status(200).json({ success: true, message: "Success", data: fetchRes });
+  } catch (error) {
+    console.error('Error fetching prospects:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 

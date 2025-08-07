@@ -174,7 +174,7 @@ const AddProspect = () => {
     try {
       // You'll need a new backend endpoint for bulk import, e.g., /api/prospects/bulk
       const response = await axios.post(
-        'http://localhost:3000/api/prospects/bulk', // <--- NEW BULK IMPORT ENDPOINT
+        'http://localhost:5000/api/prospects/bulk', // <--- NEW BULK IMPORT ENDPOINT
         { prospects }, // Send an object with a 'prospects' array
         {
           headers: {

@@ -67,7 +67,7 @@ const OfficeSiteVisits = () => {
       setIsLoading(true);
       setError(null);
       
-      const response = await fetch('http://localhost:3000/api/visits');
+      const response = await fetch('http://localhost:5000/api/visits');
       const data = await response.json();
       
       if (!response.ok) {
@@ -137,7 +137,7 @@ const OfficeSiteVisits = () => {
     e.preventDefault();
     console.log("Submitting form data:", formState);
     try {
-      const response = await fetch('http://localhost:3000/api/visits', {
+      const response = await fetch('http://localhost:5000/api/visits', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -183,7 +183,7 @@ const OfficeSiteVisits = () => {
   const handleEditFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:3000/api/visits/${editFormState.visitID}`, {
+      const response = await fetch(`http://localhost:5000/api/visits/${editFormState.visitID}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
