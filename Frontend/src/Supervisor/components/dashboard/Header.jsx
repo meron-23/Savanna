@@ -1,11 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import NotificationBell from '../../../components/dashboard/NotificationBell';
 
 const Header = ({ isMobile, toggleSidebar, isSidebarOpen, handleProfileClick }) => {
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+   const today = new Date();
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  const formattedDate = today.toLocaleDateString('en-US', options);
+
+  const notifications = [];
+
+  // Close dropdown when clicking outside
+  const handleClickOutside = (e) => {
+    if (!e.target.closest('.profile-dropdown')) {
+      setIsProfileOpen(false);
+    }
+  };
+
+  // Add event listener when dropdown is open
+  React.useEffect(() => {
+    if (isProfileOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    } else {
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isProfileOpen]);
+
   return (
     <header className="bg-[#333333] text-white shadow-md">
       <div className="flex items-center justify-between px-4 py-3 md:px-6">
-
         {/* Logo/Brand */}
         <div className="flex items-center flex-shrink-0">
           <Link to="/" className="flex items-center">
@@ -18,38 +45,59 @@ const Header = ({ isMobile, toggleSidebar, isSidebarOpen, handleProfileClick }) 
           </Link>
         </div>
 
-        
+        {/* Right side icons */}
         <div className="flex items-center space-x-4">
-          <button className="text-gray-300 hover:text-white relative">
-            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-            </svg>
-            <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-red-500"></span>
-          </button>
-          <button 
-            onClick={() => handleProfileClick('Profile')}
-            className='cursor-pointer'
-          >
-            <span className="text-sm font-medium text-white">U</span>
-          </button>
+          {/* Notification Bell */}
+          <NotificationBell notifications={notifications} />
 
-          <div className="relative">
-            <button className="flex items-center space-x-2 focus:outline-none">
+
+          {/* Profile Dropdown */}
+          <div className="relative profile-dropdown">
+            <button 
+              onClick={() => setIsProfileOpen(!isProfileOpen)}
+              className="flex items-center space-x-2 focus:outline-none"
+            >
+              <div className="h-8 w-8 rounded-full bg-gray-600 flex items-center justify-center">
+                <span className="text-white font-medium">U</span>
+              </div>
               {!isMobile && (
-                <span className="text-gray-300 hover:text-white">
-                  <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </span>
+                <svg 
+                  className={`h-4 w-4 text-gray-300 transition-transform ${isProfileOpen ? 'transform rotate-180' : ''}`}
+                  fill="none" 
+                  viewBox="0 0 24 24" 
+                  stroke="currentColor"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
               )}
             </button>
 
-            
-            <div className="hidden absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50">
-              <Link to="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Your Profile</Link>
-              <Link to="/settings" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Settings</Link>
-              <Link to="/logout" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Sign out</Link>
-            </div>
+            {/* Dropdown Menu */}
+            {isProfileOpen && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
+                <Link 
+                  to="/profile" 
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  onClick={() => setIsProfileOpen(false)}
+                >
+                  Your Profile
+                </Link>
+                <Link 
+                  to="/settings" 
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  onClick={() => setIsProfileOpen(false)}
+                >
+                  Settings
+                </Link>
+                <Link 
+                  to="/" 
+                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                  onClick={() => setIsProfileOpen(false)}
+                >
+                  Sign out
+                </Link>
+              </div>
+            )}
           </div>
         </div>
       </div>
