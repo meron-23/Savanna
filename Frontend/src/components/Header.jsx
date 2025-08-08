@@ -10,6 +10,14 @@ const Header = ({ isMobile, toggleSidebar, isSidebarOpen, user }) => {
     }
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('name');
+    localStorage.removeItem('role');
+    localStorage.removeItem('userId');
+    navigate('/login');
+    // setIsProfileOpen(false);
+  };
+
   React.useEffect(() => {
     if (isProfileOpen) {
       document.addEventListener('mousedown', handleClickOutside);
@@ -22,7 +30,7 @@ const Header = ({ isMobile, toggleSidebar, isSidebarOpen, user }) => {
       <div className="flex items-center justify-between px-4 py-3 md:px-6">
         {/* Left Section */}
         <div className="flex items-center">
-          {isMobile && (
+          {/* {isMobile && (
             <button
               onClick={toggleSidebar}
               className="mr-4 text-gray-300 hover:text-white focus:outline-none"
@@ -36,7 +44,7 @@ const Header = ({ isMobile, toggleSidebar, isSidebarOpen, user }) => {
                 )}
               </svg>
             </button>
-          )}
+          )} */}
 
           {/* Logo */}
           {(!isMobile || !isSidebarOpen) && (
@@ -46,7 +54,7 @@ const Header = ({ isMobile, toggleSidebar, isSidebarOpen, user }) => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
                 </svg>
               </div>
-              <span className="text-xl font-bold ml-2 hidden sm:block">Savanna</span>
+              <span className="text-xl font-bold ml-2 hidden sm:block ps-7">Savanna</span>
             </Link>
           )}
         </div>
@@ -70,7 +78,7 @@ const Header = ({ isMobile, toggleSidebar, isSidebarOpen, user }) => {
             >
               <div className="h-8 w-8 rounded-full bg-gray-600 flex items-center justify-center">
                 <span className="text-white font-medium">
-                  {user?.name?.charAt(0).toUpperCase() || 'U'}
+                  {user && user.charAt(0).toUpperCase()}
                 </span>
               </div>
               {!isMobile && (
@@ -103,9 +111,8 @@ const Header = ({ isMobile, toggleSidebar, isSidebarOpen, user }) => {
                   Settings
                 </Link>
                 <Link 
-                  to="/logout" 
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  onClick={() => setIsProfileOpen(false)}
+                  onClick={handleLogout}
                 >
                   Sign out
                 </Link>

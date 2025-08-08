@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import Header from '../components/Header';
-import { useContext } from 'react';
 import { UserContext } from '../context/UserContext';
 import DesktopSidebar from '../components/DesktopSidebar';
 import SupervisorDashboard from './SupervisorPages/SupervisorDashboard';
@@ -10,7 +9,6 @@ import ViewProspect from '../components/ViewProspect';
 import ProfilePage from './ProfilePage';
 import RegisterAgents from './SupervisorPages/RegisterAgents';
 import OfficeSiteVisits from './SupervisorPages/OfficeSiteVisits';
-import RegisterSalesData from './SupervisorPages/RegisterSalesData';
 import ManagerDashboard from './ManagerPages/ManagerDashboard';
 import RegisterUser from './ManagerPages/RegisterUser';
 import SalesReport from './ManagerPages/SalesReport';
@@ -19,6 +17,7 @@ import Footer from '../components/Footer';
 import MobileBottomNav from '../components/MobileBottomNav';
 import AssignedLeadsTable from './SalesPages/AssignedLeadsTable';
 import ProspectsDashboard from './ManagerPages/ProspectDashboard';
+import RegisterSalesData from './SupervisorPages/RegisterSalesData';
 
 const Dashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -26,22 +25,35 @@ const Dashboard = () => {
   const [activeItem, setActiveItem] = useState('Dashboard');
   const [isProspectOpen, setIsProspectOpen] = useState(false);
   const [mainContent, setMainContent] = useState('Dashboard');
-  const { role } = useContext(UserContext);
+  const { user, role } = useContext(UserContext);
+
+  const mobileBreakpoint = 768; // Consistent breakpoint
 
   useEffect(() => {
     const handleResize = () => {
-      const mobileBreakpoint = 768;
       setIsMobile(window.innerWidth < mobileBreakpoint);
 
+      // On larger screens, ensure sidebar is open
       if (window.innerWidth >= mobileBreakpoint) {
         setIsSidebarOpen(true);
+      } else {
+        // On mobile, close sidebar by default unless specifically opened
+        setIsSidebarOpen(false); 
       }
     };
 
-    handleResize();
+    handleResize(); // Set initial state
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // Effect to close sidebar on mobile when navigating
+  useEffect(() => {
+    if (isMobile && mainContent !== 'Dashboard') { // Added condition to not close on initial dashboard load
+      setIsSidebarOpen(false);
+    }
+  }, [mainContent, isMobile]);
+
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
@@ -49,7 +61,7 @@ const Dashboard = () => {
 
   const handleItemClick = (item) => {
     setActiveItem(item);
-    setIsProspectOpen(false);
+    setIsProspectOpen(false); // Close prospect dropdown when main item is clicked
 
     // Handle role-specific navigation
     switch (item) {
@@ -57,17 +69,14 @@ const Dashboard = () => {
         setMainContent('Dashboard');
         break;
       case 'Prospect':
+        // Toggle prospect dropdown, but don't change mainContent unless a sub-item is clicked
         setIsProspectOpen(!isProspectOpen);
-        if (!isProspectOpen && !mainContent) {
-          setMainContent('Dashboard');
-        }
         break;
       case 'Leads':
-        // Only allow leads for Sales role
         if (role === 'Sales Agent') {
           setMainContent('Leads');
         } else {
-          setMainContent('Dashboard');
+          setMainContent('Dashboard'); // Fallback if role doesn't match
         }
         break;
       case 'RegisterAgents':
@@ -76,16 +85,16 @@ const Dashboard = () => {
       case 'SiteVisits':
         setMainContent('SiteVisits');
         break;
-      case 'Sales Agent':
-        setMainContent('Sales Agent');
+      case 'Sales': // This seems to refer to RegisterSalesData
+        setMainContent('Sales');
         break;
-      case 'Home':
-        setMainContent('Home');
+      case 'Dashboard': // This seems to refer to ManagerDashboard
+        setMainContent('Dashboard');
         break;
       case 'RegisterUser':
         setMainContent('RegisterUser');
         break;
-      case 'AddProspect':
+      case 'AddProspect': // This should ideally be handled by sub-item click or dedicated button
         setMainContent('AddProspectForm');
         break;
       case 'ProspectReport':
@@ -108,6 +117,7 @@ const Dashboard = () => {
     } else if (subItem === 'View') {
       setMainContent('ViewProspectsComponent');
     }
+    // Automatically close sidebar on mobile after a sub-item click
     if (isMobile) {
       setIsSidebarOpen(false);
     }
@@ -116,15 +126,18 @@ const Dashboard = () => {
   const handleProfileClick = (item) => {
     if (item === 'Profile') {
       setMainContent('ProfilePage');
-      setIsProspectOpen(false);
+      setIsProspectOpen(false); // Close prospect dropdown
     } else {
       setMainContent('Dashboard');
+    }
+    // Close sidebar on mobile after profile click
+    if (isMobile) {
+      setIsSidebarOpen(false);
     }
   };
 
   // Role-based component rendering
   const renderMainContent = () => {
-    // Common components for all roles
     switch (mainContent) {
       case 'AddProspectForm':
         return <AddProspect />;
@@ -133,10 +146,8 @@ const Dashboard = () => {
       case 'ProfilePage':
         return <ProfilePage />;
       case 'Leads':
-        // Only show leads for Sales role
-        return role === 'Sales Agent' ? <AssignedLeadsTable /> : <SalesDashboard />;
+        return role === 'Sales Agent' ? <AssignedLeadsTable /> : <SalesDashboard />; // Fallback for non-sales
         
-      // Role-specific dashboard views
       case 'Dashboard':
         switch (role) {
           case 'Sales Agent':
@@ -146,31 +157,31 @@ const Dashboard = () => {
           case 'Manager':
             return <ManagerDashboard />;
           default:
-            return <SalesDashboard />;
+            return <SalesDashboard />; // Default for unknown roles
         }
 
-      // Supervisor-specific components
+      // Supervisor-specific components (ensure role check is robust)
       case 'RegisterAgents':
-        return role === 'Supervisor' && <RegisterAgents />
+        return role === 'Supervisor' ? <RegisterAgents /> : <SupervisorDashboard />; // Fallback
       case 'SiteVisits':
-        return role === 'Supervisor' && <OfficeSiteVisits />
-      case 'Sales Agent':
-        return role === 'Supervisor' && <RegisterSalesData />
+        return role === 'Supervisor' ? <OfficeSiteVisits /> : <SupervisorDashboard />; // Fallback
+      case 'Sales': // Corresponds to RegisterSalesData
+        return role === 'Supervisor' ? <RegisterSalesData /> : <SupervisorDashboard />; // Fallback
 
-      // Manager-specific components
-      case 'Home':
-        return role === 'Manager' && <ManagerDashboard />
+      // Manager-specific components (ensure role check is robust)
+      case 'Dashboard': // Corresponds to ManagerDashboard
+        return role === 'Manager' ? <ManagerDashboard /> : <ManagerDashboard />; // Fallback
       case 'RegisterUser':
-        return role === 'Manager' && <RegisterUser />
+        return role === 'Manager' ? <RegisterUser /> : <ManagerDashboard />; // Fallback
       case 'ProspectReport':
-        return role === 'Manager' && <ProspectsDashboard />
+        return role === 'Manager' ? <ProspectsDashboard /> : <ManagerDashboard />; // Fallback
       case 'SalesReport':
-        return role === 'Manager' && < SalesReport/>
+        return role === 'Manager' ? <SalesReport /> : <ManagerDashboard />; // Fallback
       case 'ClientVisits':
-        return role === 'Manager' && <VisitsReport />
+        return role === 'Manager' ? <VisitsReport /> : <ManagerDashboard />; // Fallback
 
       default:
-        // Fallback to role-specific dashboard
+        // Fallback to role-specific dashboard if mainContent is unrecognized
         switch (role) {
           case 'Sales Agent':
             return <SalesDashboard />;
@@ -179,21 +190,25 @@ const Dashboard = () => {
           case 'Manager':
             return <ManagerDashboard />;
           default:
-            return <SalesDashboard />;
+            return <SalesDashboard />; // Final fallback
         }
     }
   };
 
   return (
-    <div className="min-h-screen flex flex-col font-roboto bg-gray-100">
+    <div className="min-h-screen flex flex-col font-roboto bg-gray-100 overflow-hidden"> {/* Added overflow-hidden */}
+      {/* Header (fixed at top) */}
       <Header
         isMobile={isMobile}
         isSidebarOpen={isSidebarOpen}
         handleItemClick={handleItemClick}
         handleProfileClick={handleProfileClick}
+        toggleSidebar={toggleSidebar}
+        user={user}
       />
 
-      <div className="flex flex-1 flex-col md:flex-row">
+      <div className="flex flex-1 flex-col md:flex-row relative"> {/* Added relative for sidebar positioning context */}
+        {/* Desktop Sidebar (sticky on desktop, hidden/overlay on mobile) */}
         <DesktopSidebar 
           toggleSidebar={toggleSidebar}
           isSidebarOpen={isSidebarOpen}
@@ -202,27 +217,36 @@ const Dashboard = () => {
           handleItemClick={handleItemClick}
           handleSubItemClick={handleSubItemClick}
           role={role}
+          isMobile={isMobile} // Pass isMobile prop
         />
 
-        <div className={`flex-1 flex flex-col md:pl-64 md:w-7xl`}>
-          <main className={`flex flex-1 p-4 md:p-8 overflow-auto ${isSidebarOpen ? 'ms-0' : '-ml-40'}`}>
-            <div className="flex-1 pr-0 md:pr-6 w-full pt-20">
+        {/* Main Content Area */}
+        <div 
+          className={`flex-1 flex flex-col pt-[64px] pb-[60px] md:pb-0 
+                      ${isSidebarOpen && !isMobile ? 'md:ml-64' : 'md:ml-16'} 
+                      overflow-y-auto max-h-screen`} // Added overflow-y-auto and max-h-screen
+        >
+          <main className="flex-1 p-4 md:p-8">
+            <div className="flex-1 w-full">
               {renderMainContent()}
             </div>
           </main>
         </div>
 
+        {/* Mobile Bottom Navigation (fixed at bottom) */}
         {isMobile && (
           <MobileBottomNav 
-            isSidebarOpen={isSidebarOpen}
+            isSidebarOpen={isSidebarOpen} // Pass to allow conditional rendering if needed
             activeItem={activeItem}
             handleItemClick={handleItemClick}
             handleSubItemClick={handleSubItemClick}
             isProspectOpen={isProspectOpen}
+            role={role}
           />
         )}
       </div>
 
+      {/* Footer (appears below content, pushed down by flex-1 on main content) */}
       <Footer isMobile={isMobile} isSidebarOpen={isSidebarOpen} />
     </div>
   );

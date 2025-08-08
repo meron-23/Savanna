@@ -273,7 +273,7 @@ const RegisterSalesData = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 md:p-6 w-full font-sans">
+    <div className="min-h-screen bg-gray-100 p-4 sm:p-6 lg:p-8 w-full font-sans">
       <div className="mx-auto space-y-6">
         {/* Header and "Register Sale" button */}
         {/* Uses flexbox for responsive alignment, padding adjusts with screen size */}
