@@ -3,7 +3,7 @@ import axios from 'axios';
 import { User, Mail, Phone, Pencil, CircleAlert, X } from 'lucide-react';
 
 // IMPORTANT: Update API_BASE_URL to point to your backend
-const API_BASE_URL = 'http://localhost:3000/api'; // Use relative path for proxy to work
+const API_BASE_URL = 'http://localhost:5000/api'; // Use relative path for proxy to work
 
 // A simple component to display the colored role labels
 const RoleBadge = ({ role }) => {
@@ -179,7 +179,7 @@ const RegisterAgents = ({ isSidebarOpen }) => { // Accept isSidebarOpen prop
       <div className="text-center mt-8">
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-[#F4A300] text-white py-3 px-6 rounded-lg font-semibold hover:bg-orange-700 transition-colors duration-200 shadow-md"
+          className="bg-[#F4A300] text-white py-3 px-6 rounded-lg font-semibold hover:bg-orange-300 transition-colors duration-200 shadow-md"
         >
           Add New Team Member
         </button>
@@ -213,7 +213,7 @@ const RegisterAgents = ({ isSidebarOpen }) => { // Accept isSidebarOpen prop
                       id="name"
                       value={newMember.name}
                       onChange={handleInputChange}
-                      className="focus:ring-[#F4A300] focus:border-[#F4A300] block w-full pl-10 pr-3 sm:text-sm border-gray-300 rounded-lg"
+                      className="mt-1 block w-full px-9 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                       placeholder="Enter full name"
                     />
                   </div>
@@ -234,7 +234,7 @@ const RegisterAgents = ({ isSidebarOpen }) => { // Accept isSidebarOpen prop
                       id="email"
                       value={newMember.email}
                       onChange={handleInputChange}
-                      className="focus:ring-[#F4A300] focus:border-[#F4A300] block w-full pl-10 pr-3 sm:text-sm border-gray-300 rounded-lg"
+                      className="mt-1 block w-full px-9 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                       placeholder="name@example.com"
                     />
                   </div>
@@ -251,7 +251,7 @@ const RegisterAgents = ({ isSidebarOpen }) => { // Accept isSidebarOpen prop
                       name="gender"
                       value={newMember.gender}
                       onChange={handleInputChange}
-                      className="focus:ring-[#F4A300] focus:border-[#F4A300] block w-full pr-10 sm:text-sm border-gray-300 rounded-lg"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     >
                       <option value="">Select Gender</option>
                       <option value="Male">Male</option>
@@ -275,7 +275,7 @@ const RegisterAgents = ({ isSidebarOpen }) => { // Accept isSidebarOpen prop
                       id="phoneNumber"
                       value={newMember.phoneNumber}
                       onChange={handleInputChange}
-                      className="focus:ring-[#F4A300] focus:border-[#F4A300] block w-full pl-10 pr-3 sm:text-sm border-gray-300 rounded-lg"
+                      className="mt-1 block w-full px-9 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                       placeholder="Enter phone number"
                     />
                   </div>
@@ -284,7 +284,7 @@ const RegisterAgents = ({ isSidebarOpen }) => { // Accept isSidebarOpen prop
               <div className="mt-6">
                 <button
                   type="submit"
-                  className="w-full bg-[#F4A300] text-white py-3 px-4 rounded-lg font-semibold hover:bg-orange-700 transition-colors duration-200"
+                  className="w-full bg-[#F4A300] text-white py-3 px-4 rounded-lg font-semibold hover:bg-orange-300 transition-colors duration-200"
                   disabled={isLoading}
                 >
                   {isLoading ? 'Adding...' : 'Add Team Member'}

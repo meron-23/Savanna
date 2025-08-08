@@ -27,7 +27,7 @@ const ProspectsDashboard = () => {
       setError(null);     // Clear any previous errors
       try {
         // Updated API endpoint as per your latest information
-        const response = await fetch('http://localhost:3000/api/prospects-with-agents');
+        const response = await fetch('http://localhost:5000/api/prospects-with-agents');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -286,7 +286,7 @@ const ProspectsDashboard = () => {
                     id="phone-search"
                     type="text"
                     placeholder="Search by Name, Phone No, or Agent"
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                   />
@@ -309,7 +309,7 @@ const ProspectsDashboard = () => {
                   <label htmlFor="agent-select" className="sr-only">Agent</label>
                   <select
                     id="agent-select"
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     value={selectedAgent}
                     onChange={(e) => setSelectedAgent(e.target.value)}
                   >
@@ -322,7 +322,7 @@ const ProspectsDashboard = () => {
                   <label htmlFor="site-select" className="sr-only">Site</label>
                   <select
                     id="site-select"
-                    className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     value={selectedSite}
                     onChange={(e) => setSelectedSite(e.target.value)}
                   >
@@ -333,12 +333,12 @@ const ProspectsDashboard = () => {
                 </div>
                 {/* Date Range Filters: Uses flex-wrap to stack on smaller screens, and min-w-0 for inputs */}
                 <div className="col-span-1 sm:col-span-2 lg:col-span-3 flex flex-col sm:flex-row gap-2"> {/* Adjusted col-span to 3 as 'Team' filter is commented out */}
-                  <label htmlFor="start-date" className="block text-sm font-medium text-gray-700 whitespace-nowrap hidden sm:block">Date Range:</label>
+                  <label htmlFor="start-date" className=" mt-3 text-sm font-medium text-gray-700 whitespace-nowrap hidden sm:block">Date Range:</label>
                   <input
                     id="start-date"
                     type="date"
                     placeholder="Start date"
-                    className="flex-1 min-w-0 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    className="flex-1 min-w-0 p-2 bordermt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
                   />
@@ -346,7 +346,7 @@ const ProspectsDashboard = () => {
                   <input
                     type="date"
                     placeholder="End date"
-                    className="flex-1 min-w-0 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm"
+                    className="flex-1 min-w-0 p-2 border mt-1 block w-full px-3 py-2  border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
                   />

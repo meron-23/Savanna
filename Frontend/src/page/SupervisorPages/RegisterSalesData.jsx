@@ -298,7 +298,7 @@ const RegisterSalesData = () => {
                 id="search-phone"
                 type="text"
                 placeholder="Search by Client, House No, or Agent"
-                className="pl-4 pr-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#00A381] focus:border-[#00A381] text-sm w-full"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                 value={searchTerm}
                 onChange={handleSearchChange}
               />
@@ -309,7 +309,7 @@ const RegisterSalesData = () => {
               <input
                 id="date-from"
                 type="date"
-                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#00A381] focus:border-[#00A381] text-sm w-full"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                 value={dateFrom}
                 onChange={handleDateChange(setDateFrom)}
               />
@@ -319,7 +319,7 @@ const RegisterSalesData = () => {
               <input
                 id="date-to"
                 type="date"
-                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#00A381] focus:border-[#00A381] text-sm w-full"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                 value={dateTo}
                 onChange={handleDateChange(setDateTo)}
               />
@@ -472,7 +472,7 @@ const RegisterSalesData = () => {
                       name="propertyCost"
                       value={formState.propertyCost}
                       onChange={handleFormChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     />
                   </div>
                   {/* House Number */}
@@ -484,7 +484,7 @@ const RegisterSalesData = () => {
                       name="houseNumber"
                       value={formState.houseNumber}
                       onChange={handleFormChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     />
                   </div>
                   {/* Agreement Number */}
@@ -496,7 +496,7 @@ const RegisterSalesData = () => {
                       name="agreementNumber"
                       value={formState.agreementNumber}
                       onChange={handleFormChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     />
                   </div>
                   {/* Date of Sale */}
@@ -508,7 +508,7 @@ const RegisterSalesData = () => {
                       name="dateOfSale"
                       value={formState.dateOfSale}
                       onChange={handleFormChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     />
                   </div>
                 </div>
@@ -525,7 +525,7 @@ const RegisterSalesData = () => {
                         name="salesAgent"
                         value={formState.salesAgent}
                         onChange={handleFormChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm"
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                       >
                         <option value="">Select Sales Agent</option>
                         {mockAgents.map(agent => (
@@ -541,7 +541,7 @@ const RegisterSalesData = () => {
                         name="propertyType"
                         value={formState.propertyType}
                         onChange={handleFormChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm"
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                       >
                         <option value="">Select Type</option>
                         <option value="Apartment">Apartment</option>
@@ -557,7 +557,7 @@ const RegisterSalesData = () => {
                         name="area"
                         value={formState.area}
                         onChange={handleFormChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm"
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                       />
                     </div>
                     {/* Location */}
@@ -569,7 +569,7 @@ const RegisterSalesData = () => {
                         name="location"
                         value={formState.location}
                         onChange={handleFormChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm"
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                       />
                     </div>
                     {/* Site */}
@@ -580,7 +580,7 @@ const RegisterSalesData = () => {
                         name="site"
                         value={formState.site}
                         onChange={handleFormChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm"
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                       >
                         <option value="">Select Site</option>
                         {mockSites.map(site => (
@@ -597,7 +597,7 @@ const RegisterSalesData = () => {
                         name="remark"
                         value={formState.remark}
                         onChange={handleFormChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm"
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                       />
                     </div>
                   </div>
@@ -615,7 +615,7 @@ const RegisterSalesData = () => {
                       placeholder="Enter phone number"
                       value={formState.clientPhoneNumber}
                       onChange={handleFormChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     />
                   </div>
                   <div>
@@ -625,7 +625,7 @@ const RegisterSalesData = () => {
                       name="prospect"
                       value={formState.prospect}
                       onChange={handleFormChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     >
                       <option value="">Select Prospect</option>
                       {mockProspects.map(prospect => (
@@ -679,7 +679,7 @@ const RegisterSalesData = () => {
                       name="propertyCost"
                       value={editFormState.propertyCost}
                       onChange={handleEditFormChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     />
                   </div>
                   {/* House Number */}
@@ -691,7 +691,7 @@ const RegisterSalesData = () => {
                       name="houseNumber"
                       value={editFormState.houseNumber}
                       onChange={handleEditFormChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     />
                   </div>
                   {/* Agreement Number */}
@@ -703,7 +703,7 @@ const RegisterSalesData = () => {
                       name="agreementNumber"
                       value={editFormState.agreementNumber}
                       onChange={handleEditFormChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     />
                   </div>
                   {/* Date of Sale */}
@@ -715,7 +715,7 @@ const RegisterSalesData = () => {
                       name="dateOfSale"
                       value={editFormState.dateOfSale}
                       onChange={handleEditFormChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     />
                   </div>
                 </div>
@@ -732,7 +732,7 @@ const RegisterSalesData = () => {
                         name="salesAgent"
                         value={editFormState.salesAgent}
                         onChange={handleEditFormChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm"
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                       >
                         <option value="">Select Sales Agent</option>
                         {mockAgents.map(agent => (
@@ -764,7 +764,7 @@ const RegisterSalesData = () => {
                         name="area"
                         value={editFormState.area}
                         onChange={handleEditFormChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm"
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                       />
                     </div>
                     {/* Location */}
@@ -776,7 +776,7 @@ const RegisterSalesData = () => {
                         name="location"
                         value={editFormState.location}
                         onChange={handleEditFormChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm"
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                       />
                     </div>
                     {/* Site */}
@@ -787,7 +787,7 @@ const RegisterSalesData = () => {
                         name="site"
                         value={editFormState.site}
                         onChange={handleEditFormChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm"
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                       >
                         <option value="">Select Site</option>
                         {mockSites.map(site => (
@@ -804,7 +804,7 @@ const RegisterSalesData = () => {
                         name="remark"
                         value={editFormState.remark}
                         onChange={handleEditFormChange}
-                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm"
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                       />
                     </div>
                   </div>
@@ -822,7 +822,7 @@ const RegisterSalesData = () => {
                       placeholder="Enter phone number"
                       value={editFormState.clientPhoneNumber}
                       onChange={handleEditFormChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     />
                   </div>
                   <div>
@@ -832,7 +832,7 @@ const RegisterSalesData = () => {
                       name="prospect"
                       value={editFormState.prospect}
                       onChange={handleEditFormChange}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 text-sm"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     >
                       <option value="">Select Prospect</option>
                       {mockProspects.map(prospect => (

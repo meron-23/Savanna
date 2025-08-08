@@ -26,7 +26,7 @@ const RegisterUser = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('http://localhost:3000/api/users');
+      const response = await fetch('http://localhost:5000/api/users');
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
@@ -129,7 +129,7 @@ const RegisterUser = () => {
     };
 
     try {
-      const response = await fetch('http://localhost:3000/api/users', {
+      const response = await fetch('http://localhost:5000/api/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -260,7 +260,7 @@ const RegisterUser = () => {
                     <input
                       type="text"
                       placeholder="Search by name, email or phone"
-                      className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                      className="mt-1 block w-full px-9 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -380,7 +380,7 @@ const RegisterUser = () => {
                     name="name"
                     value={newMember.name}
                     onChange={handleNewMemberChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#F4A300] focus:border-[#F4A300]"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     placeholder="Enter Name"
                     required
                   />
@@ -395,7 +395,7 @@ const RegisterUser = () => {
                     name="email"
                     value={newMember.email}
                     onChange={handleNewMemberChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#F4A300] focus:border-[#F4A300]"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     placeholder="Enter Email"
                     required
                   />
@@ -409,7 +409,7 @@ const RegisterUser = () => {
                     name="gender"
                     value={newMember.gender}
                     onChange={handleNewMemberChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#F4A300] focus:border-[#F4A300]"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     required
                   >
                     <option value="">Select Gender</option>
@@ -428,7 +428,7 @@ const RegisterUser = () => {
                     name="phoneNumber"
                     value={newMember.phoneNumber}
                     onChange={handleNewMemberChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#F4A300] focus:border-[#F4A300]"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     placeholder="Phone Number"
                   />
                 </div>
@@ -441,7 +441,7 @@ const RegisterUser = () => {
                     name="role"
                     value={newMember.role}
                     onChange={handleNewMemberChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#F4A300] focus:border-[#F4A300]"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     required
                   >
                     <option value="">Select Role</option>

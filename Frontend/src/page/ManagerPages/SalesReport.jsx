@@ -116,19 +116,19 @@ const SalesReport = () => {
                 id="phone-search"
                 type="text"
                 placeholder="Search phone"
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
               />
             </div>
             <div>
               <label htmlFor="team-select" className="block text-sm font-medium text-gray-700 mb-1">Team</label>
-              <select id="team-select" className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+              <select id="team-select" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm">
                 <option>All Teams</option>
                 {/* Add dynamic team options here */}
               </select>
             </div>
             <div>
               <label htmlFor="agent-select" className="block text-sm font-medium text-gray-700 mb-1">Agent</label>
-              <select id="agent-select" className="w-full p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm">
+              <select id="agent-select" className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm">
                 <option>All Agents</option>
                 {/* Add dynamic agent options here */}
               </select>
@@ -140,12 +140,12 @@ const SalesReport = () => {
                 <input
                   type="date"
                   placeholder="Start date"
-                  className="flex-grow flex-shrink-0 min-w-0 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  className="flex-grow flex-shrink-0 min-w-0 mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                 />
                 <input
                   type="date"
                   placeholder="End date"
-                  className="flex-grow flex-shrink-0 min-w-0 p-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm"
+                  className="flex-grow flex-shrink-0 min-w-0 mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                 />
               </div>
             </div>
