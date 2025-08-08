@@ -4,10 +4,10 @@ import axios from 'axios';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 // IMPORTANT: Update API_BASE_URL to point to your backend
-const API_BASE_URL = 'http://localhost:3000/api'; // Your backend URL
+const API_BASE_URL = 'http://localhost:5000/api'; // Your backend URL
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
-const DashboardOverview = ({ supervisorId }) => { // Ensure supervisorId is passed as a prop
+const SupervisorDashboard = ({ supervisorId }) => { // Ensure supervisorId is passed as a prop
   const [dashboardData, setDashboardData] = useState({
     loading: true,
     error: null,
@@ -232,4 +232,4 @@ const StatCard = ({ title, value, icon }) => (
 );
 
 
-export default DashboardOverview;
+export default SupervisorDashboard;

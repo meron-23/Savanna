@@ -174,7 +174,7 @@ const AddProspect = () => {
     try {
       // You'll need a new backend endpoint for bulk import, e.g., /api/prospects/bulk
       const response = await axios.post(
-        'http://localhost:3000/api/prospects/bulk', // <--- NEW BULK IMPORT ENDPOINT
+        'http://localhost:5000/api/prospects/bulk', // <--- NEW BULK IMPORT ENDPOINT
         { prospects }, // Send an object with a 'prospects' array
         {
           headers: {
@@ -202,7 +202,7 @@ const AddProspect = () => {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 md:p-6 mb-8 w-full">
+    <div className="bg-white rounded-lg shadow-md p-4 md:p-6 mb-8 md:ml-9 md:mt-8 w-full">
       <h2 className="text-xl font-bold text-[#333333] mb-4">Add New Prospect</h2>
       
       {/* Status Messages */}

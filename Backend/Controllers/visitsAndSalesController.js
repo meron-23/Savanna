@@ -2,7 +2,8 @@ import {
   createVisit,
   viewVisits,
   updateVisit,
-  deleteVisit
+  deleteVisit,
+  getVisitsWithProspectsAndAgents
 } from "../Models/visitsAndSalesModel.js";
 
 export const addVisit = async (req, res) => {
@@ -22,6 +23,16 @@ export const getVisits = async (req, res) => {
     res.status(200).json({ success: true, data: visits });
   } catch (error) {
     res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+
+export const fetchVisitsWithProspectsAndAgents = async (req, res) => {
+  try {
+    const data = await getVisitsWithProspectsAndAgents();
+    res.status(200).json(data);
+  } catch (error) {
+    console.error('Error fetching visits:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 

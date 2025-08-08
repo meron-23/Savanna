@@ -23,6 +23,34 @@ const viewVisits = async () => {
   }
 };
 
+const getVisitsWithProspectsAndAgents = async () => {
+  const query = `
+    SELECT 
+      v.VisitID,
+      v.VisitDate,
+      v.OfficeVisit,
+      v.SiteVisit,
+      v.VisitDetails,
+
+      p.id AS prospect_id,
+      p.name AS prospect_name,
+      p.phoneNumber,
+      p.interest,
+      p.method,
+      p.site,
+
+      u.userId AS agent_id,
+      u.name AS agent_name,
+      u.email AS agent_email,
+      u.role AS agent_role
+    FROM VisitsAndSales v
+    JOIN prospects p ON v.ClientID = p.id
+    JOIN users u ON p.userId = u.userId
+  `;
+  const [rows] = await mySqlConnection.query(query);
+  return rows;
+};
+
 const updateVisit = async (visitId, visitDate, officeVisit, siteVisit, visitDetails) => {
   const sql = `UPDATE VisitsAndSales SET VisitDate=?, OfficeVisit=?, SiteVisit=?, VisitDetails=? WHERE VisitID=?`;
   try {
@@ -48,6 +76,7 @@ const deleteVisit = async (visitId) => {
 export {
   createVisit,
   viewVisits,
+  getVisitsWithProspectsAndAgents,
   updateVisit,
   deleteVisit
 };

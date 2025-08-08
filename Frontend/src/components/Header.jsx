@@ -4,14 +4,20 @@ import { Link } from 'react-router-dom';
 const Header = ({ isMobile, toggleSidebar, isSidebarOpen, user }) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
 
-  // Close dropdown when clicking outside
   const handleClickOutside = (e) => {
     if (!e.target.closest('.profile-dropdown')) {
       setIsProfileOpen(false);
     }
   };
 
-  // Add/remove event listener
+  const handleLogout = () => {
+    localStorage.removeItem('name');
+    localStorage.removeItem('role');
+    localStorage.removeItem('userId');
+    navigate('/login');
+    // setIsProfileOpen(false);
+  };
+
   React.useEffect(() => {
     if (isProfileOpen) {
       document.addEventListener('mousedown', handleClickOutside);
@@ -22,9 +28,9 @@ const Header = ({ isMobile, toggleSidebar, isSidebarOpen, user }) => {
   return (
     <header className="bg-[#333333] text-white shadow-md fixed top-0 right-0 left-0 z-40">
       <div className="flex items-center justify-between px-4 py-3 md:px-6">
-        {/* Left Section - Hamburger (mobile) + Logo */}
+        {/* Left Section */}
         <div className="flex items-center">
-          {isMobile && (
+          {/* {isMobile && (
             <button
               onClick={toggleSidebar}
               className="mr-4 text-gray-300 hover:text-white focus:outline-none"
@@ -38,9 +44,9 @@ const Header = ({ isMobile, toggleSidebar, isSidebarOpen, user }) => {
                 )}
               </svg>
             </button>
-          )}
+          )} */}
 
-          {/* Logo - Hidden on mobile when sidebar is open */}
+          {/* Logo */}
           {(!isMobile || !isSidebarOpen) && (
             <Link to="/" className="flex items-center hover:no-underline">
               <div className="bg-[#F4A300] rounded-lg p-2">
@@ -48,12 +54,12 @@ const Header = ({ isMobile, toggleSidebar, isSidebarOpen, user }) => {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
                 </svg>
               </div>
-              <span className="text-xl font-bold ml-2 hidden md:block">Savanna</span>
+              <span className="text-xl font-bold ml-2 hidden sm:block ps-7">Savanna</span>
             </Link>
           )}
         </div>
 
-        {/* Right Section - Icons */}
+        {/* Right Section */}
         <div className="flex items-center space-x-4">
           {/* Notification Bell */}
           <button className="text-gray-300 hover:text-white relative focus:outline-none">
@@ -72,7 +78,7 @@ const Header = ({ isMobile, toggleSidebar, isSidebarOpen, user }) => {
             >
               <div className="h-8 w-8 rounded-full bg-gray-600 flex items-center justify-center">
                 <span className="text-white font-medium">
-                  {user?.name?.charAt(0).toUpperCase() || 'U'}
+                  {user && user.charAt(0).toUpperCase()}
                 </span>
               </div>
               {!isMobile && (
@@ -105,9 +111,8 @@ const Header = ({ isMobile, toggleSidebar, isSidebarOpen, user }) => {
                   Settings
                 </Link>
                 <Link 
-                  to="/logout" 
                   className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  onClick={() => setIsProfileOpen(false)}
+                  onClick={handleLogout}
                 >
                   Sign out
                 </Link>

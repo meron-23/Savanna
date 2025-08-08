@@ -1,10 +1,14 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import Login from './pages/Login';
-//import Dashboard from './pages/Dashboard';
+// import Login from './pages/Login';
+// import Dashboard from './pages/Dashboard';
 // import Dashboard from './Supervisor/pages/Dashboard';
-import ManagerLayout from './Manager/pages/ManagerLayout';
+// import ManagerLayout from './Manager/pages/ManagerLayout';
 import { UserProvider } from './context/UserContext';
-import ProfilePage from './Supervisor/components/dashboard/ProfilePage';
+// import ProfilePage from './Supervisor/components/dashboard/ProfilePage';
+import Dashboard from './page/Dashboard';
+import ProfilePage from './page/ProfilePage';
+import Login from './page/Login'
+
 
 
 function App() {
@@ -13,8 +17,11 @@ function App() {
     <UserProvider>
       <Router>
         <Routes>
-          <Route path="/" element={<Login />} />
+          {/* <Route path="/" element={<Login />} />
           <Route path="/dashboard" element={<ManagerLayout/>} />
+          <Route path="/profile" element={<ProfilePage />} /> */}
+          <Route path="/" element={<Login />} />
+          <Route path="/dashboard" element={<Dashboard/>} />
           <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </Router>

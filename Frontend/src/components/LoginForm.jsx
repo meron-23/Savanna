@@ -10,7 +10,7 @@ const LoginForm = () => {
   const [success, setSuccess] = useState(false);
   const [successMessage, setSuccessMessage] = useState('');
   const [error, setError] = useState('');
-  const { setUser } = useContext(UserContext);
+  const { setUser, role, setRole } = useContext(UserContext);
 
   const [formData, setFormData] = useState({
     name: '',
@@ -44,7 +44,7 @@ const LoginForm = () => {
 
     try {
       const response = await axios.post(
-        'http://localhost:3000/api/users/login',
+        'http://localhost:5000/api/users/login',
         formData,
         {
           headers: {
@@ -65,8 +65,14 @@ const LoginForm = () => {
         navigate('/dashboard');
         localStorage.setItem('userId', response.data.user.userId);
 
+
         // set the name using context
-        setUser(response.data.user.name)
+        setUser(response.data.user.name);
+        setRole(response.data.user.role);
+
+        // console.log(response.data.user.name);
+        // console.log(response.data.user.role);
+        // console.log(response.data.user.role);
         // console.log(response.data.user.userId);
       } else {
         setError(response.data.message || 'Failed to save prospect');
@@ -86,6 +92,7 @@ const LoginForm = () => {
         setError('An unexpected error occurred.');
       }
     }
+    // console.log("Role:", role);
   };
 
   return (

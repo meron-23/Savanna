@@ -4,7 +4,7 @@ import MethodsPieChart from './MethodsPieChart';
 import { isToday, isThisWeek } from '../../utils/dateHelpers'; // <--- UPDATED IMPORT PATH
 
 
-const DashboardOverview = () => {
+const SalesDashboard = () => {
   const [prospectsData, setProspectsData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -30,7 +30,7 @@ const DashboardOverview = () => {
   useEffect(() => {
     const fetchProspects = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/prospects'); 
+        const response = await fetch('http://localhost:5000/api/prospects'); 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -284,4 +284,4 @@ const DashboardOverview = () => {
   );
 };
 
-export default DashboardOverview;
+export default SalesDashboard;
