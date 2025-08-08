@@ -30,7 +30,7 @@ const SalesDashboard = () => {
   useEffect(() => {
     const fetchProspects = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/prospects'); 
+        const response = await fetch('http://localhost:3000/api/prospects'); 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -128,10 +128,18 @@ const SalesDashboard = () => {
   return (
     <div className="flex flex-col space-y-6 w-full">
       <div className="bg-white p-6 rounded-lg shadow-sm mb-6">
-        <h1 className="text-3xl font-bold text-gray-800">Welcome</h1>
-        <div className="flex flex-col mt-2 text-gray-600">
-          <span>Role: Sales Agent</span>
-        </div>
+        <div>
+              <h1 className="text-2xl font-bold text-gray-800">Welcome, Back!</h1> {/* Assuming supervisorName comes from a user context or login */}
+              <p className="text-gray-600">Role: Sales Agent</p>
+              <p className="text-gray-800 mt-2">
+                {new Date().toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </p>
+          </div>
       </div>
 
       {/* Today's Follow-ups Section (input field) */}
@@ -225,25 +233,6 @@ const SalesDashboard = () => {
         </div>
       </div>
 
-      {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Prospects Overview Bar Chart */}
-        <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Prospects Overview</h3>
-          <div className="w-full h-80"> 
-            <ProspectsBarChart chartData={barChartData} />
-          </div>
-        </div>
-
-        {/* Methods Distribution Pie Chart */}
-        <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center">
-          <h3 className="text-lg font-semibold text-gray-800 mb-4">Methods Distribution</h3>
-          <div className="w-full h-80 flex justify-center items-center"> 
-            <MethodsPieChart chartData={pieChartData} />
-          </div>
-        </div>
-      </div>
-
       {/* "Filter By Date" section */}
       <div className="bg-white p-4 rounded-lg shadow-sm mb-6">
         <h3 className="text-lg font-semibold text-gray-800 mb-4">Filter By Date</h3>
@@ -277,6 +266,25 @@ const SalesDashboard = () => {
                 </svg>
               </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Charts Section */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        {/* Prospects Overview Bar Chart */}
+        <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Prospects Overview</h3>
+          <div className="w-full h-80"> 
+            <ProspectsBarChart chartData={barChartData} />
+          </div>
+        </div>
+
+        {/* Methods Distribution Pie Chart */}
+        <div className="bg-white p-4 rounded-lg shadow-sm flex flex-col items-center">
+          <h3 className="text-lg font-semibold text-gray-800 mb-4">Methods Distribution</h3>
+          <div className="w-full h-80 flex justify-center items-center"> 
+            <MethodsPieChart chartData={pieChartData} />
           </div>
         </div>
       </div>

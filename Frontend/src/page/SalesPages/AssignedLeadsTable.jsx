@@ -77,7 +77,7 @@ const AssignedLeadsTable = () => {
   }, []); // Empty dependency array means this runs once on mount
 
   if (loading) {
-    return <p className="text-blue-700 p-4">Loading assigned leads...</p>;
+    return <p className="text-[#F4C430] p-4">Loading assigned leads...</p>;
   }
 
   if (error) {
