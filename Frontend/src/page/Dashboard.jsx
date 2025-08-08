@@ -153,7 +153,7 @@ const Dashboard = () => {
           case 'Sales Agent':
             return <SalesDashboard />;
           case 'Supervisor':
-            return <SupervisorDashboard />;
+            return <SupervisorDashboard supervisorId={"pdHoZXgh03gM5Jslp4Q7jstFyeb3"}/>;
           case 'Manager':
             return <ManagerDashboard />;
           default:
@@ -162,11 +162,11 @@ const Dashboard = () => {
 
       // Supervisor-specific components (ensure role check is robust)
       case 'RegisterAgents':
-        return role === 'Supervisor' ? <RegisterAgents /> : <SupervisorDashboard />; // Fallback
+        return role === 'Supervisor' ? <RegisterAgents /> : <SupervisorDashboard supervisorId={"pdHoZXgh03gM5Jslp4Q7jstFyeb3"}/>; // Fallback
       case 'SiteVisits':
-        return role === 'Supervisor' ? <OfficeSiteVisits /> : <SupervisorDashboard />; // Fallback
+        return role === 'Supervisor' ? <OfficeSiteVisits /> : <SupervisorDashboard supervisorId={"pdHoZXgh03gM5Jslp4Q7jstFyeb3"}/>; // Fallback
       case 'Sales': // Corresponds to RegisterSalesData
-        return role === 'Supervisor' ? <RegisterSalesData /> : <SupervisorDashboard />; // Fallback
+        return role === 'Supervisor' ? <RegisterSalesData /> : <SupervisorDashboard supervisorId={"pdHoZXgh03gM5Jslp4Q7jstFyeb3"} />; // Fallback
 
       // Manager-specific components (ensure role check is robust)
       case 'Dashboard': // Corresponds to ManagerDashboard
@@ -186,7 +186,7 @@ const Dashboard = () => {
           case 'Sales Agent':
             return <SalesDashboard />;
           case 'Supervisor':
-            return <SupervisorDashboard />;
+            return <SupervisorDashboard supervisorId={"pdHoZXgh03gM5Jslp4Q7jstFyeb3"}/>;
           case 'Manager':
             return <ManagerDashboard />;
           default:

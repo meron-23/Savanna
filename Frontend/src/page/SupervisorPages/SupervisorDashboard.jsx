@@ -4,8 +4,8 @@ import axios from 'axios';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 // IMPORTANT: Update API_BASE_URL to point to your backend
-const API_BASE_URL = 'http://localhost:5000/api'; // Your backend URL
-const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
+const API_BASE_URL = 'http://localhost:3000/api'; // Your backend URL
+const COLORS = ['#333333', '#FFD700', '#F4C430', '#FF8042'];
 
 const SupervisorDashboard = ({ supervisorId }) => { // Ensure supervisorId is passed as a prop
   const [dashboardData, setDashboardData] = useState({
@@ -91,7 +91,7 @@ const SupervisorDashboard = ({ supervisorId }) => { // Ensure supervisorId is pa
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
         <div className="flex justify-between items-start flex-wrap gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-800">Welcome, Supervisor!</h1> {/* Assuming supervisorName comes from a user context or login */}
+            <h1 className="text-2xl font-bold text-gray-800">Welcome, Back!</h1> {/* Assuming supervisorName comes from a user context or login */}
             <p className="text-gray-600">Role: Supervisor</p>
             <p className="text-gray-800 mt-2">
               {new Date().toLocaleDateString('en-US', {
@@ -127,12 +127,12 @@ const SupervisorDashboard = ({ supervisorId }) => { // Ensure supervisorId is pa
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-6">
-        <StatCard title="Total Prospects" value={dashboardData.stats.totalProspects} icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-blue-500"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>} />
-        <StatCard title="Total Feedbacks" value={dashboardData.stats.totalFeedbacks} icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-green-500"><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.455 3.63 2.745 7.5 2.745s7.5-1.29 7.5-2.745m-.75-6.09c0 1.455-3.63 2.745-7.5 2.745S5.25 9.165 5.25 7.71M4.5 18.75h15c.621 0 1.125-.504 1.125-1.125V9.25a2.25 2.25 0 00-2.25-2.25H4.5A2.25 2.25 0 002.25 9.25v8.375c0 .621.504 1.125 1.125 1.125z" /></svg>} />
-        <StatCard title="Office Visits" value={dashboardData.stats.officeVisits} icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-purple-500"><path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>} />
-        <StatCard title="Site Visits" value={dashboardData.stats.siteVisits} icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-yellow-500"><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>} />
-        <StatCard title="Total Sales" value={dashboardData.stats.totalSales} icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-red-500"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>} />
-        <StatCard title="Sales Amount" value={`$${dashboardData.stats.salesAmount.toLocaleString()}`} icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-orange-500"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.79 12 12 12c-.725 0-1.45-.22-2.003-.659-1.172-.879-1.172-2.303 0-3.182s2.913-.659 4.242 0M12 6V4m0 2v10m0-10a2 2 0 00-2 2v4a2 2 0 002 2M4 16h16a2 2 0 002-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>} />
+        <StatCard title="Total Prospects" value={dashboardData.stats.totalProspects} icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-[#F4C430]"><path strokeLinecap="round" strokeLinejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" /></svg>} />
+        <StatCard title="Total Feedbacks" value={dashboardData.stats.totalFeedbacks} icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-[#F4C430]"><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.455 3.63 2.745 7.5 2.745s7.5-1.29 7.5-2.745m-.75-6.09c0 1.455-3.63 2.745-7.5 2.745S5.25 9.165 5.25 7.71M4.5 18.75h15c.621 0 1.125-.504 1.125-1.125V9.25a2.25 2.25 0 00-2.25-2.25H4.5A2.25 2.25 0 002.25 9.25v8.375c0 .621.504 1.125 1.125 1.125z" /></svg>} />
+        <StatCard title="Office Visits" value={dashboardData.stats.officeVisits} icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-[#F4C430]"><path strokeLinecap="round" strokeLinejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>} />
+        <StatCard title="Site Visits" value={dashboardData.stats.siteVisits} icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-[#F4C430]"><path strokeLinecap="round" strokeLinejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>} />
+        <StatCard title="Total Sales" value={dashboardData.stats.totalSales} icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-[#F4C430]"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>} />
+        <StatCard title="Sales Amount" value={`$${dashboardData.stats.salesAmount.toLocaleString()}`} icon={<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6 text-[#F4C430]"><path strokeLinecap="round" strokeLinejoin="round" d="M12 6v12m-3-2.818l.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.79 12 12 12c-.725 0-1.45-.22-2.003-.659-1.172-.879-1.172-2.303 0-3.182s2.913-.659 4.242 0M12 6V4m0 2v10m0-10a2 2 0 00-2 2v4a2 2 0 002 2M4 16h16a2 2 0 002-2V6a2 2 0 00-2-2H4a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>} />
       </div>
 
       {/* Charts Section */}
@@ -147,9 +147,9 @@ const SupervisorDashboard = ({ supervisorId }) => { // Ensure supervisorId is pa
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="totalSales" fill="#8884d8" name="Total Sales" />
-              <Bar dataKey="officeVisits" fill="#82ca9d" name="Office Visits" />
-              <Bar dataKey="siteVisits" fill="#ffc658" name="Site Visits" />
+              <Bar dataKey="totalSales" fill="#F4C430" name="Total Sales" />
+              <Bar dataKey="officeVisits" fill="#FF8042" name="Office Visits" />
+              <Bar dataKey="siteVisits" fill="#333333" name="Site Visits" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -166,7 +166,7 @@ const SupervisorDashboard = ({ supervisorId }) => { // Ensure supervisorId is pa
                 labelLine={false}
                 label={renderCustomizedLabel}
                 outerRadius={120}
-                fill="#8884d8"
+                fill="#F4C430"
                 dataKey="value"
               >
                 {dashboardData.visitDistribution.map((entry, index) => (
@@ -190,7 +190,7 @@ const SupervisorDashboard = ({ supervisorId }) => { // Ensure supervisorId is pa
             <YAxis />
             <Tooltip />
             <Legend />
-            <Bar dataKey="sales" fill="#8884d8" name="Sales Amount" />
+            <Bar dataKey="sales" fill="#F4C430" name="Sales Amount" />
           </BarChart>
         </ResponsiveContainer>
       </div>

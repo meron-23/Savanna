@@ -38,7 +38,7 @@ const VisitsReport = () => {
       setError(null);     // Clear any previous errors
       try {
         // Updated API endpoint
-        const response = await fetch('http://localhost:5000/api/visits-with-prospects-and-agents');
+        const response = await fetch('http://localhost:3000/api/visits-with-prospects-and-agents');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -247,7 +247,7 @@ const VisitsReport = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
               {/* Total Visits Card */}
               <div className="bg-white p-6 rounded-lg shadow-md flex items-center">
-                <div className="bg-blue-100 text-blue-500 rounded-full p-3 mr-4">
+                <div className="bg-blue-100 text-[#F4C430] rounded-full p-3 mr-4">
                   <i className="fas fa-chart-line text-2xl"></i>
                 </div>
                 <div>
@@ -257,7 +257,7 @@ const VisitsReport = () => {
               </div>
               {/* Office Visits Card */}
               <div className="bg-white p-6 rounded-lg shadow-md flex items-center">
-                <div className="bg-green-100 text-green-500 rounded-full p-3 mr-4">
+                <div className="bg-green-100 text-[#F4C430] rounded-full p-3 mr-4">
                   <i className="fas fa-building text-2xl"></i>
                 </div>
                 <div>
@@ -267,7 +267,7 @@ const VisitsReport = () => {
               </div>
               {/* Site Visits Card */}
               <div className="bg-white p-6 rounded-lg shadow-md flex items-center">
-                <div className="bg-purple-100 text-purple-500 rounded-full p-3 mr-4">
+                <div className="bg-purple-100 text-[#F4C430] rounded-full p-3 mr-4">
                   <i className="fas fa-map-marker-alt text-2xl"></i>
                 </div>
                 <div>
@@ -291,7 +291,7 @@ const VisitsReport = () => {
                   <div className="flex space-x-2">
                     <button
                       onClick={handleExport} // Added onClick handler for Export
-                      className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 flex items-center"
+                      className="bg-[#F4A300] text-white px-4 py-2 rounded-lg hover:bg-[#333333] flex items-center"
                     >
                       <i className="fas fa-file-export mr-2"></i> Export
                     </button>
