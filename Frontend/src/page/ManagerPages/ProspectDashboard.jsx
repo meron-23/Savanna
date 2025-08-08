@@ -362,12 +362,6 @@ const ProspectsDashboard = () => {
                   Export
                 </button>
                 <button
-                  onClick={handleDeleteDuplicates} // Added onClick handler
-                  className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                >
-                  Delete Duplicates
-                </button>
-                <button
                   onClick={handleClearFilters}
                   className="px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                 >
