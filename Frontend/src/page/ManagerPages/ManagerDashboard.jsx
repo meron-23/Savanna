@@ -32,13 +32,25 @@ const ManagerDashboard = ({ user }) => {
     { name: 'Other', value: 1 }
   ];
 
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28'];
+  const COLORS = ['#333333', '#FFD700', '#F4C430'];
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-6">Manager Dashboard</h1>
+      <div className="bg-white p-6 rounded-lg shadow-sm mb-6">
+        <div>
+              <h1 className="text-2xl font-bold text-gray-800">Welcome, Back!</h1> {/* Assuming supervisorName comes from a user context or login */}
+              <p className="text-gray-600">Role: Manager</p>
+              <p className="text-gray-800 mt-2">
+                {new Date().toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </p>
+          </div>
+      </div>
       <div className="mb-8">
-        <h2 className="text-xl font-semibold mb-2">Welcome back, {user?.name}</h2>
         
         {/* Performance Overview */}
         <div className="bg-white rounded-lg shadow p-6 mb-8">
@@ -85,7 +97,7 @@ const ManagerDashboard = ({ user }) => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="visits" fill="#F4A300" />
+                  <Bar dataKey="visits" fill="#F4C430" />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -102,8 +114,8 @@ const ManagerDashboard = ({ user }) => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="lastWeek" fill="#8884d8" />
-                  <Bar dataKey="thisWeek" fill="#82ca9d" />
+                  <Bar dataKey="lastWeek" fill="#F4C430" />
+                  <Bar dataKey="thisWeek" fill="#333333" />
                 </BarChart>
               </ResponsiveContainer>
             </div>

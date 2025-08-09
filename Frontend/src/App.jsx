@@ -8,8 +8,8 @@ import { UserProvider } from './context/UserContext';
 import Dashboard from './page/Dashboard';
 import ProfilePage from './page/ProfilePage';
 import Login from './page/Login'
-// import { Settings } from 'lucide-react';
-// import Setting from './page/Settings';
+import { Settings } from 'lucide-react';
+import Setting from './page/Settings';
 
 
 
@@ -25,7 +25,7 @@ function App() {
           <Route path="/" element={<Login />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<ProfilePage />} />
-          {/* <Route path="/settings" element={<Setting />} /> */}
+          <Route path="/settings" element={<Setting />} />
 
         </Routes>
       </Router>
