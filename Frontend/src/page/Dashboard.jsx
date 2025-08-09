@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import Header from '../components/Header';
 import { UserContext } from '../context/UserContext';
 import DesktopSidebar from '../components/DesktopSidebar';
+
 import SupervisorDashboard from './SupervisorPages/SupervisorDashboard';
 import SalesDashboard from './SalesPages/SalesDashboard';
 import AddProspect from '../components/AddProspect';
@@ -18,6 +19,7 @@ import MobileBottomNav from '../components/MobileBottomNav';
 import AssignedLeadsTable from './SalesPages/AssignedLeadsTable';
 import ProspectsDashboard from './ManagerPages/ProspectDashboard';
 import RegisterSalesData from './SupervisorPages/RegisterSalesData';
+import AssignLeads from '../components/AssignLeads';
 
 const Dashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -94,6 +96,9 @@ const Dashboard = () => {
       case 'RegisterUser':
         setMainContent('RegisterUser');
         break;
+      case 'AssignLeads':
+        setMainContent('AssignLeads');
+        break;
       case 'AddProspect': // This should ideally be handled by sub-item click or dedicated button
         setMainContent('AddProspectForm');
         break;
@@ -165,6 +170,8 @@ const Dashboard = () => {
         return role === 'Supervisor' ? <RegisterAgents /> : <SupervisorDashboard supervisorId={"pdHoZXgh03gM5Jslp4Q7jstFyeb3"}/>; // Fallback
       case 'SiteVisits':
         return role === 'Supervisor' ? <OfficeSiteVisits /> : <SupervisorDashboard supervisorId={"pdHoZXgh03gM5Jslp4Q7jstFyeb3"}/>; // Fallback
+      case 'AssignLeads':
+        return role === 'Supervisor' ? <AssignLeads /> : <SupervisorDashboard supervisorId={"pdHoZXgh03gM5Jslp4Q7jstFyeb3"} />; // Fallback
       case 'Sales': // Corresponds to RegisterSalesData
         return role === 'Supervisor' ? <RegisterSalesData /> : <SupervisorDashboard supervisorId={"pdHoZXgh03gM5Jslp4Q7jstFyeb3"} />; // Fallback
 
@@ -173,6 +180,8 @@ const Dashboard = () => {
         return role === 'Manager' ? <ManagerDashboard /> : <ManagerDashboard />; // Fallback
       case 'RegisterUser':
         return role === 'Manager' ? <RegisterUser /> : <ManagerDashboard />; // Fallback
+      case 'AssignLeads':
+        return role === 'Manager' ? <AssignLeads /> : <ManagerDashboard />; // Fallback
       case 'ProspectReport':
         return role === 'Manager' ? <ProspectsDashboard /> : <ManagerDashboard />; // Fallback
       case 'SalesReport':
