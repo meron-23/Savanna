@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import mySqlConnection from './Config/db.js';
 import router from './routes/route.js';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
@@ -10,9 +11,13 @@ dotenv.config();
 const port = process.env.PORT || 3000;
 
 const app = express();
+app.use(cookieParser());
 
 // cors - cross origin resource sharing to allow the frontend access the backend api
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}))
 
 // a middleware used to parse key-value pairs
 app.use(express.json());
