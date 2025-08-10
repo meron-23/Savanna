@@ -70,37 +70,39 @@ const Header = ({ isMobile, toggleSidebar, isSidebarOpen, user }) => {
         const response = await axios.get('http://localhost:5000/api/full-details');
         
         if (response.data && Array.isArray(response.data.data)) {
-      // Filter leads based on role and user ID
-      let filteredLeads = [];
-      
-      const userRole = localStorage.getItem('role');
-      const userId = localStorage.getItem('userId');
+          // Filter leads based on role and user ID
+          let filteredLeads = [];
+          
+          const userRole = localStorage.getItem('role');
+          const userId = localStorage.getItem('userId');
 
-      filteredLeads = response.data.data.filter(lead => {
-        // For supervisors: show leads where supervisor ID matches OR agent_role is Supervisor
-        if (userRole === 'Supervisor') {
-          return lead.supervisor === userId || 
-            lead.agent_role === 'Supervisor' && lead.agent_id === userId && lead.status === 'new';
+          // console.log(response.data.data)
+
+          filteredLeads = response.data.data.filter(lead => {
+            // For supervisors: show leads where supervisor ID matches OR agent_role is Supervisor
+            if (userRole === 'Supervisor') {
+              return lead.agent_id === userId || 
+                lead.agent_role === 'Supervisor' && lead.agent_id === userId && lead.status === 'new';
+            }
+            // For sales agents: only show their own leads
+            else {
+              return lead.agent_id === userId && 
+                lead.agent_role === 'Sales Agent' && lead.status === 'new';
+            }
+          });
+
+          // Calculate new leads by comparing with last fetched leads
+          const newLeads = filteredLeads.filter(newLead => 
+            !lastFetchedLeads.some(oldLead => oldLead.lead_id === newLead.lead_id)
+          );
+
+          if (newLeads.length > 0) {
+            setNewLeadsCount(prev => prev + newLeads.length);
+          }
+
+          setAssignedLeads(filteredLeads);
+          setLastFetchedLeads(filteredLeads);
         }
-        // For sales agents: only show their own leads
-        else {
-          return lead.agent_id === userId && 
-            lead.agent_role === 'Sales Agent' && lead.status === 'new';
-        }
-      });
-
-      // Calculate new leads by comparing with last fetched leads
-      const newLeads = filteredLeads.filter(newLead => 
-        !lastFetchedLeads.some(oldLead => oldLead.lead_id === newLead.lead_id)
-      );
-
-      if (newLeads.length > 0) {
-        setNewLeadsCount(prev => prev + newLeads.length);
-      }
-
-      setAssignedLeads(filteredLeads);
-      setLastFetchedLeads(filteredLeads);
-    }
       } catch (error) {
         console.error("Error fetching assigned leads:", error);
       }
@@ -139,27 +141,6 @@ const Header = ({ isMobile, toggleSidebar, isSidebarOpen, user }) => {
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0a3 3 0 11-6 0m6 0v2" />
-
-          {/* Profile Dropdown */}
-          <div className="relative profile-dropdown">
-            <button 
-              onClick={() => setIsProfileOpen(!isProfileOpen)}
-              className="flex items-center space-x-2 focus:outline-none"
-              aria-label="User menu"
-            >
-              <div className="h-8 w-8 rounded-full bg-[#F4C430] flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
-                  <path fill-rule="evenodd" d="M18.685 19.097A9.723 9.723 0 0021.75 12c0-5.385-4.365-9.75-9.75-9.75S2.25 6.615 2.25 12a9.723 9.723 0 003.065 7.097A9.716 9.716 0 0012 21.75a9.716 9.716 0 006.685-2.653zm-12.54-1.285A7.486 7.486 0 0112 15a7.486 7.486 0 015.855 2.812A8.224 8.224 0 0112 20.25a8.224 8.224 0 01-5.855-2.438zM15.75 9a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" clip-rule="evenodd" />
-                </svg>
-              </div>
-              {!isMobile && (
-                <svg 
-                  className={`h-4 w-4 text-gray-300 transition-transform ${isProfileOpen ? 'transform rotate-180' : ''}`}
-                  fill="none" 
-                  viewBox="0 0 24 24" 
-                  stroke="currentColor"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                 </svg>
                 {newLeadsCount > 0 && (
                   <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
@@ -221,35 +202,6 @@ const Header = ({ isMobile, toggleSidebar, isSidebarOpen, user }) => {
               )}
             </div>
           )}
-            </button>
-
-            {/* Dropdown Menu */}
-            {isProfileOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-50 border border-gray-200">
-                <Link 
-                  to="/profile" 
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  onClick={() => setIsProfileOpen(false)}
-                >
-                  Your Profile
-                </Link>
-                <Link 
-                  to="/settings" 
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  onClick={() => setIsProfileOpen(false)}
-                >
-                  Settings
-                </Link>
-                <Link 
-                  to="/" 
-                  className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                  onClick={handleLogout}
-                >
-                  Sign out
-                </Link>
-              </div>
-            )}
-          </div>
         </div>
       </div>
   

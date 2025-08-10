@@ -5,7 +5,7 @@ const AssignLeads = () => {
   // State management
   const [leads, setLeads] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
-  const [selectedLead, setSelectedLead] = useState(null);
+  const [selectedLeads, setSelectedLeads] = useState([]);
   const [selectedSupervisor, setSelectedSupervisor] = useState('');
   const [selectedAgent, setSelectedAgent] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -57,28 +57,57 @@ const AssignLeads = () => {
     ? agents.filter(agent => String(agent.supervisor_id) === String(selectedSupervisor))
     : [];
 
+  // Handle lead selection
+  const handleLeadSelect = (lead) => {
+    setSelectedLeads(prev => {
+      const isSelected = prev.some(l => l.id === lead.id);
+      if (isSelected) {
+        return prev.filter(l => l.id !== lead.id);
+      } else {
+        return [...prev, lead];
+      }
+    });
+  };
+
+  // Handle select all
+  const handleSelectAll = (e) => {
+    if (e.target.checked) {
+      setSelectedLeads([...filteredLeads]);
+    } else {
+      setSelectedLeads([]);
+    }
+  };
+
   // Handle lead assignment
   const handleAssign = async () => {
-    if (!selectedLead || (!selectedSupervisor && !selectedAgent)) return;
+    if (selectedLeads.length === 0 || (!selectedSupervisor && !selectedAgent)) return;
 
     try {
       setIsLoading(true);
       setError(null);
 
-      const response = await fetch(`http://localhost:5000/api/leads/${selectedLead.id}/status`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          status: 'new',
-          assigned_to: selectedAgent || selectedSupervisor
+      // Prepare batch assignment
+      const assignmentPromises = selectedLeads.map(lead => 
+        fetch(`http://localhost:5000/api/leads/${lead.id}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            status: 'new',
+            assigned_to: selectedAgent || selectedSupervisor
+          })
         })
-      });
+      );
 
-      if (!response.ok) throw new Error('Assignment failed');
+      // Execute all assignments
+      const responses = await Promise.all(assignmentPromises);
+      const allSuccessful = responses.every(response => response.ok);
+      
+      if (!allSuccessful) throw new Error('Some assignments failed');
 
       // Update local state
-      setLeads(leads.filter(lead => lead.id !== selectedLead.id));
-      setSelectedLead(null);
+      const assignedLeadIds = selectedLeads.map(lead => lead.id);
+      setLeads(leads.filter(lead => !assignedLeadIds.includes(lead.id)));
+      setSelectedLeads([]);
       setSelectedSupervisor('');
       setSelectedAgent('');
       
@@ -92,11 +121,14 @@ const AssignLeads = () => {
   // Refresh data
   const handleRefresh = () => {
     setSearchTerm('');
-    setSelectedLead(null);
+    setSelectedLeads([]);
     setSelectedSupervisor('');
     setSelectedAgent('');
     setIsLoading(true);
   };
+
+  // Check if all filtered leads are currently selected
+  const allLeadsSelected = filteredLeads.length > 0 && selectedLeads.length === filteredLeads.length;
 
   // Loading state
   if (isLoading) return (
@@ -157,41 +189,54 @@ const AssignLeads = () => {
               <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-gray-50">
                   <tr>
+                    <th className="w-10 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      <input
+                        type="checkbox"
+                        checked={allLeadsSelected}
+                        onChange={handleSelectAll}
+                        className="form-checkbox h-4 w-4 text-[#F4A300] rounded"
+                      />
+                    </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {filteredLeads.map(lead => (
-                    <tr key={lead.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                        {lead.name || 'N/A'}
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {lead.phone || 'N/A'}
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <span className={`px-2 py-1 rounded-full text-xs ${
-                          lead.status === 'new' ? 'bg-blue-100 text-blue-800' :
-                          lead.status === 'assigned' ? 'bg-green-100 text-green-800' :
-                          'bg-yellow-100 text-yellow-800'
-                        }`}>
-                          {lead.status || 'unknown'}
-                        </span>
-                      </td>
-                      <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                        <button
-                          onClick={() => setSelectedLead(lead)}
-                          className="text-[#F4A300] hover:text-[#e6b82a] flex items-center"
-                        >
-                          <FiSend className="inline mr-1" />
-                          Assign
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
+                  {filteredLeads.map(lead => {
+                    const isSelected = selectedLeads.some(l => l.id === lead.id);
+                    return (
+                      <tr 
+                        key={lead.id} 
+                        className={`hover:bg-gray-50 cursor-pointer ${isSelected ? 'bg-blue-50' : ''}`}
+                        onClick={() => handleLeadSelect(lead)}
+                      >
+                        <td className="w-10 px-4 py-4 whitespace-nowrap">
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            readOnly
+                            className="form-checkbox h-4 w-4 text-[#F4A300] rounded pointer-events-none"
+                          />
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                          {lead.name || 'N/A'}
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                          {lead.phone || 'N/A'}
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <span className={`px-2 py-1 rounded-full text-xs ${
+                            lead.status === 'new' ? 'bg-blue-100 text-blue-800' :
+                            lead.status === 'assigned' ? 'bg-green-100 text-green-800' :
+                            'bg-yellow-100 text-yellow-800'
+                          }`}>
+                            {lead.status || 'unknown'}
+                          </span>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             ) : (
@@ -221,28 +266,26 @@ const AssignLeads = () => {
             </button>
           </div>
           
-          {selectedLead ? (
+          {selectedLeads.length > 0 ? (
             <div className="space-y-4">
               <div className="p-4 border border-gray-200 rounded-lg">
-                <h3 className="font-medium mb-2">Selected Lead:</h3>
-                <p><span className="font-semibold">Name:</span> {selectedLead.name || 'N/A'}</p>
-                <p><span className="font-semibold">Phone:</span> {selectedLead.phone || 'N/A'}</p>
-                <p><span className="font-semibold">Status:</span> 
-                  <span className={`ml-1 px-2 py-1 rounded-full text-xs ${
-                    selectedLead.status === 'new' ? 'bg-blue-100 text-blue-800' :
-                    selectedLead.status === 'assigned' ? 'bg-green-100 text-green-800' :
-                    'bg-yellow-100 text-yellow-800'
-                  }`}>
-                    {selectedLead.status || 'unknown'}
-                  </span>
-                </p>
-                <button
-                  onClick={() => setSelectedLead(null)}
-                  className="mt-2 text-sm text-red-500 hover:text-red-700 flex items-center"
-                >
-                  <FiX className="inline mr-1" />
-                  Clear selection
-                </button>
+                <h3 className="font-medium mb-2">Selected Leads ({selectedLeads.length}):</h3>
+                <div className="max-h-40 overflow-y-auto">
+                  {selectedLeads.map(lead => (
+                    <div key={lead.id} className="flex justify-between items-center py-1 border-b border-gray-100">
+                      <span className="truncate">{lead.name || 'N/A'}</span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleLeadSelect(lead);
+                        }}
+                        className="text-red-400 hover:text-red-600"
+                      >
+                        <FiX />
+                      </button>
+                    </div>
+                  ))}
+                </div>
               </div>
 
               {/* Supervisor Dropdown */}
@@ -301,7 +344,7 @@ const AssignLeads = () => {
                 ) : (
                   <>
                     <FiSend className="mr-2" />
-                    Assign Lead
+                    Assign {selectedLeads.length} Lead{selectedLeads.length !== 1 ? 's' : ''}
                   </>
                 )}
               </button>
@@ -313,7 +356,7 @@ const AssignLeads = () => {
           ) : (
             <div className="text-center py-8 text-gray-500">
               <FiUser className="mx-auto text-4xl text-gray-300 mb-2" />
-              <p>Select a lead to assign</p>
+              <p>Select one or more leads to assign</p>
             </div>
           )}
         </div>

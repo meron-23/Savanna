@@ -3,7 +3,7 @@ import axios from 'axios';
 import { User, Mail, Phone, Pencil, CircleAlert, X } from 'lucide-react';
 
 // IMPORTANT: Update API_BASE_URL to point to your backend
-const API_BASE_URL = 'http://localhost:3000/api'; // Use relative path for proxy to work
+const API_BASE_URL = 'http://localhost:5000/api'; // Use relative path for proxy to work
 
 // A simple component to display the colored role labels
 const RoleBadge = ({ role }) => {

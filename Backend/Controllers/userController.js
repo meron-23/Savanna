@@ -7,7 +7,7 @@ import {
   getUserById,
 } from "../Models/userModel.js";
 
-import jwt from 'jsonwebtoken';
+// import jwt from 'jsonwebtoken';
 
 export const addUser = async (req, res, next) => {
   const { userId, name, email, phoneNumber, gender, role, supervisor, creationTime, lastSignInTime } = req.body;
@@ -30,22 +30,22 @@ export const loginUser = async (req, res, next) => {
       return res.status(401).json({ success: false, message: "Invalid name or email" });
     }
 
-    const token = jwt.sign(
-      {
-        id: user.userId,
-        username: user.name,
-        role: user.role
-      },
-      process.env.JWT_SECRET, {
-      expiresIn: '1h'
-    });
+    // const token = jwt.sign(
+    //   {
+    //     id: user.userId,
+    //     username: user.name,
+    //     role: user.role
+    //   },
+    //   process.env.JWT_SECRET, {
+    //   expiresIn: '1h'
+    // });
 
-    res.cookie('authToken', token, {
-      httpOnly: true,
-      secure: false, // set to true in production with HTTPS
-      sameSite: 'Lax',
-      maxAge: 3600000 // 1 hour
-    });
+    // res.cookie('authToken', token, {
+    //   httpOnly: true,
+    //   secure: false,
+    //   sameSite: 'Lax',
+    //   maxAge: 3600000
+    // });
 
     res.status(200).json({
       success: true,
@@ -66,19 +66,20 @@ export const loginUser = async (req, res, next) => {
 };
 
 export const verifyToken = (req, res, next) => {
-  const token = req.cookies.authToken;
+  // const token = req.cookies.authToken;
 
   if (!token) return res.status(401).json({ valid: false });
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    // const decoded = jwt.verify(token, process.env.JWT_SECRET);
     res.status(200).json({ 
       valid: true,
       user: {
         id: decoded.id,
         name: decoded.username,
         role: decoded.role
-    }});
+      }
+    });
 
     // next();
   } catch (err) {

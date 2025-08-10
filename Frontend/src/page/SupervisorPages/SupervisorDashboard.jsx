@@ -4,7 +4,7 @@ import axios from 'axios';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 // IMPORTANT: Update API_BASE_URL to point to your backend
-const API_BASE_URL = 'http://localhost:3000/api'; // Your backend URL
+const API_BASE_URL = 'http://localhost:5000/api'; // Your backend URL
 const COLORS = ['#333333', '#FFD700', '#F4C430', '#FF8042'];
 
 const SupervisorDashboard = ({ supervisorId }) => { // Ensure supervisorId is passed as a prop

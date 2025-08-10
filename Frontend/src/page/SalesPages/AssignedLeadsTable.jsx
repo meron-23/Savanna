@@ -7,7 +7,6 @@ const AssignedLeadsTable = () => {
   const [error, setError] = useState(null);
   const [currentUser, setCurrentUser] = useState(null);
 
-  // Effect to get the current user's data from localStorage
   useEffect(() => {
     const userId = localStorage.getItem('userId');
     const userName = localStorage.getItem('name');
@@ -25,10 +24,8 @@ const AssignedLeadsTable = () => {
     }
   }, []);
 
-  // Effect to fetch leads from the API
   useEffect(() => {
     const fetchLeads = async () => {
-      // Don't fetch if we don't have user data yet
       if (!currentUser) return;
 
       setLoading(true);
@@ -41,7 +38,6 @@ const AssignedLeadsTable = () => {
           throw new Error('API response data is not in the expected format.');
         }
 
-        // Filter the leads here, right after receiving the response
         const userLeads = response.data.data.filter(
           (lead) => lead.agent_id === currentUser.userId
         );
@@ -58,9 +54,28 @@ const AssignedLeadsTable = () => {
     if (currentUser) {
       fetchLeads();
     }
-  }, [currentUser]); // This effect now depends on `currentUser`
+  }, [currentUser]);
 
-  // --- Rendering Logic ---
+  const handleCallLead = (phoneNumber) => {
+    if (!phoneNumber) {
+      alert('No phone number available for this lead');
+      return;
+    }
+    
+    // Clean the phone number (remove all non-numeric characters)
+    const cleanedPhoneNumber = phoneNumber.replace(/\D/g, '');
+    
+    // Create the tel: link
+    const telLink = `tel:${cleanedPhoneNumber}`;
+    
+    // Open the dialer (works on mobile devices)
+    window.location.href = telLink;
+    
+    // For desktop browsers, we can show a message
+    if (!/Mobi|Android/i.test(navigator.userAgent)) {
+      alert(`Call ${phoneNumber} from your phone`);
+    }
+  };
 
   if (loading) {
     return (
@@ -115,7 +130,11 @@ const AssignedLeadsTable = () => {
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {leads.map((lead) => (
-              <tr key={lead.lead_id} className="hover:bg-gray-50">
+              <tr 
+                key={lead.lead_id} 
+                className="hover:bg-gray-50 cursor-pointer"
+                onClick={() => handleCallLead(lead.phone)}
+              >
                 <td className="px-3 py-3 whitespace-nowrap sm:px-4">
                   <div className="font-medium text-gray-900">{lead.lead_name}</div>
                   <div className="text-xs text-gray-500 line-clamp-1">{lead.lead_interest}</div>
@@ -148,7 +167,6 @@ const AssignedLeadsTable = () => {
   );
 };
 
-// Helper function for status colors
 const getStatusColor = (status) => {
   const normalizedStatus = status.toLowerCase();
   switch (normalizedStatus) {
