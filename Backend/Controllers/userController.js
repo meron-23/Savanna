@@ -7,6 +7,8 @@ import {
   getUserById,
 } from "../Models/userModel.js";
 
+import jwt from 'jsonwebtoken';
+
 export const addUser = async (req, res, next) => {
   const { userId, name, email, phoneNumber, gender, role, supervisor, creationTime, lastSignInTime } = req.body;
 
@@ -28,6 +30,23 @@ export const loginUser = async (req, res, next) => {
       return res.status(401).json({ success: false, message: "Invalid name or email" });
     }
 
+    const token = jwt.sign(
+      {
+        id: user.userId,
+        username: user.name,
+        role: user.role
+      },
+      process.env.JWT_SECRET, {
+      expiresIn: '1h'
+    });
+
+    res.cookie('authToken', token, {
+      httpOnly: true,
+      secure: false, // set to true in production with HTTPS
+      sameSite: 'Lax',
+      maxAge: 3600000 // 1 hour
+    });
+
     res.status(200).json({
       success: true,
       message: "Login successful",
@@ -38,10 +57,44 @@ export const loginUser = async (req, res, next) => {
         role: user.role
       }
     });
+    // console.log(token)
+    // console.log(user.userId, user.name)
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
+};
+
+export const verifyToken = (req, res, next) => {
+  const token = req.cookies.authToken;
+
+  if (!token) return res.status(401).json({ valid: false });
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    res.status(200).json({ 
+      valid: true,
+      user: {
+        id: decoded.id,
+        name: decoded.username,
+        role: decoded.role
+    }});
+
+    // next();
+  } catch (err) {
+    res.status(401).json({ valid: false });
+  }
+};
+
+// controllers/authController.js
+
+export const logoutUser = (req, res) => {
+  res.clearCookie('authToken', {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'Strict',
+  });
+  res.status(200).json({ success: true, message: 'Logged out successfully' });
 };
 
 

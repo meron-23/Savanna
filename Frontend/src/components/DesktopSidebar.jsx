@@ -1,15 +1,6 @@
 import React, { useContext } from 'react';
 import NavItem from './NavItem';
-import Header from './Header'; // This import is not used in the provided code, but kept as per original.
 import { UserContext } from '../context/UserContext';
-
-const currentDate = new Date();
-const formattedDate = currentDate.toLocaleDateString('en-US', {
-  weekday: 'long',
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric'
-});
 
 const DesktopSidebar = ({
   isSidebarOpen,
@@ -22,7 +13,7 @@ const DesktopSidebar = ({
 }) => {
   const { user } = useContext(UserContext);
 
-  // Common links for the 'Prospect' dropdown - these will be used by Sales and Supervisor roles
+  // Common links for the 'Prospect' dropdown
   const commonLinks = [
     { index: 1, name: 'Add Prospect', path: 'Add' },
     { index: 2, name: 'View Prospect', path: 'View' },
@@ -30,13 +21,23 @@ const DesktopSidebar = ({
 
   // Define the top-level navigation items for Sales role
   const salesTopLevelLinks = [
-    { index: 1, name: 'Dashboard', path: 'Dashboard', icon: (
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-    )},
+    { 
+      index: 1, 
+      name: 'Dashboard', 
+      path: 'Dashboard', 
+      icon: (
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+      )
+    },
     // Prospect will be inserted manually to handle its submenu
-    { index: 3, name: 'Leads', path: 'Leads', icon: (
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h2a2 2 0 002-2V4a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h2m0 0a2 2 0 100 4 2 2 0 000-4zm0 0l-2.5-2.5M7 13h10v4H7v-4zm0 0a2 2 0 100-4 2 2 0 000 4zm0 0l-2.5-2.5M7 7h10v4H7V7zm0 0a2 2 0 100-4 2 2 0 000 4zm0 0l-2.5-2.5" />
-    )},
+    { 
+      index: 3, 
+      name: 'Leads', 
+      path: 'Leads', 
+      icon: (
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h2a2 2 0 002-2V4a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h2m0 0a2 2 0 100 4 2 2 0 000-4zm0 0l-2.5-2.5M7 13h10v4H7v-4zm0 0a2 2 0 100-4 2 2 0 000 4zm0 0l-2.5-2.5M7 7h10v4H7V7zm0 0a2 2 0 100-4 2 2 0 000 4zm0 0l-2.5-2.5" />
+      )
+    },
   ];
 
   // Define the top-level navigation items for Supervisor role
@@ -59,7 +60,15 @@ const DesktopSidebar = ({
     },
     // Prospect will be inserted manually to handle its submenu
     {
-      index: 4, // Adjusted index
+      index: 4,
+      name: 'Assign Leads',
+      path: 'AssignLeads',
+      icon: (
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+      )
+    },
+    {
+      index: 5,
       name: 'Office and Site Visits',
       path: 'SiteVisits',
       icon: (
@@ -67,7 +76,7 @@ const DesktopSidebar = ({
       )
     },
     {
-      index: 5, // Adjusted index
+      index: 6,
       name: 'Sales',
       path: 'Sales',
       icon: (
@@ -96,7 +105,7 @@ const DesktopSidebar = ({
     },
     {
       index: 3,
-      name: 'Add Prospect', // This is a direct link for Manager, not part of a dropdown
+      name: 'Add Prospect',
       path: 'AddProspect',
       icon: (
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -104,6 +113,14 @@ const DesktopSidebar = ({
     },
     {
       index: 4,
+      name: 'Assign Leads',
+      path: 'AssignLeads',
+      icon: (
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+      )
+    },
+    {
+      index: 5,
       name: 'Prospect Report',
       path: 'ProspectReport',
       icon: (
@@ -111,7 +128,7 @@ const DesktopSidebar = ({
       )
     },
     {
-      index: 5,
+      index: 6,
       name: 'Sales Report',
       path: 'SalesReport',
       icon: (
@@ -119,7 +136,7 @@ const DesktopSidebar = ({
       )
     },
     {
-      index: 6,
+      index: 7,
       name: 'Client Visits',
       path: 'ClientVisits',
       icon: (
@@ -127,7 +144,6 @@ const DesktopSidebar = ({
       )
     }
   ];
-
 
   return (
     <aside
@@ -199,7 +215,7 @@ const DesktopSidebar = ({
                 }
                 isActive={activeItem === 'Prospect' || activeItem === 'Add' || activeItem === 'View'}
                 isSidebarOpen={isSidebarOpen}
-                onClick={() => handleItemClick('Prospect')} // Keep this for toggling dropdown
+                onClick={() => handleItemClick('Prospect')}
                 hasSubmenu={true}
                 isSubmenuOpen={isProspectOpen}
               >
@@ -226,7 +242,7 @@ const DesktopSidebar = ({
           {role === 'Supervisor' && (
             // Render Supervisor-specific links in desired order
             <>
-              {supervisorTopLevelLinks.filter(link => link.index <= 2).map((link) => (
+              {supervisorTopLevelLinks.map((link) => (
                 <NavItem
                   key={link.index}
                   name={link.name}
@@ -250,7 +266,7 @@ const DesktopSidebar = ({
                 }
                 isActive={activeItem === 'Prospect' || activeItem === 'Add' || activeItem === 'View'}
                 isSidebarOpen={isSidebarOpen}
-                onClick={() => handleItemClick('Prospect')} // Keep this for toggling dropdown
+                onClick={() => handleItemClick('Prospect')}
                 hasSubmenu={true}
                 isSubmenuOpen={isProspectOpen}
               >
@@ -271,17 +287,6 @@ const DesktopSidebar = ({
                   </ul>
                 )}
               </NavItem>
-
-              {supervisorTopLevelLinks.filter(link => link.index > 2).map((link) => (
-                <NavItem
-                  key={link.index}
-                  name={link.name}
-                  icon={link.icon}
-                  isActive={activeItem === link.path}
-                  isSidebarOpen={isSidebarOpen}
-                  onClick={() => handleItemClick(link.path)}
-                />
-              ))}
             </>
           )}
 
