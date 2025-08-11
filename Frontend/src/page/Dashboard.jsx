@@ -20,6 +20,7 @@ import AssignedLeadsTable from './SalesPages/AssignedLeadsTable';
 import ProspectsDashboard from './ManagerPages/ProspectDashboard';
 import RegisterSalesData from './SupervisorPages/RegisterSalesData';
 import AssignLeads from '../components/AssignLeads';
+import SupervisorAssignLeads from '../components/SupervisorAssignLeads';
 
 const Dashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -174,7 +175,7 @@ const Dashboard = () => {
       case 'SiteVisits':
         return role === 'Supervisor' ? <OfficeSiteVisits /> : <SupervisorDashboard supervisorId={"pdHoZXgh03gM5Jslp4Q7jstFyeb3"}/>; // Fallback
       case 'AssignLeads':
-        return role === 'Supervisor' ? <AssignLeads /> : <SupervisorDashboard supervisorId={"pdHoZXgh03gM5Jslp4Q7jstFyeb3"} />; // Fallback
+        return role === 'Supervisor' ? <SupervisorAssignLeads /> : <SupervisorDashboard supervisorId={"pdHoZXgh03gM5Jslp4Q7jstFyeb3"} />; // Fallback
       case 'Sales': // Corresponds to RegisterSalesData
         return role === 'Supervisor' ? <RegisterSalesData /> : <SupervisorDashboard supervisorId={"pdHoZXgh03gM5Jslp4Q7jstFyeb3"} />; // Fallback
 
