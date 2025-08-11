@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { FiUser, FiSend, FiX, FiSearch, FiRefreshCw } from 'react-icons/fi';
 
-const AssignLeads = () => {
+const SupervisorLeads = () => {
   // State management
   const [leads, setLeads] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [selectedLeads, setSelectedLeads] = useState([]);
-  const [selectedSupervisorId, setSelectedSupervisorId] = useState(''); // Now stores ID instead of name
   const [selectedAgent, setSelectedAgent] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -14,21 +13,10 @@ const AssignLeads = () => {
   const [statusFilter, setStatusFilter] = useState('new');
   const [sourceFilter, setSourceFilter] = useState('');
 
-  // Filter users locally
-  const supervisors = allUsers.filter(user => user.role === 'Supervisor');
-  const agents = allUsers.filter(user => user.role === 'SalesAgent');
-
-  // Debug data
-  useEffect(() => {
-    console.log("Supervisors:", supervisors);
-    console.log("Agents:", agents.map(a => ({
-      id: a.id,
-      name: a.name,
-      supervisor_id: a.supervisor,
-      supervisor_name: supervisors.find(s => s.id === a.supervisor_id)?.name || 'None'
-    })));
-    console.log("Selected Supervisor ID:", selectedSupervisorId);
-  }, [allUsers, selectedSupervisorId]);
+  // --- Placeholder for the current supervisor's ID ---
+  // In a real application, this would be retrieved from a user context
+  // after successful login.
+  const currentSupervisorId = "Meron Muluye"; 
 
   // Fetch data on component mount and when statusFilter changes
   useEffect(() => {
@@ -41,16 +29,23 @@ const AssignLeads = () => {
         const leadsResponse = await fetch(`http://localhost:5000/api/allLeads`);
         if (!leadsResponse.ok) throw new Error('Failed to fetch leads');
         const leadsData = await leadsResponse.json();
-        setLeads(leadsData.data || []);
-
+        
         // Fetch all users
         const usersResponse = await fetch('http://localhost:5000/api/users');
         if (!usersResponse.ok) throw new Error('Failed to fetch users');
         const usersData = await usersResponse.json();
-        
-        // Handle different API response structures
         const users = usersData.data || usersData.users || [];
-        console.log("Fetched Users:", users);
+        
+        // Filter leads based on supervisor's agents
+        const supervisorAgents = users.filter(user => user.role === 'SalesAgent' && user.supervisor_id === currentSupervisorId);
+        const agentIds = supervisorAgents.map(agent => agent.id);
+        
+        // The supervisor can see all their agents' leads, plus unassigned leads
+        const relevantLeads = leadsData.data.filter(lead => 
+          !lead.assigned_to || agentIds.includes(lead.assigned_to)
+        );
+        
+        setLeads(relevantLeads);
         setAllUsers(users);
         
       } catch (err) {
@@ -64,6 +59,9 @@ const AssignLeads = () => {
     fetchData();
   }, [statusFilter]);
 
+  // Filter agents locally based on the current supervisor's ID
+  const agents = allUsers.filter(user => user.role === 'SalesAgent' && user.supervisor_id === currentSupervisorId);
+
   // Filter leads based on search term and filters
   const filteredLeads = leads.filter(lead => {
     const matchesSearch = (lead.name && lead.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
@@ -72,20 +70,6 @@ const AssignLeads = () => {
     const matchesSource = !sourceFilter || lead.source === sourceFilter;
     return matchesSearch && matchesStatus && matchesSource;
   });
-
-  // Filter agents based on selected supervisor ID
-  const filteredAgents = selectedSupervisorId
-    ? agents.filter(agent => {
-        if (!agent.supervisor) {
-          console.warn(`Agent ${agent.userId} (${agent.name}) has no supervisor_id`);
-          return false;
-        }
-        const match = String(agent.supervisor) === String(selectedSupervisorId);
-        console.log(`Matching: Agent ${agent.userId} (supervisor_id: ${agent.supervisor}) with Selected: ${selectedSupervisorId} => ${match}`);
-        return match;
-      })
-    : [];
-  console.log("Filtered Agents:", filteredAgents);
 
   // Handle lead selection
   const handleLeadSelect = (lead) => {
@@ -110,35 +94,31 @@ const AssignLeads = () => {
 
   // Handle lead assignment
   const handleAssign = async () => {
-    if (selectedLeads.length === 0 || (!selectedSupervisorId && !selectedAgent)) return;
+    if (selectedLeads.length === 0 || !selectedAgent) return;
 
     try {
       setIsLoading(true);
       setError(null);
 
-      // Prepare batch assignment
       const assignmentPromises = selectedLeads.map(lead => 
         fetch(`http://localhost:5000/api/leads/${lead.id}/status`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            status: 'new',
-            assigned_to: selectedAgent || selectedSupervisorId // Now using ID
+            status: 'assigned',
+            assigned_to: selectedAgent
           })
         })
       );
 
-      // Execute all assignments
       const responses = await Promise.all(assignmentPromises);
       const allSuccessful = responses.every(response => response.ok);
       
       if (!allSuccessful) throw new Error('Some assignments failed');
 
-      // Update local state
       const assignedLeadIds = selectedLeads.map(lead => lead.id);
-      setLeads(leads.filter(lead => !assignedLeadIds.includes(lead.id)));
+      setLeads(prevLeads => prevLeads.filter(lead => !assignedLeadIds.includes(lead.id)));
       setSelectedLeads([]);
-      setSelectedSupervisorId('');
       setSelectedAgent('');
       
     } catch (err) {
@@ -153,9 +133,9 @@ const AssignLeads = () => {
     setSearchTerm('');
     setSourceFilter('');
     setSelectedLeads([]);
-    setSelectedSupervisorId('');
     setSelectedAgent('');
-    setIsLoading(true);
+    setIsLoading(true); // This will trigger the useEffect to fetch data again
+    setError(null);
   };
 
   // Check if all filtered leads are currently selected
@@ -192,7 +172,8 @@ const AssignLeads = () => {
 
   return (
     <div className="p-4 md:p-6">
-      <h1 className="text-2xl font-bold mb-6">Assign Leads</h1>
+      <h1 className="text-2xl font-bold mb-6">Supervisor Dashboard</h1>
+      <p className="text-sm text-gray-500 mb-6">Viewing leads for: <span className="font-semibold">{currentSupervisorId}</span></p>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Leads List Column */}
@@ -218,6 +199,7 @@ const AssignLeads = () => {
                 className="p-2 border border-gray-300 rounded-md"
               >
                 <option value="new">New Leads</option>
+                <option value="assigned">Assigned Leads</option>
                 <option value="followup">Follow-up</option>
                 <option value="all">All Leads</option>
               </select>
@@ -359,57 +341,27 @@ const AssignLeads = () => {
                 </div>
               </div>
 
-              {/* Supervisor Dropdown - Now stores ID */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Assign to Supervisor:
-                </label>
-                <select
-                  value={selectedSupervisorId}
-                  onChange={(e) => {
-                    setSelectedSupervisorId(e.target.value);
-                    setSelectedAgent('');
-                  }}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                >
-                  <option value="">Select Supervisor</option>
-                  {supervisors.map(supervisor => (
-                    <option key={supervisor.userId} value={supervisor.userId}>
-                      {supervisor.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
               {/* Agent Dropdown */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Or assign directly to Agent:
+                  Assign to Agent:
                 </label>
-                {selectedSupervisorId ? (
-                  filteredAgents.length > 0 ? (
-                    <select
-                      value={selectedAgent}
-                      onChange={(e) => setSelectedAgent(e.target.value)}
-                      className="w-full p-2 border border-gray-300 rounded-md"
-                    >
-                      <option value="">Select Agent</option>
-                      {filteredAgents.map(agent => (
-                        <option key={agent.userId} value={agent.userId}>
-                          {agent.name}
-                        </option>
-                      ))}
-                    </select>
-                  ) : (
-                    <div className="text-sm text-yellow-600 p-2 bg-yellow-50 rounded">
-                      {agents.some(a => a.supervisor_id) 
-                        ? "No agents available for selected supervisor" 
-                        : "Warning: No agents have supervisor IDs assigned"}
-                    </div>
-                  )
+                {agents.length > 0 ? (
+                  <select
+                    value={selectedAgent}
+                    onChange={(e) => setSelectedAgent(e.target.value)}
+                    className="w-full p-2 border border-gray-300 rounded-md"
+                  >
+                    <option value="">Select Agent</option>
+                    {agents.map(agent => (
+                      <option key={agent.id} value={agent.id}>
+                        {agent.name || 'Unnamed Agent'}
+                      </option>
+                    ))}
+                  </select>
                 ) : (
-                  <div className="text-sm text-gray-500 p-2 bg-gray-50 rounded">
-                    Please select a supervisor first
+                  <div className="text-sm text-yellow-600 p-2 bg-yellow-50 rounded">
+                    No agents available for this supervisor
                   </div>
                 )}
               </div>
@@ -417,9 +369,9 @@ const AssignLeads = () => {
               {/* Assign Button */}
               <button
                 onClick={handleAssign}
-                disabled={(!selectedSupervisorId && !selectedAgent) || isLoading}
+                disabled={!selectedAgent || isLoading}
                 className={`w-full py-2 px-4 rounded-md text-white flex items-center justify-center ${
-                  (!selectedSupervisorId && !selectedAgent) || isLoading
+                  !selectedAgent || isLoading
                     ? 'bg-gray-400 cursor-not-allowed'
                     : 'bg-[#F4A300] hover:bg-[#e6b82a]'
                 }`}
@@ -453,4 +405,4 @@ const AssignLeads = () => {
   );
 };
 
-export default AssignLeads;
+export default SupervisorLeads;
