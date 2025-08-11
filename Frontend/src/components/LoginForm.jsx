@@ -97,6 +97,10 @@ const LoginForm = () => {
 
   return (
     <div className="w-full max-w-sm">
+<h2 className="block sm:hidden text-2xl font-bold text-center mb-2 text-[#F4A300]">
+  Savanna
+</h2>
+
       <h2 className="text-3xl font-bold text-center mb-2 text-charcoal">Welcome Back</h2>
       <p className="text-center text-gray-600 mb-8">
         Enter your email and password to access your account.
