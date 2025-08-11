@@ -27,7 +27,7 @@ const ProspectsDashboard = () => {
       setError(null);     // Clear any previous errors
       try {
         // Updated API endpoint as per your latest information
-        const response = await fetch('http://localhost:3000/api/prospects-with-agents');
+        const response = await fetch('http://localhost:5000/api/prospects-with-agents');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

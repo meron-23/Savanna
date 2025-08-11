@@ -99,6 +99,9 @@ const Dashboard = () => {
       case 'AssignLeads':
         setMainContent('AssignLeads');
         break;
+      case 'DashboardAssignLeads':
+        setMainContent('DashboardAssignLeads');
+        break;
       case 'AddProspect': // This should ideally be handled by sub-item click or dedicated button
         setMainContent('AddProspectForm');
         break;
@@ -180,7 +183,7 @@ const Dashboard = () => {
         return role === 'Manager' ? <ManagerDashboard /> : <ManagerDashboard />; // Fallback
       case 'RegisterUser':
         return role === 'Manager' ? <RegisterUser /> : <ManagerDashboard />; // Fallback
-      case 'AssignLeads':
+      case 'DashboardAssignLeads':
         return role === 'Manager' ? <AssignLeads /> : <ManagerDashboard />; // Fallback
       case 'ProspectReport':
         return role === 'Manager' ? <ProspectsDashboard /> : <ManagerDashboard />; // Fallback
