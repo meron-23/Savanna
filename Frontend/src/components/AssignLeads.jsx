@@ -6,16 +6,29 @@ const AssignLeads = () => {
   const [leads, setLeads] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [selectedLeads, setSelectedLeads] = useState([]);
-  const [selectedSupervisor, setSelectedSupervisor] = useState('');
+  const [selectedSupervisorId, setSelectedSupervisorId] = useState(''); // Now stores ID instead of name
   const [selectedAgent, setSelectedAgent] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [statusFilter, setStatusFilter] = useState('new');
+  const [sourceFilter, setSourceFilter] = useState('');
 
   // Filter users locally
   const supervisors = allUsers.filter(user => user.role === 'Supervisor');
   const agents = allUsers.filter(user => user.role === 'SalesAgent');
+
+  // Debug data
+  useEffect(() => {
+    console.log("Supervisors:", supervisors);
+    console.log("Agents:", agents.map(a => ({
+      id: a.id,
+      name: a.name,
+      supervisor_id: a.supervisor,
+      supervisor_name: supervisors.find(s => s.id === a.supervisor_id)?.name || 'None'
+    })));
+    console.log("Selected Supervisor ID:", selectedSupervisorId);
+  }, [allUsers, selectedSupervisorId]);
 
   // Fetch data on component mount and when statusFilter changes
   useEffect(() => {
@@ -34,9 +47,14 @@ const AssignLeads = () => {
         const usersResponse = await fetch('http://localhost:5000/api/users');
         if (!usersResponse.ok) throw new Error('Failed to fetch users');
         const usersData = await usersResponse.json();
-        setAllUsers(usersData.data || []);
+        
+        // Handle different API response structures
+        const users = usersData.data || usersData.users || [];
+        console.log("Fetched Users:", users);
+        setAllUsers(users);
         
       } catch (err) {
+        console.error("Fetch error:", err);
         setError(err.message);
       } finally {
         setIsLoading(false);
@@ -46,16 +64,28 @@ const AssignLeads = () => {
     fetchData();
   }, [statusFilter]);
 
-  // Filter leads based on search term
-  const filteredLeads = leads.filter(lead =>
-    (lead.name && lead.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (lead.phone && lead.phone.includes(searchTerm))
-  );
+  // Filter leads based on search term and filters
+  const filteredLeads = leads.filter(lead => {
+    const matchesSearch = (lead.name && lead.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                        (lead.phone && lead.phone.includes(searchTerm));
+    const matchesStatus = statusFilter === 'all' || lead.status === statusFilter;
+    const matchesSource = !sourceFilter || lead.source === sourceFilter;
+    return matchesSearch && matchesStatus && matchesSource;
+  });
 
-  // Filter agents based on selected supervisor
-  const filteredAgents = selectedSupervisor
-    ? agents.filter(agent => String(agent.supervisor_id) === String(selectedSupervisor))
+  // Filter agents based on selected supervisor ID
+  const filteredAgents = selectedSupervisorId
+    ? agents.filter(agent => {
+        if (!agent.supervisor) {
+          console.warn(`Agent ${agent.userId} (${agent.name}) has no supervisor_id`);
+          return false;
+        }
+        const match = String(agent.supervisor) === String(selectedSupervisorId);
+        console.log(`Matching: Agent ${agent.userId} (supervisor_id: ${agent.supervisor}) with Selected: ${selectedSupervisorId} => ${match}`);
+        return match;
+      })
     : [];
+  console.log("Filtered Agents:", filteredAgents);
 
   // Handle lead selection
   const handleLeadSelect = (lead) => {
@@ -80,7 +110,7 @@ const AssignLeads = () => {
 
   // Handle lead assignment
   const handleAssign = async () => {
-    if (selectedLeads.length === 0 || (!selectedSupervisor && !selectedAgent)) return;
+    if (selectedLeads.length === 0 || (!selectedSupervisorId && !selectedAgent)) return;
 
     try {
       setIsLoading(true);
@@ -93,7 +123,7 @@ const AssignLeads = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             status: 'new',
-            assigned_to: selectedAgent || selectedSupervisor
+            assigned_to: selectedAgent || selectedSupervisorId // Now using ID
           })
         })
       );
@@ -108,7 +138,7 @@ const AssignLeads = () => {
       const assignedLeadIds = selectedLeads.map(lead => lead.id);
       setLeads(leads.filter(lead => !assignedLeadIds.includes(lead.id)));
       setSelectedLeads([]);
-      setSelectedSupervisor('');
+      setSelectedSupervisorId('');
       setSelectedAgent('');
       
     } catch (err) {
@@ -121,8 +151,9 @@ const AssignLeads = () => {
   // Refresh data
   const handleRefresh = () => {
     setSearchTerm('');
+    setSourceFilter('');
     setSelectedLeads([]);
-    setSelectedSupervisor('');
+    setSelectedSupervisorId('');
     setSelectedAgent('');
     setIsLoading(true);
   };
@@ -149,6 +180,15 @@ const AssignLeads = () => {
       </button>
     </div>
   );
+
+  // Format source for display
+  const formatSource = (source) => {
+    if (!source) return 'Unknown';
+    return source
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
 
   return (
     <div className="p-4 md:p-6">
@@ -181,6 +221,20 @@ const AssignLeads = () => {
                 <option value="followup">Follow-up</option>
                 <option value="all">All Leads</option>
               </select>
+
+              <select
+                value={sourceFilter}
+                onChange={(e) => setSourceFilter(e.target.value)}
+                className="p-2 border border-gray-300 rounded-md"
+              >
+                <option value="">All Sources</option>
+                <option value="social_media">Social Media</option>
+                <option value="cold_call">Cold Call</option>
+                <option value="survey">Survey</option>
+                <option value="referral">Referral</option>
+                <option value="website">Website</option>
+                <option value="event">Event</option>
+              </select>
             </div>
           </div>
 
@@ -199,6 +253,7 @@ const AssignLeads = () => {
                     </th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Source</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                   </tr>
                 </thead>
@@ -224,6 +279,19 @@ const AssignLeads = () => {
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                           {lead.phone || 'N/A'}
+                        </td>
+                        <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
+                          <span className={`px-2 py-1 rounded-full text-xs ${
+                            lead.source === 'social_media' ? 'bg-purple-100 text-purple-800' :
+                            lead.source === 'cold_call' ? 'bg-blue-100 text-blue-800' :
+                            lead.source === 'survey' ? 'bg-green-100 text-green-800' :
+                            lead.source === 'referral' ? 'bg-yellow-100 text-yellow-800' :
+                            lead.source === 'website' ? 'bg-indigo-100 text-indigo-800' :
+                            lead.source === 'event' ? 'bg-pink-100 text-pink-800' :
+                            'bg-gray-100 text-gray-800'
+                          }`}>
+                            {formatSource(lead.source)}
+                          </span>
                         </td>
                         <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
                           <span className={`px-2 py-1 rounded-full text-xs ${
@@ -273,7 +341,10 @@ const AssignLeads = () => {
                 <div className="max-h-40 overflow-y-auto">
                   {selectedLeads.map(lead => (
                     <div key={lead.id} className="flex justify-between items-center py-1 border-b border-gray-100">
-                      <span className="truncate">{lead.name || 'N/A'}</span>
+                      <div>
+                        <p className="font-medium truncate">{lead.name || 'N/A'}</p>
+                        <p className="text-xs text-gray-500">{formatSource(lead.source)}</p>
+                      </div>
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
@@ -288,21 +359,23 @@ const AssignLeads = () => {
                 </div>
               </div>
 
-              {/* Supervisor Dropdown */}
+              {/* Supervisor Dropdown - Now stores ID */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Assign to Supervisor:</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Assign to Supervisor:
+                </label>
                 <select
-                  value={selectedSupervisor}
+                  value={selectedSupervisorId}
                   onChange={(e) => {
-                    setSelectedSupervisor(e.target.value);
+                    setSelectedSupervisorId(e.target.value);
                     setSelectedAgent('');
                   }}
                   className="w-full p-2 border border-gray-300 rounded-md"
                 >
                   <option value="">Select Supervisor</option>
                   {supervisors.map(supervisor => (
-                    <option key={supervisor.id} value={supervisor.id}>
-                      {supervisor.name || 'Unnamed Supervisor'}
+                    <option key={supervisor.userId} value={supervisor.userId}>
+                      {supervisor.name}
                     </option>
                   ))}
                 </select>
@@ -310,28 +383,43 @@ const AssignLeads = () => {
 
               {/* Agent Dropdown */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Or assign directly to Agent:</label>
-                <select
-                  value={selectedAgent}
-                  onChange={(e) => setSelectedAgent(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-md"
-                  disabled={!selectedSupervisor}
-                >
-                  <option value="">Select Agent</option>
-                  {filteredAgents.map(agent => (
-                    <option key={agent.id} value={agent.id}>
-                      {agent.name || 'Unnamed Agent'}
-                    </option>
-                  ))}
-                </select>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Or assign directly to Agent:
+                </label>
+                {selectedSupervisorId ? (
+                  filteredAgents.length > 0 ? (
+                    <select
+                      value={selectedAgent}
+                      onChange={(e) => setSelectedAgent(e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-md"
+                    >
+                      <option value="">Select Agent</option>
+                      {filteredAgents.map(agent => (
+                        <option key={agent.userId} value={agent.userId}>
+                          {agent.name}
+                        </option>
+                      ))}
+                    </select>
+                  ) : (
+                    <div className="text-sm text-yellow-600 p-2 bg-yellow-50 rounded">
+                      {agents.some(a => a.supervisor_id) 
+                        ? "No agents available for selected supervisor" 
+                        : "Warning: No agents have supervisor IDs assigned"}
+                    </div>
+                  )
+                ) : (
+                  <div className="text-sm text-gray-500 p-2 bg-gray-50 rounded">
+                    Please select a supervisor first
+                  </div>
+                )}
               </div>
 
               {/* Assign Button */}
               <button
                 onClick={handleAssign}
-                disabled={!selectedSupervisor && !selectedAgent}
+                disabled={(!selectedSupervisorId && !selectedAgent) || isLoading}
                 className={`w-full py-2 px-4 rounded-md text-white flex items-center justify-center ${
-                  (!selectedSupervisor && !selectedAgent) || isLoading
+                  (!selectedSupervisorId && !selectedAgent) || isLoading
                     ? 'bg-gray-400 cursor-not-allowed'
                     : 'bg-[#F4A300] hover:bg-[#e6b82a]'
                 }`}

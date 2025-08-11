@@ -8,7 +8,7 @@ import cookieParser from 'cookie-parser';
 dotenv.config();
 
 // use port number from .env or the fallback port num 3000
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 5000;
 
 const app = express();
 app.use(cookieParser());
