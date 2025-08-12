@@ -36,6 +36,10 @@ const LoginForm = () => {
   //   }
   // };
 const handleGoogleLogin = async () => {
+  setSuccess(false);
+  setSuccessMessage('');
+  setError('');
+
   try {
     // Open Google OAuth in a popup window
     const popup = window.open(
@@ -51,31 +55,45 @@ const handleGoogleLogin = async () => {
 
       if (event.data.success) {
         const { user } = event.data;
+        
+        // Store user data
+        localStorage.setItem('userId', user.userId);
         setUser(user.name);
         setRole(user.role);
-        localStorage.setItem('userId', user.userId);
-
+        
         // Close the popup
-        popup.close();
-
-        // Redirect based on role
-        if (user.role === 'Manager') {
-          navigate('/dashboard');
-        } else {
-          navigate('/user-dashboard');
+        if (popup && !popup.closed) {
+          popup.close();
         }
+
+        // Navigate to dashboard
+        navigate('/dashboard');
       } else {
         setError(event.data.message || 'Google login failed');
-        popup.close();
+        if (popup && !popup.closed) {
+          popup.close();
+        }
       }
+      
+      // Clean up the event listener
+      window.removeEventListener('message', receiveMessage);
     };
 
     window.addEventListener('message', receiveMessage, false);
+
+    // Check if popup was blocked
+    if (!popup || popup.closed || typeof popup.closed === 'undefined') {
+      setError('Popup was blocked. Please allow popups for this site.');
+      return;
+    }
+
   } catch (err) {
     console.error('Google login error:', err);
     setError('Failed to initiate Google login');
   }
 };
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSuccess(false);

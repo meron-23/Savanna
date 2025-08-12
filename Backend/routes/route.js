@@ -18,17 +18,21 @@ import {
   verifyPassword
 } from "../Controllers/userController2.js";
 const router = express.Router();
-router.get(
-  "/auth/google",
-  passport.authenticate("google", { scope: ["profile", "email"] })
+router.get('/auth/google',
+  passport.authenticate('google', {
+    scope: ['profile', 'email'],
+    prompt: 'select_account' // Forces account selection
+  })
 );
 
-router.get(
-  "/auth/google/callback",
-  passport.authenticate("google", { failureRedirect: "/" }),
-  googleCallback // Use the controller we just defined
+// Google callback
+router.get('/auth/google/callback',
+  passport.authenticate('google', { 
+    failureRedirect: '/login',
+    session: true 
+  }),
+  googleCallback
 );
-
 router.get("/hash/:password", hashPassword);
 router.get("/verify/:password/:hash", verifyPassword);
 
