@@ -1,6 +1,6 @@
 import express from 'express';
 import { addProspect, bulkAddProspects, deleteProspect, fetchProspectsWithAgents, getProspect, putProspect } from '../Controllers/prospectController.js';
-import { addUser, deleteUser, fetchUserById, getUser, loginUser, logoutUser, putUser, verifyToken,} from '../Controllers/userController.js';
+import { addUser, deleteUser, fetchUserById, getUser, loginUser, logoutUser, putUser, verifyToken,googleLogin} from '../Controllers/userController.js';
 import {getSupervisorAgents,
   getDashboardStats,
   registerAgent} from '../Controllers/supervisorController.js';
@@ -22,6 +22,7 @@ router.post('/bulk', bulkAddProspects);
 // User Routes
 router.post('/users', addUser);
 router.post('/users/login', loginUser);
+router.post('/users/google-login', googleLogin);
 // router.get('/users', getUser);
 router.get('/users', getUser);
 router.get('/users/:id', fetchUserById)

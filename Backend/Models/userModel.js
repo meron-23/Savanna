@@ -1,15 +1,18 @@
 import mySqlConnection from "../Config/db.js";
 
 const generateUserId = () => {
-    // Generates a random string that can serve as a unique ID
-    return 'user_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+  // Generates a random string that can serve as a unique ID
+  return 'user_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
 };
 
 
-const createUser = async (userId, name, email, phoneNumber, gender, role, supervisor, creationTime, lastSignInTime) => {
-  const addSqlQuery = "INSERT INTO users (userId, name, email, phoneNumber, gender, role, supervisor, creationTime, lastSignInTime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+// Updated to accept 'password' hash
+const createUser = async (userId, name, email, password, phoneNumber, gender, role, supervisor, creationTime, lastSignInTime) => {
+  // Add 'password' to the SQL query and values
+  const addSqlQuery = "INSERT INTO users (userId, name, email,phoneNumber, gender, role, supervisor, creationTime, lastSignInTime,password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
   try {
-    const [result] = await mySqlConnection.query(addSqlQuery, [userId, name, email, phoneNumber, gender, role, supervisor, creationTime, lastSignInTime]);
+    // Pass the hashed password to the query
+    const [result] = await mySqlConnection.query(addSqlQuery, [userId, name, email, phoneNumber, gender, role, supervisor, creationTime, lastSignInTime,password]);
     return result;
   } catch (error) {
     console.error("Create error:", error);
@@ -17,11 +20,18 @@ const createUser = async (userId, name, email, phoneNumber, gender, role, superv
   }
 };
 
+// New function to find a user by their email for login
+const findUserByEmail = async (email) => {
+  const [rows] = await mySqlConnection.query("SELECT * FROM users WHERE email = ?", [email]);
+  // Return the first user found, or null if none
+  return rows[0]; 
+};
+
+// You can keep or remove this function, but it is not needed for password-based login
 const findUserByNameAndEmail = async (name, email) => {
   const [rows] = await mySqlConnection.query("SELECT * FROM users WHERE name = ? AND email = ?", [name, email]);
   return rows;
 };
-
 
 
 const viewUser = async () => {
@@ -74,8 +84,7 @@ const deleteUserModel = async (id) => {
 };
 
 
-
-// Add these to your exports
+// Add the new function to your exports
 export {
   createUser,
   viewUser,
@@ -83,5 +92,6 @@ export {
   deleteUserModel,
   findUserByNameAndEmail,
   getUserById,
-  generateUserId 
+  generateUserId,
+  findUserByEmail
 };

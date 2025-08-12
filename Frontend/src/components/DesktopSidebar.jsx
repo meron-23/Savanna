@@ -189,7 +189,7 @@ const DesktopSidebar = ({
           </h3>
         )}
         <ul className="space-y-2">
-          {role === 'Sales Agent' && (
+          {role === 'Agent' && (
             // Render Sales-specific links
             <>
               {salesTopLevelLinks.map((link) => (

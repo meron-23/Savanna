@@ -76,7 +76,7 @@ const Dashboard = () => {
         setIsProspectOpen(!isProspectOpen);
         break;
       case 'Leads':
-        if (role === 'Sales Agent') {
+        if (role === 'SalesAgent') {
           setMainContent('Leads');
         } else {
           setMainContent('Dashboard'); // Fallback if role doesn't match
@@ -155,11 +155,12 @@ const Dashboard = () => {
       case 'ProfilePage':
         return <ProfilePage />;
       case 'Leads':
-        return role === 'Sales Agent' ? <AssignedLeadsTable /> : <SalesDashboard />; // Fallback for non-sales
+        return role === 'SalesAgent' ? <AssignedLeadsTable /> : <SalesDashboard />; // Fallback for non-sales
         
       case 'Dashboard':
         switch (role) {
-          case 'Sales Agent':
+          case 'Agent':
+            console.log(role);
             return <SalesDashboard />;
           case 'Supervisor':
             return <SupervisorDashboard supervisorId={"pdHoZXgh03gM5Jslp4Q7jstFyeb3"}/>;
@@ -196,7 +197,7 @@ const Dashboard = () => {
       default:
         // Fallback to role-specific dashboard if mainContent is unrecognized
         switch (role) {
-          case 'Sales Agent':
+          case 'Agent':
             return <SalesDashboard />;
           case 'Supervisor':
             return <SupervisorDashboard supervisorId={"pdHoZXgh03gM5Jslp4Q7jstFyeb3"}/>;
