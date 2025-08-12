@@ -8,7 +8,6 @@ import { UserProvider } from './context/UserContext';
 import Dashboard from './page/Dashboard';
 import ProfilePage from './page/ProfilePage';
 import Login from './page/Login'
-import { Settings } from 'lucide-react';
 import Setting from './page/Settings';
 
 

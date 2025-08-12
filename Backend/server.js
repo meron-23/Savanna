@@ -4,6 +4,9 @@ import mySqlConnection from './Config/db.js';
 import router from './routes/route.js';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import session from 'express-session';
+import passport from 'passport';
+import './Config/passport.js'; // ✅ Load Google strategy before routes
 
 dotenv.config();
 
@@ -17,7 +20,16 @@ app.use(cookieParser());
 app.use(cors({
   origin: 'http://localhost:5173',
   credentials: true
-}))
+}));
+app.use(session({
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+}));
+
+// ===== Passport Middleware =====
+app.use(passport.initialize());
+app.use(passport.session());
 
 // a middleware used to parse key-value pairs
 app.use(express.json());

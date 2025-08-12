@@ -35,7 +35,47 @@ const LoginForm = () => {
   //     alert('Invalid email or password');
   //   }
   // };
+const handleGoogleLogin = async () => {
+  try {
+    // Open Google OAuth in a popup window
+    const popup = window.open(
+      'http://localhost:5000/api/auth/google',
+      'Google Login',
+      'width=600,height=600'
+    );
 
+    // Listen for message from the popup
+    const receiveMessage = (event) => {
+      // Check origin for security
+      if (event.origin !== 'http://localhost:5000') return;
+
+      if (event.data.success) {
+        const { user } = event.data;
+        setUser(user.name);
+        setRole(user.role);
+        localStorage.setItem('userId', user.userId);
+
+        // Close the popup
+        popup.close();
+
+        // Redirect based on role
+        if (user.role === 'Manager') {
+          navigate('/dashboard');
+        } else {
+          navigate('/user-dashboard');
+        }
+      } else {
+        setError(event.data.message || 'Google login failed');
+        popup.close();
+      }
+    };
+
+    window.addEventListener('message', receiveMessage, false);
+  } catch (err) {
+    console.error('Google login error:', err);
+    setError('Failed to initiate Google login');
+  }
+};
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSuccess(false);
@@ -166,12 +206,24 @@ const LoginForm = () => {
       </div>
 
       <div className="flex space-x-4">
-        <button className="flex-1 flex items-center justify-center border border-gray-300 rounded py-2 text-gray-700 hover:bg-gray-50 transition duration-200">
-          <FcGoogle className="mr-2 text-lg" /> Google
-        </button>
-        <button className="flex-1 flex items-center justify-center border border-gray-300 rounded py-2 text-gray-700 hover:bg-gray-50 transition duration-200">
-          <FaApple className="mr-2 text-lg" /> Apple
-        </button>
+     <button
+  type="button"
+  onClick={() => {
+    window.location.href = 'http://localhost:5000/api/auth/google';
+  }}
+  className="flex-1 flex items-center justify-center border border-gray-300 rounded py-2 text-gray-700 hover:bg-gray-50 transition duration-200"
+>
+  <FcGoogle className="mr-2 text-lg" /> Google
+</button>
+
+
+       <button
+  type="button"
+  onClick={handleGoogleLogin}
+  className="flex-1 flex items-center justify-center border border-gray-300 rounded py-2 text-gray-700 hover:bg-gray-50 transition duration-200"
+>
+  <FcGoogle className="mr-2 text-lg" /> Google
+</button>
       </div>
 
       <p className="text-center text-gray-600 text-sm mt-6">

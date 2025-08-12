@@ -1,4 +1,6 @@
+
 import express from 'express';
+import passport from 'passport';
 import { addProspect, bulkAddProspects, deleteProspect, fetchProspectsWithAgents, getProspect, putProspect } from '../Controllers/prospectController.js';
 import { addUser, deleteUser, fetchUserById, getUser, loginUser, logoutUser, putUser, verifyToken,} from '../Controllers/userController.js';
 import {getSupervisorAgents,
@@ -8,7 +10,27 @@ import { addVisit, getVisits, putVisit, deleteVisitRecord, fetchVisitsWithProspe
 import { createLeadController, deleteLeadController, getAllLeadsController, getFullLeadDetailsController, getLeadByIdController, getLeadsByProspectIdController, getLeadsWithProspectInfoController, updateLeadController, updateLeadStatusController } from '../Controllers/leadControllers.js';
 
 
+//semir updates 
+import {
+  
+  googleCallback,
+  hashPassword,
+  verifyPassword
+} from "../Controllers/userController2.js";
 const router = express.Router();
+router.get(
+  "/auth/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+router.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/" }),
+  googleCallback // Use the controller we just defined
+);
+
+router.get("/hash/:password", hashPassword);
+router.get("/verify/:password/:hash", verifyPassword);
 
 // Prospect Routes
 router.post('/prospects', addProspect);
