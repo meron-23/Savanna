@@ -1,118 +1,162 @@
 import React, { useState, useEffect } from 'react';
-// import axios from 'axios'; // No longer needed for dummy data
+import axios from 'axios';
 
 const AssignedLeadsTable = () => {
   const [leads, setLeads] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // Dummy data to simulate leads assigned to the user
-  const dummyLeads = [
-    {
-      id: 1,
-      name: 'John Doe',
-      phoneNumber: '+1-555-1234',
-      interest: 'Product A',
-      remark: 'New Lead',
-      date: '2025-07-30T10:00:00Z',
-    },
-    {
-      id: 2,
-      name: 'Jane Smith',
-      phoneNumber: '+1-555-5678',
-      interest: 'Service B',
-      remark: 'Follow-up scheduled',
-      date: '2025-07-29T14:30:00Z',
-    },
-    {
-      id: 3,
-      name: 'Sam Wilson',
-      phoneNumber: '+1-555-9012',
-      interest: 'Product A',
-      remark: 'Qualified',
-      date: '2025-07-28T11:45:00Z',
-    },
-    {
-      id: 4,
-      name: 'Maria Garcia',
-      phoneNumber: '+1-555-3456',
-      interest: 'Service C',
-      remark: 'Unqualified - Not interested',
-      date: '2025-07-27T16:00:00Z',
-    },
-    {
-      id: 5,
-      name: 'Chris Evans',
-      phoneNumber: '+1-555-7890',
-      interest: 'Product B',
-      remark: 'Contacted',
-      date: '2025-07-26T09:15:00Z',
-    },
-  ];
+  const [currentUser, setCurrentUser] = useState(null);
 
   useEffect(() => {
-    // Simulate fetching data from an API with a 1-second delay
-    const fetchData = () => {
+    const userId = localStorage.getItem('userId');
+    const userName = localStorage.getItem('name');
+    const userRole = localStorage.getItem('role');
+
+    if (userId && userName && userRole) {
+      setCurrentUser({
+        userId,
+        name: userName,
+        role: userRole,
+      });
+    } else {
+      setError('User data not found. Please log in.');
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    const fetchLeads = async () => {
+      if (!currentUser) return;
+
       setLoading(true);
       setError(null);
 
-      setTimeout(() => {
-        try {
-          // In a real app, this would be the response from your backend API
-          // const response = await axios.get(`http://localhost:5000/api/leads/assigned/${userId}`);
-          // setLeads(response.data.data);
+      try {
+        const response = await axios.get('http://localhost:5000/api/full-details');
 
-          // For now, we'll just set the dummy data directly
-          setLeads(dummyLeads);
-          setLoading(false);
-        } catch (err) {
-          // Simulate an error
-          setError('Failed to load leads from the server.');
-          setLoading(false);
+        if (!response.data || !Array.isArray(response.data.data)) {
+          throw new Error('API response data is not in the expected format.');
         }
-      }, 1000); // 1-second delay
+
+        const userLeads = response.data.data.filter(
+          (lead) => lead.agent_id === currentUser.userId
+        );
+
+        setLeads(userLeads);
+      } catch (err) {
+        console.error('Failed to fetch leads:', err);
+        setError(err.response?.data?.message || 'Failed to load leads. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
     };
 
-    fetchData();
-  }, []); // Empty dependency array means this runs once on mount
+    if (currentUser) {
+      fetchLeads();
+    }
+  }, [currentUser]);
+
+  const handleCallLead = (phoneNumber) => {
+    if (!phoneNumber) {
+      alert('No phone number available for this lead');
+      return;
+    }
+    
+    // Clean the phone number (remove all non-numeric characters)
+    const cleanedPhoneNumber = phoneNumber.replace(/\D/g, '');
+    
+    // Create the tel: link
+    const telLink = `tel:${cleanedPhoneNumber}`;
+    
+    // Open the dialer (works on mobile devices)
+    window.location.href = telLink;
+    
+    // For desktop browsers, we can show a message
+    if (!/Mobi|Android/i.test(navigator.userAgent)) {
+      alert(`Call ${phoneNumber} from your phone`);
+    }
+  };
 
   if (loading) {
-    return <p className="text-[#F4C430] p-4">Loading assigned leads...</p>;
+    return (
+      <div className="bg-white rounded-lg shadow-md p-4 md:p-6 w-full flex justify-center items-center h-48">
+        <p className="text-blue-700 text-lg">Loading your leads...</p>
+      </div>
+    );
   }
 
   if (error) {
-    return <p className="text-red-500 p-4">Error: {error}</p>;
+    return (
+      <div className="bg-white rounded-lg shadow-md p-4 md:p-6 w-full flex justify-center items-center h-48">
+        <p className="text-red-500 text-lg font-medium">Error: {error}</p>
+      </div>
+    );
   }
 
-  if (!leads || leads.length === 0) {
-    return <p className="text-gray-600 p-4">You have no assigned leads at this time. Check back later!</p>;
+  if (leads.length === 0) {
+    return (
+      <div className="bg-white rounded-lg shadow-md p-4 md:p-6 w-full flex justify-center items-center h-48">
+        <p className="text-gray-600 text-lg text-center">
+          No leads are currently assigned to you. Check back later!
+        </p>
+      </div>
+    );
   }
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-4 md:p-6 w-full">
-      <h2 className="text-xl font-bold text-[#333333] mb-4">Your Assigned Leads</h2>
-      
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-gray-200 mt-4">
+    <div className="bg-white rounded-lg shadow-md p-4 md:p-6 w-full overflow-hidden">
+      <div className="flex justify-between items-center mb-4">
+        <div>
+          <h2 className="text-2xl font-bold text-[#333333]">Your Assigned Leads</h2>
+          {currentUser && (
+            <p className="text-sm text-gray-500">Logged in as: {currentUser.name} ({currentUser.role})</p>
+          )}
+        </div>
+        <span className="bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded">
+          {leads.length} {leads.length === 1 ? 'lead' : 'leads'}
+        </span>
+      </div>
+
+      <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
+        <table className="min-w-full divide-y divide-gray-200">
           <thead className="bg-gray-50">
             <tr>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Interest</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-              <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date Added</th>
-              {/* Add more table headers as needed for leads */}
+              <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap sm:px-4">Lead</th>
+              <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap sm:px-4">Phone</th>
+              <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-4">Prospect Source</th>
+              <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider sm:px-4">Status</th>
+              <th scope="col" className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap sm:px-4">Date Added</th>
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
             {leads.map((lead) => (
-              <tr key={lead.id}> 
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{lead.name}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{lead.phoneNumber}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{lead.interest}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{lead.remark}</td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {new Date(lead.date).toLocaleDateString()}
+              <tr 
+                key={lead.lead_id} 
+                className="hover:bg-gray-50 cursor-pointer"
+                onClick={() => handleCallLead(lead.phone)}
+              >
+                <td className="px-3 py-3 whitespace-nowrap sm:px-4">
+                  <div className="font-medium text-gray-900">{lead.lead_name}</div>
+                  <div className="text-xs text-gray-500 line-clamp-1">{lead.lead_interest}</div>
+                </td>
+                <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-500 sm:px-4">
+                  {lead.phone}
+                </td>
+                <td className="px-3 py-3 text-sm text-gray-500 sm:px-4">
+                  <div className="font-medium">{lead.prospect_name || lead.lead_name}</div>
+                  <div className="text-xs text-gray-400">{lead.method} • {lead.site}</div>
+                </td>
+                <td className="px-3 py-3 whitespace-nowrap sm:px-4">
+                  <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusColor(lead.status)}`}>
+                    {lead.status.charAt(0).toUpperCase() + lead.status.slice(1)}
+                  </span>
+                </td>
+                <td className="px-3 py-3 whitespace-nowrap text-sm text-gray-500 sm:px-4">
+                  {new Date(lead.date_added).toLocaleDateString('en-US', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })}
                 </td>
               </tr>
             ))}
@@ -121,6 +165,19 @@ const AssignedLeadsTable = () => {
       </div>
     </div>
   );
+};
+
+const getStatusColor = (status) => {
+  const normalizedStatus = status.toLowerCase();
+  switch (normalizedStatus) {
+    case 'new': return 'bg-blue-100 text-blue-800';
+    case 'contacted': return 'bg-purple-100 text-purple-800';
+    case 'interested': return 'bg-yellow-100 text-yellow-800';
+    case 'qualified': return 'bg-green-100 text-green-800';
+    case 'converted': return 'bg-indigo-100 text-indigo-800';
+    case 'closed': return 'bg-gray-100 text-gray-800';
+    default: return 'bg-gray-100 text-gray-800';
+  }
 };
 
 export default AssignedLeadsTable;

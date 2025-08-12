@@ -126,6 +126,48 @@ const getLeadsWithProspectInfo = async () => {
   }
 };
 
+const getFullLeadDetails = async () => {
+  const query = `
+    SELECT 
+      l.id AS lead_id,
+      l.name AS lead_name,
+      l.phone,
+      l.interest AS lead_interest,
+      l.status,
+      l.date_added,
+      
+      p.id AS prospect_id,
+      p.name AS prospect_name,
+      p.phoneNumber AS prospect_phone,
+      p.interest AS prospect_interest,
+      p.method,
+      p.site,
+      p.comment,
+      p.remark,
+      p.periodTime,
+      p.date AS prospect_date,
+      
+      u.userId AS agent_id,
+      u.name AS agent_name,
+      u.email AS agent_email,
+      u.phoneNumber AS agent_phone,
+      u.role AS agent_role,
+      u.supervisor
+    FROM leads l
+    JOIN prospects p ON l.prospect_id = p.id
+    JOIN users u ON p.userId = u.userId
+    ORDER BY l.date_added DESC
+  `;
+  
+  try {
+    const [rows] = await mySqlConnection.query(query);
+    return rows;
+  } catch (error) {
+    console.error("Error fetching full lead details:", error);
+    throw error;
+  }
+};
+
 export {
   createLead,
   getAllLeads,
@@ -134,5 +176,6 @@ export {
   updateLead,
   updateLeadStatus,
   deleteLead,
-  getLeadsWithProspectInfo
+  getLeadsWithProspectInfo,
+  getFullLeadDetails
 };

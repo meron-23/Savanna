@@ -51,7 +51,7 @@ const SettingsPage = () => {
                       <label className="block text-sm mb-1">First Name</label>
                       <input 
                         type="text" 
-                        className={`w-full p-2 border rounded ${darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}`}
+                        className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm'
                         defaultValue="John"
                       />
                     </div>
@@ -59,7 +59,7 @@ const SettingsPage = () => {
                       <label className="block text-sm mb-1">Last Name</label>
                       <input 
                         type="text" 
-                        className={`w-full p-2 border rounded ${darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}`}
+                        className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm'
                         defaultValue="Doe"
                       />
                     </div>
@@ -67,7 +67,7 @@ const SettingsPage = () => {
                       <label className="block text-sm mb-1">Email</label>
                       <input 
                         type="email" 
-                        className={`w-full p-2 border rounded ${darkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}`}
+                        className='mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm'
                         defaultValue="john@example.com"
                       />
                     </div>
@@ -119,7 +119,7 @@ const SettingsPage = () => {
 
                 {/* Save Button */}
                 <div className="pt-4">
-                  <button className="px-6 py-2 bg-[#F4C430] text-white rounded-lg hover:bg-[#e6b82a] transition-colors">
+                  <button className={`px-6 py-2 bg-[#F4C430] text-black rounded-lg hover:bg-[#e6b82a] transition-colors`}>
                     Save Changes
                   </button>
                 </div>

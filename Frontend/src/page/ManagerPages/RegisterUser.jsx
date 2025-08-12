@@ -267,10 +267,22 @@ const RegisterUser = () => {
                   </div>
                   <button
                     onClick={openModal}
-                    className="bg-[#F4A300] text-white px-4 py-2 rounded-lg shadow-md hover:bg-[#333333] focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition duration-150 ease-in-out whitespace-nowrap"
+                    className="
+                      bg-[#F4A300] text-white 
+                      px-3 py-3.5 text-sm
+                      sm:px-4 sm:py-2 sm:text-base
+                      rounded-lg shadow-md 
+                      hover:bg-[#333333] 
+                      focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 
+                      transition duration-150 ease-in-out 
+                      whitespace-nowrap
+                      flex items-center justify-center
+                    "
                   >
-                    <i className="fas fa-user-plus mr-2"></i> Add Member
+                    <i className="fas fa-user-plus"></i>
+                    <span className="hidden sm:inline ml-2">Add Member</span>
                   </button>
+
                 </div>
               </div>
 

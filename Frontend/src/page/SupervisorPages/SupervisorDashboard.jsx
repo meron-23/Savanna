@@ -102,26 +102,34 @@ const SupervisorDashboard = ({ supervisorId }) => { // Ensure supervisorId is pa
               })}
             </p>
           </div>
-          <div className="flex space-x-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Start date</label>
-              <input
-                type="date"
-                value={dateRange.startDate.toISOString().split('T')[0]}
-                onChange={(e) => handleDateChange(e, 'startDate')}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">End date</label>
-              <input
-                type="date"
-                value={dateRange.endDate.toISOString().split('T')[0]}
-                onChange={(e) => handleDateChange(e, 'endDate')}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
-              />
-            </div>
-          </div>
+          <div className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
+  <div className="flex-1">
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      Start date
+    </label>
+    <input
+      type="date"
+      value={dateRange.startDate.toISOString().split('T')[0]}
+      onChange={(e) => handleDateChange(e, 'startDate')}
+      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm 
+                 focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
+    />
+  </div>
+
+  <div className="flex-1">
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      End date
+    </label>
+    <input
+      type="date"
+      value={dateRange.endDate.toISOString().split('T')[0]}
+      onChange={(e) => handleDateChange(e, 'endDate')}
+      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm 
+                 focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
+    />
+  </div>
+</div>
+
         </div>
       </div>
 
@@ -137,66 +145,85 @@ const SupervisorDashboard = ({ supervisorId }) => { // Ensure supervisorId is pa
 
       {/* Charts Section */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Agent Performance Chart */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Agent Performance</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={dashboardData.agentsPerformance} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="totalSales" fill="#F4C430" name="Total Sales" />
-              <Bar dataKey="officeVisits" fill="#FF8042" name="Office Visits" />
-              <Bar dataKey="siteVisits" fill="#333333" name="Site Visits" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+  {/* Agent Performance Chart */}
+  <div className="bg-white rounded-lg shadow-md p-4 sm:p-6">
+    <h2 className="text-lg sm:text-xl font-semibold text-gray-700 mb-4">
+      Agent Performance
+    </h2>
+    <ResponsiveContainer width="100%" height={250}>
+      <BarChart
+        data={dashboardData.agentsPerformance}
+        margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" fontSize={12} />
+        <YAxis fontSize={12} />
+        <Tooltip />
+        <Legend />
+        <Bar dataKey="totalSales" fill="#F4C430" name="Total Sales" />
+        <Bar dataKey="officeVisits" fill="#FF8042" name="Office Visits" />
+        <Bar dataKey="siteVisits" fill="#333333" name="Site Visits" />
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
 
-        {/* Visit Distribution Pie Chart */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Visit Distribution</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={dashboardData.visitDistribution}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={renderCustomizedLabel}
-                outerRadius={120}
-                fill="#F4C430"
-                dataKey="value"
-              >
-                {dashboardData.visitDistribution.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+  {/* Visit Distribution Pie Chart */}
+  <div className="bg-white rounded-lg shadow-md p-4">
+    <h2 className="text-lg sm:text-xl font-semibold text-gray-700 mb-4">
+      Visit Distribution
+    </h2>
+    <ResponsiveContainer width="100%" height={250}>
+      <PieChart>
+        <Pie
+          data={dashboardData.visitDistribution}
+          cx="50%"
+          cy="50%"
+          labelLine={false}
+          label={renderCustomizedLabel}
+          outerRadius={80}
+          fill="#F4C430"
+          dataKey="value"
+        >
+          {dashboardData.visitDistribution.map((entry, index) => (
+            <Cell
+              key={`cell-${index}`}
+              fill={COLORS[index % COLORS.length]}
+            />
+          ))}
+        </Pie>
+        <Tooltip />
+        <Legend />
+      </PieChart>
+    </ResponsiveContainer>
+  </div>
+</div>
+
 
       {/* Sales Trend Chart */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 className="text-xl font-semibold text-gray-700 mb-4">Sales Trend</h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={dashboardData.salesTrend} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="sales" fill="#F4C430" name="Sales Amount" />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+      <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 w-full">
+  <h2 className="text-lg sm:text-xl font-semibold text-gray-700 mb-4">
+    Sales Trend
+  </h2>
+  <div className="w-full h-[250px] sm:h-[300px]">
+    <ResponsiveContainer width="100%" height="100%">
+      <BarChart
+        data={dashboardData.salesTrend}
+        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" fontSize={12} />
+        <YAxis fontSize={12} />
+        <Tooltip />
+        <Legend />
+        <Bar dataKey="sales" fill="#F4C430" name="Sales Amount" />
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+</div>
+
 
       {/* Recent Feedback Section (Example) */}
-      <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="bg-white rounded-lg shadow-md mt-5 p-6">
         <h2 className="text-xl font-semibold text-gray-700 mb-4">Recent Client Feedback</h2>
         {dashboardData.recentFeedbacks && dashboardData.recentFeedbacks.length > 0 ? (
           <ul className="divide-y divide-gray-200">

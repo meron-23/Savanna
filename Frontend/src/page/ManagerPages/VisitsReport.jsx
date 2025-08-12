@@ -38,7 +38,7 @@ const VisitsReport = () => {
       setError(null);     // Clear any previous errors
       try {
         // Updated API endpoint
-        const response = await fetch('http://localhost:3000/api/visits-with-prospects-and-agents');
+        const response = await fetch('http://localhost:5000/api/visits-with-prospects-and-agents');
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

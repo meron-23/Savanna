@@ -52,6 +52,11 @@ const supervisorNavItems = [
     subItems: prospectSubItems,
   },
   {
+    name: 'Assign Leads',
+    path: 'AssignLeads',
+    icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />,
+  },
+  {
     name: 'Office and Site Visits',
     path: 'SiteVisits',
     icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />,
@@ -78,6 +83,11 @@ const managerNavItems = [
   {
     name: 'Add Prospect',
     path: 'AddProspect',
+    icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />,
+  },
+  {
+    name: 'Assign Leads',
+    path: 'AssignLeads',
     icon: <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />,
   },
   {
@@ -125,69 +135,72 @@ const MobileBottomNav = ({
   }
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-[#333333] border-t border-gray-700 shadow-lg z-50">
-      <nav className="relative z-50 bg-[#333333]">
-        <ul className="flex justify-around">
-          {navItems.map((item) => (
-            <li key={item.name} className="relative flex-1">
-              <button
-                className={`w-full flex flex-col items-center py-3 px-1 ${
-                  activeItem === item.name || (item.subItems && (activeItem === 'Add' || activeItem === 'View')) ? 'text-[#F4A300]' : 'text-gray-300'
-                }`}
-                onClick={() => {
-                  if (item.subItems) {
-                    toggleItem(item.name);
-                  } else {
-                    handleItemClick(item.path);
-                  }
-                }}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill={item.name === 'Prospect' ? 'currentColor' : 'none'}
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  {item.icon}
-                </svg>
-                <span className="text-xs mt-1">{item.name}</span>
-              </button>
+    <div className="fixed bottom-0 left-0 right-0 bg-[#333333] border-t border-gray-700 shadow-lg z-50 sm:hidden">
+  <nav className="relative z-50">
+    <ul className="flex justify-around">
+      {navItems.map((item) => (
+        <li key={item.name} className="relative flex-1">
+          <button
+            className={`w-full flex flex-col items-center py-3 px-1 ${
+              activeItem === item.name || 
+              (item.subItems && (activeItem === 'Add' || activeItem === 'View'))
+                ? 'text-[#F4A300]'
+                : 'text-gray-300'
+            }`}
+            onClick={() => {
+              if (item.subItems) {
+                toggleItem(item.name);
+              } else {
+                handleItemClick(item.path);
+              }
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill={item.name === 'Prospect' ? 'currentColor' : 'none'}
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              {item.icon}
+            </svg>
+            <span className="text-xs mt-1">{item.name}</span>
+          </button>
 
-              {/* Submenu for items with subItems (e.g., Prospect for Sales/Supervisor) */}
-              {expandedItem === item.name && item.subItems && (
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-48 bg-[#444] rounded-lg shadow-xl z-50">
-                  <div className="py-1">
-                    {item.subItems.map((subItem) => (
-                      <button
-                        key={subItem.name}
-                        className="w-full flex items-center px-4 py-3 text-sm text-white hover:bg-[#F4A300] hover:text-black"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleSubItemClick(subItem.name);
-                          setExpandedItem(null);
-                        }}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="h-4 w-4 mr-2"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                        >
-                          {subItem.icon}
-                        </svg>
-                        {subItem.name} Prospect
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
-      </nav>
-    </div>
+          {expandedItem === item.name && item.subItems && (
+            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 w-48 bg-[#444] rounded-lg shadow-xl z-50">
+              <div className="py-1">
+                {item.subItems.map((subItem) => (
+                  <button
+                    key={subItem.name}
+                    className="w-full flex items-center px-4 py-3 text-sm text-white hover:bg-[#F4A300] hover:text-black"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSubItemClick(subItem.name);
+                      setExpandedItem(null);
+                    }}
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4 mr-2"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      {subItem.icon}
+                    </svg>
+                    {subItem.name} Prospect
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </li>
+      ))}
+    </ul>
+  </nav>
+</div>
+
   );
 };
 

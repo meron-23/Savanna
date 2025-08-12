@@ -30,7 +30,7 @@ const SalesDashboard = () => {
   useEffect(() => {
     const fetchProspects = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/prospects'); 
+        const response = await fetch('http://localhost:5000/api/prospects'); 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -154,7 +154,7 @@ const SalesDashboard = () => {
             placeholder="Enter number"
             value={followUpNumberInput}
             onChange={(e) => setFollowUpNumberInput(e.target.value)}
-            className="flex-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-saffron focus:border-transparent text-gray-700"
+            className="flex-1 mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
           />
           <button 
             onClick={handleSubmitFollowUpInput}
@@ -243,13 +243,8 @@ const SalesDashboard = () => {
               <input
                 type="date" 
                 id="fromDate"
-                className="w-full p-2 border border-gray-300 rounded-md pr-10 focus:outline-none focus:ring-2 focus:ring-saffron focus:border-transparent text-gray-700"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
               />
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h.01M7 12h.01M7 15h.01M15 11h.01M15 12h.01M15 15h.01M4 19h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
             </div>
           </div>
           <div className="flex-1">
@@ -258,13 +253,8 @@ const SalesDashboard = () => {
               <input
                 type="date" 
                 id="toDate"
-                className="w-full p-2 border border-gray-300 rounded-md pr-10 focus:outline-none focus:ring-2 focus:ring-saffron focus:border-transparent text-gray-700"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
               />
-              <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                <svg className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h.01M7 12h.01M7 15h.01M15 11h.01M15 12h.01M15 15h.01M4 19h16a2 2 0 002-2V7a2 2 0 00-2-2H4a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-              </div>
             </div>
           </div>
         </div>

@@ -56,7 +56,7 @@ const AddProspect = () => {
       };
 
       const response = await axios.post(
-        'http://localhost:3000/api/prospects',
+        'http://localhost:5000/api/prospects',
         dataToSend,
         {
           headers: {

@@ -5,7 +5,7 @@ import {getSupervisorAgents,
   getDashboardStats,
   registerAgent} from '../Controllers/supervisorController.js';
 import { addVisit, getVisits, putVisit, deleteVisitRecord, fetchVisitsWithProspectsAndAgents } from "../Controllers/visitsAndSalesController.js";
-import { createLeadController, deleteLeadController, getAllLeadsController, getLeadByIdController, getLeadsByProspectIdController, getLeadsWithProspectInfoController, updateLeadController, updateLeadStatusController } from '../Controllers/leadControllers.js';
+import { createLeadController, deleteLeadController, getAllLeadsController, getFullLeadDetailsController, getLeadByIdController, getLeadsByProspectIdController, getLeadsWithProspectInfoController, updateLeadController, updateLeadStatusController } from '../Controllers/leadControllers.js';
 
 
 const router = express.Router();
@@ -44,6 +44,8 @@ router.post('/:supervisorId/register', registerAgent); // Register new agents un
 
 
 router.post("/leads", createLeadController);
+
+router.get("/full-details", getFullLeadDetailsController);
 
 // Get all leads
 router.get("/allLeads", getAllLeadsController);

@@ -6,7 +6,8 @@ import {
   updateLead,
   updateLeadStatus,
   deleteLead,
-  getLeadsWithProspectInfo
+  getLeadsWithProspectInfo,
+  getFullLeadDetails
 } from "../Models/leadModel.js";
 
 // Create a new lead
@@ -182,6 +183,23 @@ export const getLeadsWithProspectInfoController = async (req, res) => {
       success: false, 
       message: "Failed to fetch leads with prospect details", 
       error: error.message 
+    });
+  }
+};
+
+export const getFullLeadDetailsController = async (req, res) => {
+  try {
+    const leads = await getFullLeadDetails();
+    res.status(200).json({
+      success: true,
+      data: leads
+    });
+  } catch (error) {
+    console.error("Error in getFullLeadDetails:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch lead details",
+      error: error.message
     });
   }
 };
