@@ -3,18 +3,36 @@ import {
   updateUser,
   viewUser,
   deleteUserModel,
-  findUserByNameAndEmail,
+  findUserByEmail,
   getUserById,
+  generateUserId
 } from "../Models/userModel.js";
 
 // import jwt from 'jsonwebtoken';
+import { OAuth2Client } from 'google-auth-library';
+
+import argon2 from 'argon2';
 
 export const addUser = async (req, res, next) => {
-  const { userId, name, email, phoneNumber, gender, role, supervisor, creationTime, lastSignInTime } = req.body;
+  const { name, email, password, phoneNumber, gender, role, supervisor, creationTime, lastSignInTime } = req.body;
 
   try {
-    const result = await createUser(userId, name, email, phoneNumber, gender, role, supervisor, creationTime, lastSignInTime);
-    res.status(201).json({ success: true, message: "User created", id: result.insertId });
+    // Check if the user already exists
+    const existingUser = await findUserByEmail(email);
+    if (existingUser) {
+      return res.status(409).json({ success: false, message: "A user with this email already exists." });
+    }
+
+    // Hash the password before saving it to the database
+    const hashedPassword = await argon2.hash(password);
+
+    // Generate a new user ID
+    const userId = generateUserId();
+
+    // Pass the hashed password to the createUser function
+    const result = await createUser(userId, name, email, hashedPassword, phoneNumber, gender, role, supervisor, new Date(), new Date());
+    
+    res.status(201).json({ success: true, message: "User created successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Internal server error" });
@@ -22,31 +40,26 @@ export const addUser = async (req, res, next) => {
 };
 
 export const loginUser = async (req, res, next) => {
-  const { name, email } = req.body;
+  const { email, password } = req.body;
 
   try {
-    const [user] = await findUserByNameAndEmail(name, email);
+    // Find the user by email using the new function
+    const user = await findUserByEmail(email);
+    
     if (!user) {
-      return res.status(401).json({ success: false, message: "Invalid name or email" });
+      // User not found
+      return res.status(401).json({ success: false, message: "Invalid email or password" });
     }
 
-    // const token = jwt.sign(
-    //   {
-    //     id: user.userId,
-    //     username: user.name,
-    //     role: user.role
-    //   },
-    //   process.env.JWT_SECRET, {
-    //   expiresIn: '1h'
-    // });
+    // Verify the provided password against the stored hash
+    const passwordMatches = await argon2.verify(user.password, password);
 
-    // res.cookie('authToken', token, {
-    //   httpOnly: true,
-    //   secure: false,
-    //   sameSite: 'Lax',
-    //   maxAge: 3600000
-    // });
+    if (!passwordMatches) {
+      // Passwords do not match
+      return res.status(401).json({ success: false, message: "Invalid email or password" });
+    }
 
+    // If login is successful
     res.status(200).json({
       success: true,
       message: "Login successful",
@@ -57,13 +70,80 @@ export const loginUser = async (req, res, next) => {
         role: user.role
       }
     });
-    // console.log(token)
-    // console.log(user.userId, user.name)
+
   } catch (error) {
     console.error(error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+export const googleLogin = async (req, res) => {
+  const { email, name, googleId, picture } = req.body;
+
+  if (!email || !googleId) {
+    return res.status(400).json({ 
+      success: false, 
+      message: "Email and Google ID are required" 
+    });
+  }
+
+  try {
+    // Check if user exists by email
+    let user = await findUserByEmail(email);
+    
+    if (!user) {
+      // Create new user for Google login
+      const userId = generateUserId();
+      const defaultRole = 'Agent';
+      
+      // Generate a random password for Google-authenticated users
+      // (since your createUser requires a password parameter)
+      // const randomPassword = crypto.randomBytes(16).toString('hex');
+      
+      // Call createUser with required parameters
+      await createUser(
+        userId,
+        name,
+        email,
+        '', // Using random password since Google doesn't provide one
+        '',            // phoneNumber (empty string)
+        '',            // gender (empty string)
+        defaultRole,   // role
+        '',            // supervisor (empty string)
+        new Date(),    // creationTime
+        new Date()     // lastSignInTime
+      );
+      
+      user = await findUserByEmail(email);
+    } else if (user.googleId && user.googleId !== googleId) {
+      return res.status(401).json({ 
+        success: false, 
+        message: "This email is already registered with a different login method" 
+      });
+    }
+
+    // Successful login
+    res.status(200).json({
+      success: true,
+      message: "Google login successful",
+      user: {
+        userId: user.userId,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+      }
+    });
+
+  } catch (error) {
+    console.error("Google login error:", error);
+    res.status(500).json({ 
+      success: false, 
+      message: "Internal server error during Google login" 
+    });
+  }
+};
+
+
 
 export const verifyToken = (req, res, next) => {
   // const token = req.cookies.authToken;
