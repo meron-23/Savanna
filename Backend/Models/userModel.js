@@ -7,15 +7,64 @@ const generateUserId = () => {
 
 
 // Updated to accept 'password' hash
-const createUser = async (userId, name, email, password, phoneNumber, gender, role, supervisor, creationTime, lastSignInTime) => {
-  // Add 'password' to the SQL query and values
-  const addSqlQuery = "INSERT INTO users (userId, name, email,phoneNumber, gender, role, supervisor, creationTime, lastSignInTime,password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+const createUser = async (
+  userId,
+  name,
+  email,
+  password,
+  phoneNumber,
+  gender,
+  role,
+  supervisor,
+  creationTime,
+  lastSignInTime,
+  login_method = 'email', // Default to email
+  is_active = 1,          // Default to active
+  google_id = null        // Default to null
+) => {
+  const addSqlQuery = `
+    INSERT INTO users (
+      userId, 
+      name, 
+      email,
+      phoneNumber, 
+      gender, 
+      role, 
+      supervisor, 
+      creationTime, 
+      lastSignInTime,
+      password,
+      is_active,
+      login_method,
+      google_id
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
   try {
-    // Pass the hashed password to the query
-    const [result] = await mySqlConnection.query(addSqlQuery, [userId, name, email, phoneNumber, gender, role, supervisor, creationTime, lastSignInTime,password]);
+    const [result] = await mySqlConnection.query(addSqlQuery, [
+      userId,
+      name,
+      email,
+      phoneNumber,
+      gender,
+      role,
+      supervisor,
+      creationTime,
+      lastSignInTime,
+      password,
+      is_active,
+      login_method,
+      google_id
+    ]);
     return result;
   } catch (error) {
-    console.error("Create error:", error);
+    console.error("Create user error:", error);
+    
+    // Handle duplicate email error specifically
+    if (error.code === 'ER_DUP_ENTRY') {
+      throw new Error('Email already exists in system');
+    }
+    
     throw error;
   }
 };

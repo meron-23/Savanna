@@ -7,6 +7,7 @@ import {
   getUserById,
   generateUserId
 } from "../Models/userModel.js";
+import mySqlConnection from "../Config/db.js";
 
 // import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
@@ -14,28 +15,70 @@ import { OAuth2Client } from 'google-auth-library';
 import argon2 from 'argon2';
 
 export const addUser = async (req, res, next) => {
-  const { name, email, password, phoneNumber, gender, role, supervisor, creationTime, lastSignInTime } = req.body;
-
   try {
-    // Check if the user already exists
-    const existingUser = await findUserByEmail(email);
-    if (existingUser) {
-      return res.status(409).json({ success: false, message: "A user with this email already exists." });
+    const { name, email, phoneNumber, gender, role, supervisor } = req.body;
+
+    // Validate required fields
+    if (!name || !email || !role) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name, email, and role are required fields'
+      });
     }
 
-    // Hash the password before saving it to the database
-    const hashedPassword = await argon2.hash(password);
+    // Generate a random password if not provided
+    const randomPassword = '123456';
+    const hashedPassword = await argon2.hash(randomPassword);
 
-    // Generate a new user ID
-    const userId = generateUserId();
+    const newUser = {
+      userId: crypto.randomUUID().substring(0, 28),
+      name,
+      email,
+      password: hashedPassword,
+      phoneNumber: phoneNumber || '',
+      gender: gender || 'Other',
+      role,
+      supervisor: role === 'Supervisor' ? null : supervisor || null,
+      creationTime: new Date(),
+      lastSignInTime: new Date(),
+      login_method: 'email',
+      is_active: 1,
+      google_id: null 
+    };
 
-    // Pass the hashed password to the createUser function
-    const result = await createUser(userId, name, email, hashedPassword, phoneNumber, gender, role, supervisor, new Date(), new Date());
-    
-    res.status(201).json({ success: true, message: "User created successfully" });
+    // Save to database (implementation depends on your DB)
+    const createdUser = await createUser(
+        newUser.userId,
+        newUser.name,
+        newUser.email,
+        newUser.password,
+        newUser.phoneNumber,
+        newUser.gender,
+        newUser.role,
+        newUser.supervisor,
+        newUser.creationTime,
+        newUser.lastSignInTime,
+        newUser.login_method,    // Optional (default: 'email')
+        newUser.is_active,      // Optional (default: 1)
+        newUser.google_id       // Optional (default: null)
+      );
+    // Return response without password
+    const { password, ...userWithoutPassword } = createdUser;
+
+    res.status(201).json({
+      success: true,
+      message: 'User created successfully',
+      data: userWithoutPassword,
+      tempPassword: randomPassword // Only for development, remove in production
+    });
+
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.error('Error creating user:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to create user',
+      error: error.message
+    });
   }
 };
 
@@ -43,23 +86,35 @@ export const loginUser = async (req, res, next) => {
   const { email, password } = req.body;
 
   try {
-    // Find the user by email using the new function
+    // 1. Find the user by email
     const user = await findUserByEmail(email);
     
     if (!user) {
-      // User not found
-      return res.status(401).json({ success: false, message: "Invalid email or password" });
+      return res.status(401).json({ 
+        success: false, 
+        message: "Invalid email or password" 
+      });
     }
 
-    // Verify the provided password against the stored hash
+    // 2. Check if user registered via Google
+    if (user.login_method === 'google') {
+      return res.status(403).json({
+        success: false,
+        message: "This account requires Google login",
+        login_method: "google" // Frontend can use this to trigger Google login
+      });
+    }
+
+    // 3. Verify password (only for email-registered users)
     const passwordMatches = await argon2.verify(user.password, password);
-
     if (!passwordMatches) {
-      // Passwords do not match
-      return res.status(401).json({ success: false, message: "Invalid email or password" });
+      return res.status(401).json({ 
+        success: false, 
+        message: "Invalid email or password" 
+      });
     }
 
-    // If login is successful
+    // 4. Successful login
     res.status(200).json({
       success: true,
       message: "Login successful",
@@ -67,82 +122,83 @@ export const loginUser = async (req, res, next) => {
         userId: user.userId,
         name: user.name,
         email: user.email,
-        role: user.role
+        role: user.role,
+        login_method: user.login_method // Return for frontend reference
       }
     });
 
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.error("Login error:", error);
+    res.status(500).json({ 
+      success: false, 
+      message: "Internal server error" 
+    });
   }
 };
 
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+
 export const googleLogin = async (req, res) => {
-  const { email, name, googleId, picture } = req.body;
-
-  if (!email || !googleId) {
-    return res.status(400).json({ 
-      success: false, 
-      message: "Email and Google ID are required" 
-    });
-  }
-
   try {
-    // Check if user exists by email
-    let user = await findUserByEmail(email);
-    
-    if (!user) {
-      // Create new user for Google login
-      const userId = generateUserId();
-      const defaultRole = 'Agent';
-      
-      // Generate a random password for Google-authenticated users
-      // (since your createUser requires a password parameter)
-      // const randomPassword = crypto.randomBytes(16).toString('hex');
-      
-      // Call createUser with required parameters
-      await createUser(
-        userId,
-        name,
-        email,
-        '', // Using random password since Google doesn't provide one
-        '',            // phoneNumber (empty string)
-        '',            // gender (empty string)
-        defaultRole,   // role
-        '',            // supervisor (empty string)
-        new Date(),    // creationTime
-        new Date()     // lastSignInTime
-      );
-      
-      user = await findUserByEmail(email);
-    } else if (user.googleId && user.googleId !== googleId) {
-      return res.status(401).json({ 
-        success: false, 
-        message: "This email is already registered with a different login method" 
+    const { access_token } = req.body;
+
+    if (!access_token) {
+      return res.status(400).json({ 
+        success: false,
+        message: 'Access token is required' 
       });
     }
 
-    // Successful login
-    res.status(200).json({
-      success: true,
-      message: "Google login successful",
-      user: {
-        userId: user.userId,
-        name: user.name,
-        email: user.email,
-        role: user.role,
+    // 1. Verify token with Google
+    const response = await fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+      headers: { 
+        Authorization: `Bearer ${access_token}` 
       }
+    });
+    
+    if (!response.ok) throw new Error('Google verification failed');
+    
+     const userInfo = await response.json();
+     console.log(userInfo);
+    
+     // 2. Check if user exists in database
+    const email = await findUserByEmail(userInfo.email)
+    
+
+    if (!email) {
+      return res.status(404).json({
+        success: false,
+        message: 'Account not registered'
+      });
+    }
+
+    console.log(email);
+    // 3. Update last login
+    await mySqlConnection.query(
+      'UPDATE users SET lastSignInTime = NOW() WHERE userId = ?',
+      [email.userId]
+    );
+    await mySqlConnection.query(
+        'UPDATE users SET login_method = "google" WHERE userId = ?',
+        [email.userId]
+      );
+
+    // 4. Return user data
+    const { password, ...safeUser } = email;
+    res.json({ 
+      success: true,
+      user: safeUser 
     });
 
   } catch (error) {
-    console.error("Google login error:", error);
-    res.status(500).json({ 
-      success: false, 
-      message: "Internal server error during Google login" 
+    console.error('Google login error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.response?.data?.error || 'Authentication failed'
     });
   }
 };
-
 
 
 export const verifyToken = (req, res, next) => {
