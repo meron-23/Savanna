@@ -260,7 +260,7 @@ const RegisterUser = () => {
                     <input
                       type="text"
                       placeholder="Search by name, email or phone"
-                      className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+                      className="mt-1 block w-full px-9 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -296,7 +296,6 @@ const RegisterUser = () => {
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supervisor</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -316,17 +315,6 @@ const RegisterUser = () => {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{member.supervisor}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center space-x-2">
-                          <button className="text-blue-600 hover:text-blue-900 flex items-center">
-                            <i className="fas fa-lock mr-1"></i> Password
-                          </button>
-                          <button className="text-red-600 hover:text-red-900">
-                            <i className="fas fa-edit"></i>
-                          </button>
-                          <button className="text-gray-600 hover:text-gray-900">
-                            <i className="fas fa-trash"></i>
-                          </button>
-                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -392,7 +380,7 @@ const RegisterUser = () => {
                     name="name"
                     value={newMember.name}
                     onChange={handleNewMemberChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#F4A300] focus:border-[#F4A300]"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     placeholder="Enter Name"
                     required
                   />
@@ -407,7 +395,7 @@ const RegisterUser = () => {
                     name="email"
                     value={newMember.email}
                     onChange={handleNewMemberChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#F4A300] focus:border-[#F4A300]"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     placeholder="Enter Email"
                     required
                   />
@@ -421,7 +409,7 @@ const RegisterUser = () => {
                     name="gender"
                     value={newMember.gender}
                     onChange={handleNewMemberChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#F4A300] focus:border-[#F4A300]"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     required
                   >
                     <option value="">Select Gender</option>
@@ -440,7 +428,7 @@ const RegisterUser = () => {
                     name="phoneNumber"
                     value={newMember.phoneNumber}
                     onChange={handleNewMemberChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#F4A300] focus:border-[#F4A300]"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     placeholder="Phone Number"
                   />
                 </div>
@@ -453,7 +441,7 @@ const RegisterUser = () => {
                     name="role"
                     value={newMember.role}
                     onChange={handleNewMemberChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#F4A300] focus:border-[#F4A300]"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     required
                   >
                     <option value="">Select Role</option>
@@ -471,7 +459,7 @@ const RegisterUser = () => {
                     name="supervisor"
                     value={newMember.supervisor}
                     onChange={handleNewMemberChange}
-                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-[#F4A300] focus:border-[#F4A300]"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                   >
                     {supervisors.map((sup, index) => (
                       <option key={index} value={sup}>{sup}</option>
