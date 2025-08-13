@@ -101,66 +101,63 @@ const RegisterUser = () => {
   };
 
   // Handle submission for the "Add New Team Member" form
-  const handleAddMemberSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError(null);
+const handleAddMemberSubmit = async (e) => {
+  e.preventDefault();
+  setIsLoading(true);
+  setError(null);
 
-    const now = new Date();
-    const formattedDateTime = now.getFullYear() + '-' +
-                            String(now.getMonth() + 1).padStart(2, '0') + '-' +
-                            String(now.getDate()).padStart(2, '0') + ' ' +
-                            String(now.getHours()).padStart(2, '0') + ':' +
-                            String(now.getMinutes()).padStart(2, '0') + ':' +
-                            String(now.getSeconds()).padStart(2, '0');
+  // Basic validation
+  if (!newMember.name || !newMember.email || !newMember.role) {
+    setError('Name, email, and role are required');
+    setIsLoading(false);
+    return;
+  }
 
-    const newUserId = crypto.randomUUID().substring(0, 28); 
-
-    const memberDataToSend = {
-      userId: newUserId,
-      name: newMember.name,
-      email: newMember.email,
-      phoneNumber: newMember.phoneNumber,
-      gender: newMember.gender,
-      role: newMember.role,
-      supervisor: newMember.supervisor === 'N/A' ? null : newMember.supervisor,
-      creationTime: formattedDateTime,
-      lastSignInTime: formattedDateTime,
-    };
-
-    try {
-      const response = await fetch('http://localhost:5000/api/users', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(memberDataToSend),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
-      }
-
-      const result = await response.json();
-      alert('New member added successfully!');
-      console.log('New user added:', result);
-
-      await fetchUsers();
-      closeModal(); // Close the modal after successful submission
-    } catch (error) {
-      console.error("Failed to add new member:", error);
-      setError(`Failed to add member: ${error.message}.`);
-      alert(`Error adding member: ${error.message}`);
-    } finally {
-      setIsLoading(false);
-    }
+  const memberDataToSend = {
+    name: newMember.name.trim(),
+    email: newMember.email.trim().toLowerCase(),
+    phoneNumber: newMember.phoneNumber || '',
+    gender: newMember.gender || 'Other',
+    role: newMember.role,
+    supervisor: newMember.role === 'Supervisor' ? null : (newMember.supervisor === 'N/A' ? null : newMember.supervisor)
   };
+
+  try {
+    const response = await fetch('http://localhost:5000/api/users', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${localStorage.getItem('token')}`
+      },
+      body: JSON.stringify(memberDataToSend)
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to register user');
+    }
+
+    const result = await response.json();
+    console.log('New user added:', result);
+    
+    // Show success message
+    alert(`User created successfully! Temporary password: ${result.tempPassword}`);
+    
+    await fetchUsers();
+    closeModal();
+  } catch (error) {
+    console.error("Registration failed:", error);
+    setError(error.message);
+    alert(`Error: ${error.message}`);
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   // Calculate summary card values
   const totalMembersCount = teamMembers.length;
   const supervisorsCount = teamMembers.filter(member => member.role === 'Supervisor').length;
-  const salesAgentsCount = teamMembers.filter(member => member.role === 'Sales Agent' || member.role === 'Sales').length;
+  const salesAgentsCount = teamMembers.filter(member => member.role === 'SalesAgent' || member.role === 'Sales').length;
 
   return (
     <div className="min-h-screen bg-gray-100 p-8 font-inter">
@@ -296,7 +293,6 @@ const RegisterUser = () => {
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
                       <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Supervisor</th>
-                      <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
@@ -316,17 +312,6 @@ const RegisterUser = () => {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{member.supervisor}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium flex items-center space-x-2">
-                          <button className="text-blue-600 hover:text-blue-900 flex items-center">
-                            <i className="fas fa-lock mr-1"></i> Password
-                          </button>
-                          <button className="text-red-600 hover:text-red-900">
-                            <i className="fas fa-edit"></i>
-                          </button>
-                          <button className="text-gray-600 hover:text-gray-900">
-                            <i className="fas fa-trash"></i>
-                          </button>
-                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -457,7 +442,7 @@ const RegisterUser = () => {
                     required
                   >
                     <option value="">Select Role</option>
-                    <option value="Sales Agent">Sales Agent</option>
+                    <option value="SalesAgent">Sales Agent</option>
                     <option value="Supervisor">Supervisor</option>
                     <option value="Admin">Admin</option>
                   </select>
