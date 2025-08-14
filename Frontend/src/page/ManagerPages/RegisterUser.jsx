@@ -426,7 +426,7 @@ const RegisterUser = () => {
                     required
                   >
                     <option value="">Select Role</option>
-                    <option value="SalesAgent">Sales Agent</option>
+                    <option value="Agent">Sales Agent</option>
                     <option value="Supervisor">Supervisor</option>
                     <option value="Admin">Admin</option>
                   </select>
