@@ -6,7 +6,7 @@ const AssignLeads = () => {
   const [leads, setLeads] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [selectedLeads, setSelectedLeads] = useState([]);
-  const [selectedSupervisorId, setSelectedSupervisorId] = useState(''); // Now stores ID instead of name
+  const [selectedSupervisor, setSelectedSupervisor] = useState(''); // Now stores name
   const [selectedAgent, setSelectedAgent] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -17,18 +17,6 @@ const AssignLeads = () => {
   // Filter users locally
   const supervisors = allUsers.filter(user => user.role === 'Supervisor');
   const agents = allUsers.filter(user => user.role === 'SalesAgent');
-
-  // Debug data
-  useEffect(() => {
-    console.log("Supervisors:", supervisors);
-    console.log("Agents:", agents.map(a => ({
-      id: a.id,
-      name: a.name,
-      supervisor_id: a.supervisor,
-      supervisor_name: supervisors.find(s => s.id === a.supervisor_id)?.name || 'None'
-    })));
-    console.log("Selected Supervisor ID:", selectedSupervisorId);
-  }, [allUsers, selectedSupervisorId]);
 
   // Fetch data on component mount and when statusFilter changes
   useEffect(() => {
@@ -50,7 +38,6 @@ const AssignLeads = () => {
         
         // Handle different API response structures
         const users = usersData.data || usersData.users || [];
-        console.log("Fetched Users:", users);
         setAllUsers(users);
         
       } catch (err) {
@@ -72,20 +59,22 @@ const AssignLeads = () => {
     const matchesSource = !sourceFilter || lead.source === sourceFilter;
     return matchesSearch && matchesStatus && matchesSource;
   });
-
-  // Filter agents based on selected supervisor ID
-  const filteredAgents = selectedSupervisorId
-    ? agents.filter(agent => {
-        if (!agent.supervisor) {
-          console.warn(`Agent ${agent.userId} (${agent.name}) has no supervisor_id`);
-          return false;
-        }
-        const match = String(agent.supervisor) === String(selectedSupervisorId);
-        console.log(`Matching: Agent ${agent.userId} (supervisor_id: ${agent.supervisor}) with Selected: ${selectedSupervisorId} => ${match}`);
-        return match;
-      })
-    : [];
-  console.log("Filtered Agents:", filteredAgents);
+  
+  // Filter agents based on selected supervisor name
+ const filteredAgents = selectedSupervisor
+  ? agents.filter(agent => {
+      // Find the supervisor by ID to get their name
+      const agentsSupervisor = supervisors.find(s => s.userId === agent.supervisor);
+      console.log(agentsSupervisor)
+      if (!agentsSupervisor) {
+        console.warn(`Agent ${agent.name}'s supervisor not found`);
+        return false;
+      }
+      
+      // Compare the agent's supervisor name with the selected supervisor name
+      return agentsSupervisor.name === selectedSupervisor;
+    })
+  : [];
 
   // Handle lead selection
   const handleLeadSelect = (lead) => {
@@ -110,11 +99,22 @@ const AssignLeads = () => {
 
   // Handle lead assignment
   const handleAssign = async () => {
-    if (selectedLeads.length === 0 || (!selectedSupervisorId && !selectedAgent)) return;
+    if (selectedLeads.length === 0 || (!selectedSupervisor && !selectedAgent)) return;
 
     try {
       setIsLoading(true);
       setError(null);
+
+      // Determine the assignee ID
+      let assigneeId;
+      if (selectedAgent) {
+        assigneeId = selectedAgent; // This is already the agent's ID
+      } else if (selectedSupervisor) {
+        // Find the supervisor by name to get their ID
+        const supervisor = supervisors.find(s => s.name === selectedSupervisor);
+        if (!supervisor) throw new Error('Selected supervisor not found');
+        assigneeId = supervisor.userId;
+      }
 
       // Prepare batch assignment
       const assignmentPromises = selectedLeads.map(lead => 
@@ -123,7 +123,7 @@ const AssignLeads = () => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             status: 'new',
-            assigned_to: selectedAgent || selectedSupervisorId // Now using ID
+            assigned_to: assigneeId
           })
         })
       );
@@ -138,7 +138,7 @@ const AssignLeads = () => {
       const assignedLeadIds = selectedLeads.map(lead => lead.id);
       setLeads(leads.filter(lead => !assignedLeadIds.includes(lead.id)));
       setSelectedLeads([]);
-      setSelectedSupervisorId('');
+      setSelectedSupervisor('');
       setSelectedAgent('');
       
     } catch (err) {
@@ -153,13 +153,22 @@ const AssignLeads = () => {
     setSearchTerm('');
     setSourceFilter('');
     setSelectedLeads([]);
-    setSelectedSupervisorId('');
+    setSelectedSupervisor('');
     setSelectedAgent('');
     setIsLoading(true);
   };
 
   // Check if all filtered leads are currently selected
   const allLeadsSelected = filteredLeads.length > 0 && selectedLeads.length === filteredLeads.length;
+
+  // Format source for display
+  const formatSource = (source) => {
+    if (!source) return 'Unknown';
+    return source
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
 
   // Loading state
   if (isLoading) return (
@@ -180,15 +189,6 @@ const AssignLeads = () => {
       </button>
     </div>
   );
-
-  // Format source for display
-  const formatSource = (source) => {
-    if (!source) return 'Unknown';
-    return source
-      .split('_')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-  };
 
   return (
     <div className="p-4 md:p-6">
@@ -359,22 +359,22 @@ const AssignLeads = () => {
                 </div>
               </div>
 
-              {/* Supervisor Dropdown - Now stores ID */}
+              {/* Supervisor Dropdown - Now stores name */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Assign to Supervisor:
                 </label>
                 <select
-                  value={selectedSupervisorId}
+                  value={selectedSupervisor}
                   onChange={(e) => {
-                    setSelectedSupervisorId(e.target.value);
+                    setSelectedSupervisor(e.target.value);
                     setSelectedAgent('');
                   }}
                   className="w-full p-2 border border-gray-300 rounded-md"
                 >
                   <option value="">Select Supervisor</option>
                   {supervisors.map(supervisor => (
-                    <option key={supervisor.userId} value={supervisor.userId}>
+                    <option key={supervisor.userId} value={supervisor.name}>
                       {supervisor.name}
                     </option>
                   ))}
@@ -386,7 +386,7 @@ const AssignLeads = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Or assign directly to Agent:
                 </label>
-                {selectedSupervisorId ? (
+                {selectedSupervisor ? (
                   filteredAgents.length > 0 ? (
                     <select
                       value={selectedAgent}
@@ -402,9 +402,7 @@ const AssignLeads = () => {
                     </select>
                   ) : (
                     <div className="text-sm text-yellow-600 p-2 bg-yellow-50 rounded">
-                      {agents.some(a => a.supervisor_id) 
-                        ? "No agents available for selected supervisor" 
-                        : "Warning: No agents have supervisor IDs assigned"}
+                      No agents available for selected supervisor
                     </div>
                   )
                 ) : (
@@ -417,9 +415,9 @@ const AssignLeads = () => {
               {/* Assign Button */}
               <button
                 onClick={handleAssign}
-                disabled={(!selectedSupervisorId && !selectedAgent) || isLoading}
+                disabled={(!selectedSupervisor && !selectedAgent) || isLoading}
                 className={`w-full py-2 px-4 rounded-md text-white flex items-center justify-center ${
-                  (!selectedSupervisorId && !selectedAgent) || isLoading
+                  (!selectedSupervisor && !selectedAgent) || isLoading
                     ? 'bg-gray-400 cursor-not-allowed'
                     : 'bg-[#F4A300] hover:bg-[#e6b82a]'
                 }`}
