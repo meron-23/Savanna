@@ -9,7 +9,11 @@ const RegisterUser = () => {
   const [supervisors, setSupervisors] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [successPopup, setSuccessPopup] = useState({
+    show: false,
+    message: ''
+  });
   const itemsPerPage = 5;
 
   // State for the "Add New Team Member" form
@@ -96,63 +100,68 @@ const RegisterUser = () => {
 
   const closeModal = () => {
     setIsModalOpen(false);
-    // Reset form when closing modal
     setNewMember({ name: '', email: '', gender: '', phoneNumber: '', role: '', supervisor: '' });
   };
 
   // Handle submission for the "Add New Team Member" form
-const handleAddMemberSubmit = async (e) => {
-  e.preventDefault();
-  setIsLoading(true);
-  setError(null);
+  const handleAddMemberSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError(null);
 
-  // Basic validation
-  if (!newMember.name || !newMember.email || !newMember.role) {
-    setError('Name, email, and role are required');
-    setIsLoading(false);
-    return;
-  }
-
-  const memberDataToSend = {
-    name: newMember.name.trim(),
-    email: newMember.email.trim().toLowerCase(),
-    phoneNumber: newMember.phoneNumber || '',
-    gender: newMember.gender || 'Other',
-    role: newMember.role,
-    supervisor: newMember.role === 'Supervisor' ? null : (newMember.supervisor === 'N/A' ? null : newMember.supervisor)
-  };
-
-  try {
-    const response = await fetch('http://localhost:5000/api/users', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      },
-      body: JSON.stringify(memberDataToSend)
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.message || 'Failed to register user');
+    // Basic validation
+    if (!newMember.name || !newMember.email || !newMember.role) {
+      setError('Name, email, and role are required');
+      setIsLoading(false);
+      return;
     }
 
-    const result = await response.json();
-    console.log('New user added:', result);
-    
-    // Show success message
-    alert(`User created successfully! Temporary password: ${result.tempPassword}`);
-    
-    await fetchUsers();
-    closeModal();
-  } catch (error) {
-    console.error("Registration failed:", error);
-    setError(error.message);
-    alert(`Error: ${error.message}`);
-  } finally {
-    setIsLoading(false);
-  }
-};
+    const memberDataToSend = {
+      name: newMember.name.trim(),
+      email: newMember.email.trim().toLowerCase(),
+      phoneNumber: newMember.phoneNumber || '',
+      gender: newMember.gender || 'Other',
+      role: newMember.role,
+      supervisor: newMember.role === 'Supervisor' ? null : (newMember.supervisor === 'N/A' ? null : newMember.supervisor)
+    };
+
+    try {
+      const response = await fetch('http://localhost:5000/api/users', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify(memberDataToSend)
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Failed to register user');
+      }
+
+      const result = await response.json();
+      console.log('New user added:', result);
+      
+      // Show success popup
+      setSuccessPopup({
+        show: true,
+        message: `User created successfully! Temporary password: ${result.tempPassword}`
+      });
+      
+      await fetchUsers();
+      closeModal();
+    } catch (error) {
+      console.error("Registration failed:", error);
+      setError(error.message);
+      setSuccessPopup({
+        show: true,
+        message: `Error: ${error.message}`
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   // Calculate summary card values
   const totalMembersCount = teamMembers.length;
@@ -279,7 +288,6 @@ const handleAddMemberSubmit = async (e) => {
                     <i className="fas fa-user-plus"></i>
                     <span className="hidden sm:inline ml-2">Add Member</span>
                   </button>
-
                 </div>
               </div>
 
@@ -347,6 +355,39 @@ const handleAddMemberSubmit = async (e) => {
                     <i className="fas fa-chevron-right"></i>
                   </button>
                 </nav>
+              </div>
+            </div>
+          </>
+        )}
+
+        {/* Success Popup */}
+        {successPopup.show && (
+          <>
+            <div className="modal-backdrop" onClick={() => setSuccessPopup({...successPopup, show: false})}></div>
+            <div className="modal-container">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-bold text-gray-800">
+                  {successPopup.message.includes('Error') ? 'Error' : 'Success'}
+                </h2>
+                <button 
+                  onClick={() => setSuccessPopup({...successPopup, show: false})}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <i className="fas fa-times"></i>
+                </button>
+              </div>
+              
+              <div className="mb-4">
+                <p className="text-gray-700">{successPopup.message}</p>
+              </div>
+              
+              <div className="flex justify-end">
+                <button
+                  onClick={() => setSuccessPopup({...successPopup, show: false})}
+                  className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#F4A300] hover:bg-[#333333] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F4A300]"
+                >
+                  OK
+                </button>
               </div>
             </div>
           </>

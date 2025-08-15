@@ -22,6 +22,12 @@ const OfficeSiteVisits = () => {
   // State to control the visibility of the edit visit modal
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+   const [successModal, setSuccessModal] = useState({
+    show: false,
+    message: ''
+  });
+
+
   // State for the new visit form
   const [formState, setFormState] = useState({
     clientId: '',
@@ -47,11 +53,26 @@ const OfficeSiteVisits = () => {
   }, []);
 
   // Function to display the custom message box
-  const showMessageBox = (text, type = 'success') => {
-    setMessageBox({ isVisible: true, text, type });
-    setTimeout(() => {
-      setMessageBox({ isVisible: false, text: '', type: 'success' });
-    }, 3000); // Hide after 3 seconds
+   const showMessageBox = (text, type = 'success') => {
+    if (type === 'success') {
+      setSuccessModal({
+        show: true,
+        message: text
+      });
+    } else {
+      // For errors, keep the existing notification style
+      setMessageBox({ isVisible: true, text, type });
+      setTimeout(() => {
+        setMessageBox({ isVisible: false, text: '', type: 'success' });
+      }, 3000);
+    }
+  };
+
+   const closeSuccessModal = () => {
+    setSuccessModal({
+      show: false,
+      message: ''
+    });
   };
 
   // Handlers for opening and closing the new visit modal
@@ -158,10 +179,7 @@ const OfficeSiteVisits = () => {
       }
 
       if (data.success) {
-        // After successful submission, re-fetch the visits data to update the table
         await fetchVisits();
-
-        // Reset form after submission
         setFormState({
           clientId: '',
           visitDate: '',
@@ -301,59 +319,78 @@ const OfficeSiteVisits = () => {
         
         {/* Filter and Summary Section */}
         <div className="bg-white rounded-lg shadow-md p-4 md:p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-4 mb-4">
-            <div className="relative flex-1">
-              <label htmlFor="search-phone" className="sr-only">Search by Client ID or Details</label>
-              <input
-                id="search-phone"
-                type="text"
-                placeholder="Search by Client ID or Details"
-                className="pl-4 pr-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm w-full"
-                value={searchTerm}
-                onChange={handleSearchChange}
-              />
-            </div>
-            <div className="flex items-center space-x-2">
-              <label htmlFor="date-from" className="text-gray-600 text-sm whitespace-nowrap">Date From</label>
-              <input
-                id="date-from"
-                type="date"
-                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm w-full"
-                value={dateFrom}
-                onChange={handleDateChange(setDateFrom)}
-              />
-            </div>
-            <div className="flex items-center space-x-2">
-              <label htmlFor="date-to" className="text-gray-600 text-sm whitespace-nowrap">Date To</label>
-              <input
-                id="date-to"
-                type="date"
-                className="px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm w-full"
-                value={dateTo}
-                onChange={handleDateChange(setDateTo)}
-              />
-            </div>
-          </div>
+  {/* Filters */}
+  <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
+    {/* Search */}
+    <div className="relative flex-1 min-w-[200px]">
+      <label htmlFor="search-phone" className="sr-only">
+        Search by Client ID or Details
+      </label>
+      <input
+        id="search-phone"
+        type="text"
+        placeholder="Search by Client ID or Details"
+        className="pl-4 pr-4 py-2 border border-gray-300 rounded-md shadow-sm 
+                   focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] 
+                   text-sm w-full"
+        value={searchTerm}
+        onChange={handleSearchChange}
+      />
+    </div>
 
-          {/* Visit Summary */}
-          <div className="bg-white rounded-lg p-4 mt-6 border border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-800 mb-2">Visit Summary</h3>
-            <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4">
-              <div className="flex-1 bg-gray-50 rounded-lg p-4 shadow-sm border border-gray-200">
-                <p className="text-sm text-gray-500">Time Period</p>
-                <p className="text-2xl font-bold text-gray-900">All Visits</p>
-              </div>
-              <div className="flex-1 bg-gray-50 rounded-lg p-4 shadow-sm border border-gray-200">
-                <p className="text-sm text-gray-500">Office Visits</p>
-                <p className="text-2xl font-bold text-gray-900">{totalOfficeVisits}</p>
-              </div>
-              <div className="flex-1 bg-gray-50 rounded-lg p-4 shadow-sm border border-gray-200">
-                <p className="text-sm text-gray-500">Site Visits</p>
-                <p className="text-2xl font-bold text-gray-900">{totalSiteVisits}</p>
-              </div>
-            </div>
-          </div>
-        </div>
+    {/* Date From */}
+    <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-1 min-w-[150px]">
+      <label htmlFor="date-from" className="text-gray-600 text-sm whitespace-nowrap">
+        Date From
+      </label>
+      <input
+        id="date-from"
+        type="date"
+        className="px-4 py-2 border border-gray-300 rounded-md shadow-sm 
+                   focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] 
+                   text-sm w-full"
+        value={dateFrom}
+        onChange={handleDateChange(setDateFrom)}
+      />
+    </div>
+
+    {/* Date To */}
+    <div className="flex flex-col sm:flex-row sm:items-center gap-2 flex-1 min-w-[150px]">
+      <label htmlFor="date-to" className="text-gray-600 text-sm whitespace-nowrap">
+        Date To
+      </label>
+      <input
+        id="date-to"
+        type="date"
+        className="px-4 py-2 border border-gray-300 rounded-md shadow-sm 
+                   focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] 
+                   text-sm w-full"
+        value={dateTo}
+        onChange={handleDateChange(setDateTo)}
+      />
+    </div>
+  </div>
+
+  {/* Visit Summary */}
+  <div className="bg-white rounded-lg p-4 mt-6 border border-gray-200">
+    <h3 className="text-lg font-semibold text-gray-800 mb-4">Visit Summary</h3>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <div className="bg-gray-50 rounded-lg p-4 shadow-sm border border-gray-200">
+        <p className="text-sm text-gray-500">Time Period</p>
+        <p className="text-2xl font-bold text-gray-900">All Visits</p>
+      </div>
+      <div className="bg-gray-50 rounded-lg p-4 shadow-sm border border-gray-200">
+        <p className="text-sm text-gray-500">Office Visits</p>
+        <p className="text-2xl font-bold text-gray-900">{totalOfficeVisits}</p>
+      </div>
+      <div className="bg-gray-50 rounded-lg p-4 shadow-sm border border-gray-200">
+        <p className="text-sm text-gray-500">Site Visits</p>
+        <p className="text-2xl font-bold text-gray-900">{totalSiteVisits}</p>
+      </div>
+    </div>
+  </div>
+</div>
+
 
         {/* Visit Data Table */}
         <div className="bg-white rounded-lg shadow-md p-4 md:p-6 mb-6">
@@ -427,9 +464,47 @@ const OfficeSiteVisits = () => {
         </div>
       </div>
 
+      {/* Success Modal */}
+      {successModal.show && (
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-gray-600 bg-opacity-50 flex justify-center items-center">
+          <div className="relative bg-white rounded-lg shadow-xl p-6 m-4 max-w-md w-full">
+            <div className="text-center">
+              <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-green-100">
+                <svg
+                  className="h-6 w-6 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+              </div>
+              <h3 className="text-lg font-medium text-gray-900 mt-3">Success!</h3>
+              <div className="mt-2">
+                <p className="text-sm text-gray-500">{successModal.message}</p>
+              </div>
+              <div className="mt-5">
+                <button
+                  type="button"
+                  onClick={closeSuccessModal}
+                  className="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-[#F4A300] border border-transparent rounded-md hover:bg-[#333333] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F4A300]"
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Modal for Register New Visit Form */}
       {isRegisterModalOpen && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-gray-600 bg-opacity-50 flex justify-center pt-20">
+        <div className="fixed inset-0 z-50 overflow-y-auto bg-gray-600 bg-opacity-50 flex justify-center ">
           <div className="relative bg-white rounded-lg shadow-xl p-6 m-4 max-w-2xl w-full h-fit">
             {/* Modal Header */}
             <div className="flex justify-between items-center mb-4">
@@ -458,7 +533,7 @@ const OfficeSiteVisits = () => {
                     value={formState.clientId || ''}
                     onChange={handleFormChange}
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                   />
                 </div>
                 {/* Visit Date */}
@@ -471,7 +546,7 @@ const OfficeSiteVisits = () => {
                     value={formState.visitDate}
                     onChange={handleFormChange}
                     required
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                   />
                 </div>
                 {/* Visit Type Checkboxes */}
@@ -509,14 +584,14 @@ const OfficeSiteVisits = () => {
                     rows="3"
                     value={formState.visitDetails}
                     onChange={handleFormChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-teal-500 focus:ring-teal-500 sm:text-sm"
+                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                   ></textarea>
                 </div>
                 {/* Register Visit button */}
                 <div className="pt-4">
                   <button
                     type="submit"
-                    className="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[#F4A300]  hover:bg-[#333333] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+                    className="w-full mb-10 md:mb-0 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-[#F4A300]  hover:bg-[#333333] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
                   >
                     Register Visit
                   </button>

@@ -4,9 +4,16 @@ import { addUser, deleteUser, fetchUserById, getUser, loginUser, logoutUser, put
 import {getSupervisorAgents,
   getDashboardStats,
   registerAgent} from '../Controllers/supervisorController.js';
+
 import { addVisit, getVisits, putVisit, deleteVisitRecord, fetchVisitsWithProspectsAndAgents } from "../Controllers/visitsAndSalesController.js";
 import { createLeadController, deleteLeadController, getAllLeadsController, getFullLeadDetailsController, getLeadByIdController, getLeadsByProspectIdController, getLeadsWithProspectInfoController, updateLeadController, updateLeadStatusController } from '../Controllers/leadControllers.js';
-
+import {
+  getSales,
+  getSale,
+  createSale,
+  updateSale,
+  deleteSale
+} from '../Controllers/salesController.js';
 
 const router = express.Router();
 
@@ -68,5 +75,13 @@ router.patch("/leads/:id/status", updateLeadStatusController);
 
 // Delete a lead
 router.delete("leads/:id", deleteLeadController);
+
+//sales
+router.get('/sales', getSales);
+router.get('/sales/:id', getSale);
+router.post('/sales', createSale);
+router.put('/sales/:id', updateSale);
+router.delete('/sales/:id', deleteSale);
+
 
 export default router;

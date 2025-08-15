@@ -213,7 +213,7 @@ const RegisterAgents = ({ isSidebarOpen }) => { // Accept isSidebarOpen prop
                       id="name"
                       value={newMember.name}
                       onChange={handleInputChange}
-                      className="focus:ring-[#F4A300] focus:border-[#F4A300] block w-full pl-10 pr-3 sm:text-sm border-gray-300 rounded-lg"
+                      className="mt-1 block w-full px-9 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                       placeholder="Enter full name"
                     />
                   </div>
@@ -234,7 +234,7 @@ const RegisterAgents = ({ isSidebarOpen }) => { // Accept isSidebarOpen prop
                       id="email"
                       value={newMember.email}
                       onChange={handleInputChange}
-                      className="focus:ring-[#F4A300] focus:border-[#F4A300] block w-full pl-10 pr-3 sm:text-sm border-gray-300 rounded-lg"
+                      className="mt-1 block w-full px-9 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                       placeholder="name@example.com"
                     />
                   </div>
@@ -251,7 +251,7 @@ const RegisterAgents = ({ isSidebarOpen }) => { // Accept isSidebarOpen prop
                       name="gender"
                       value={newMember.gender}
                       onChange={handleInputChange}
-                      className="focus:ring-[#F4A300] focus:border-[#F4A300] block w-full pr-10 sm:text-sm border-gray-300 rounded-lg"
+                      className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                     >
                       <option value="">Select Gender</option>
                       <option value="Male">Male</option>
@@ -275,7 +275,7 @@ const RegisterAgents = ({ isSidebarOpen }) => { // Accept isSidebarOpen prop
                       id="phoneNumber"
                       value={newMember.phoneNumber}
                       onChange={handleInputChange}
-                      className="focus:ring-[#F4A300] focus:border-[#F4A300] block w-full pl-10 pr-3 sm:text-sm border-gray-300 rounded-lg"
+                      className="mt-1 block w-full px-9 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
                       placeholder="Enter phone number"
                     />
                   </div>

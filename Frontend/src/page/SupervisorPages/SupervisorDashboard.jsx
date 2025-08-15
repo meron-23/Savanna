@@ -89,41 +89,45 @@ const SupervisorDashboard = ({ supervisorId }) => { // Ensure supervisorId is pa
     <div className="p-8 bg-gray-100 min-h-screen font-inter">
       {/* Welcome Section */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <div className="flex justify-between items-start flex-wrap gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">Welcome, Back!</h1> {/* Assuming supervisorName comes from a user context or login */}
-            <p className="text-gray-600">Role: Supervisor</p>
-            <p className="text-gray-800 mt-2">
-              {new Date().toLocaleDateString('en-US', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric'
-              })}
-            </p>
-          </div>
-          <div className="flex space-x-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Start date</label>
-              <input
-                type="date"
-                value={dateRange.startDate.toISOString().split('T')[0]}
-                onChange={(e) => handleDateChange(e, 'startDate')}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">End date</label>
-              <input
-                type="date"
-                value={dateRange.endDate.toISOString().split('T')[0]}
-                onChange={(e) => handleDateChange(e, 'endDate')}
-                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
-              />
-            </div>
-          </div>
-        </div>
+  <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+    {/* Left Section: Welcome Text */}
+    <div className="flex-1 min-w-0">
+      <h1 className="text-2xl font-bold text-gray-800 truncate">Welcome, Back!</h1>
+      <p className="text-gray-600">Role: Supervisor</p>
+      <p className="text-gray-800 mt-2">
+        {new Date().toLocaleDateString('en-US', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric'
+        })}
+      </p>
+    </div>
+
+    {/* Right Section: Date Inputs */}
+    <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
+      <div className="flex-1 min-w-0">
+        <label className="block text-sm font-medium text-gray-700 mb-1">Start date</label>
+        <input
+          type="date"
+          value={dateRange.startDate.toISOString().split('T')[0]}
+          onChange={(e) => handleDateChange(e, 'startDate')}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
+        />
       </div>
+      <div className="flex-1 min-w-0">
+        <label className="block text-sm font-medium text-gray-700 mb-1">End date</label>
+        <input
+          type="date"
+          value={dateRange.endDate.toISOString().split('T')[0]}
+          onChange={(e) => handleDateChange(e, 'endDate')}
+          className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-[#F4A300] focus:border-[#F4A300] sm:text-sm"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-6">
@@ -136,64 +140,75 @@ const SupervisorDashboard = ({ supervisorId }) => { // Ensure supervisorId is pa
       </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-        {/* Agent Performance Chart */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Agent Performance</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={dashboardData.agentsPerformance} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="totalSales" fill="#F4C430" name="Total Sales" />
-              <Bar dataKey="officeVisits" fill="#FF8042" name="Office Visits" />
-              <Bar dataKey="siteVisits" fill="#333333" name="Site Visits" />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+  {/* Agent Performance Chart */}
+  <div className="w-full max-w-full bg-white rounded-lg shadow-md p-4 sm:p-6 mb-6">
+  <h2 className="text-lg sm:text-xl font-semibold text-gray-700 mb-4">Agent Performance</h2>
+  <div className="w-full overflow-x-auto">
+    <ResponsiveContainer width="100%" height={300}>
+      <BarChart
+        data={dashboardData.agentsPerformance}
+        margin={{ top: 5, right: 15, left: 0, bottom: 5 }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey="name" />
+        <YAxis />
+        <Tooltip />
+        <Legend />
+        <Bar dataKey="totalSales" fill="#F4C430" name="Total Sales" />
+        <Bar dataKey="officeVisits" fill="#FF8042" name="Office Visits" />
+        <Bar dataKey="siteVisits" fill="#333333" name="Site Visits" />
+      </BarChart>
+    </ResponsiveContainer>
+  </div>
+</div>
 
-        {/* Visit Distribution Pie Chart */}
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h2 className="text-xl font-semibold text-gray-700 mb-4">Visit Distribution</h2>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={dashboardData.visitDistribution}
-                cx="50%"
-                cy="50%"
-                labelLine={false}
-                label={renderCustomizedLabel}
-                outerRadius={120}
-                fill="#F4C430"
-                dataKey="value"
-              >
-                {dashboardData.visitDistribution.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-              <Legend />
-            </PieChart>
-          </ResponsiveContainer>
-        </div>
-      </div>
+
+  {/* Visit Distribution Pie Chart */}
+  <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 w-full">
+    <h2 className="text-lg sm:text-xl font-semibold text-gray-700 mb-4">Visit Distribution</h2>
+    <ResponsiveContainer width="100%" height={300}>
+      <PieChart>
+        <Pie
+          data={dashboardData.visitDistribution}
+          cx="50%"
+          cy="50%"
+          labelLine={false}
+          label={renderCustomizedLabel}
+          outerRadius={100} // smaller radius for smaller screens
+          fill="#F4C430"
+          dataKey="value"
+        >
+          {dashboardData.visitDistribution.map((entry, index) => (
+            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+          ))}
+        </Pie>
+        <Tooltip />
+        <Legend />
+      </PieChart>
+    </ResponsiveContainer>
+  </div>
+</div>
+
 
       {/* Sales Trend Chart */}
-      <div className="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 className="text-xl font-semibold text-gray-700 mb-4">Sales Trend</h2>
-        <ResponsiveContainer width="100%" height={300}>
-          <BarChart data={dashboardData.salesTrend} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Bar dataKey="sales" fill="#F4C430" name="Sales Amount" />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
+      <div className="bg-white rounded-lg shadow-md p-4 sm:p-6 mb-6 w-full">
+  <h2 className="text-lg sm:text-xl font-semibold text-gray-700 mb-4">Sales Trend</h2>
+  <ResponsiveContainer width="100%" height={300}>
+    <BarChart
+      data={dashboardData.salesTrend}
+      margin={{ top: 5, right: 15, left: 0, bottom: 5 }} // Adjusted for mobile
+    >
+      <CartesianGrid strokeDasharray="3 3" />
+      <XAxis dataKey="name" />
+      <YAxis />
+      <Tooltip />
+      <Legend />
+      <Bar dataKey="sales" fill="#F4C430" name="Sales Amount" />
+    </BarChart>
+  </ResponsiveContainer>
+</div>
+
 
       {/* Recent Feedback Section (Example) */}
       <div className="bg-white rounded-lg shadow-md p-6">
