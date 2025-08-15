@@ -6,35 +6,26 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 
 dotenv.config();
-
-// use port number from .env or the fallback port num 3000
+const app = express();
 const port = process.env.PORT || 5000;
 
-const app = express();
+app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:5173', credentials: true }));
 app.use(cookieParser());
-
-// cors - cross origin resource sharing to allow the frontend access the backend api
-app.use(cors({
-  origin: 'http://localhost:5173',
-  credentials: true
-}))
-
-// a middleware used to parse key-value pairs
 app.use(express.json());
-
-// a middleware used to parse url-enocoded data
 app.use(express.urlencoded({ extended: true }));
 
-// used to use static file(images) from the uploads folder
-// app.use('/uploads', express.static('Uploads'));
 
-app.use('/api', router);
+app.use('/api', router); 
+
+app.get('/health', (req, res) => res.json({ status: 'OK' }));
 
 app.listen(port, async () => {
   try {
     await mySqlConnection.query('SELECT 1');
-    console.log(`Server is running on port ${port} and DB is connected`);
-  } catch (error) {
-    console.error('DB connection failed:', error.message);
+    console.log(`✅ Server running on port ${port}`);
+    console.log('✅ Database connected');
+  } catch (err) {
+    console.error('❌ Database connection failed:', err.message);
+    process.exit(1);
   }
 });

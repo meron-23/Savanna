@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "argon2": "^0.44.0",
+    "crypto": "^1.0.1",
+    "google-auth-library": "^10.2.1",
+    "nodemailer": "^7.0.5"
+  }
+}

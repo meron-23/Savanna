@@ -5,6 +5,7 @@ import { FaApple } from 'react-icons/fa';
 import axios from 'axios';
 import { UserContext } from '../context/UserContext';
 import { useGoogleLogin } from '@react-oauth/google';
+import { Link } from 'react-router-dom'
 
 // This component handles both login and registration
 const AuthForm = () => {
@@ -289,9 +290,9 @@ const AuthForm = () => {
                 <input type="checkbox" className="mr-2" />
                 <span className="text-gray-700">Remember Me</span>
               </label>
-              <a href="#" className="text-[#F4A300] hover:underline">
-                Forgot Your Password?
-              </a>
+                <Link to="/forgot-password" className="text-[#F4A300] hover:underline">
+                  Forgot Your Password?
+                </Link>
             </>
           )}
         </div>
