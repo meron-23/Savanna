@@ -10,6 +10,8 @@ import ProfilePage from './page/ProfilePage';
 import Login from './page/Login'
 import { Settings } from 'lucide-react';
 import Setting from './page/Settings';
+import ForgotPassword from './components/ForgotPassword';
+import ResetPassword from './components/ResetPassword';
 
 
 
@@ -26,7 +28,8 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/settings" element={<Setting />} />
-
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password/:token" element={<ResetPassword />} />
         </Routes>
       </Router>
     </UserProvider>

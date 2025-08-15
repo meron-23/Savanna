@@ -1,97 +1,180 @@
 import mySqlConnection from "../Config/db.js";
+import crypto from "crypto";
+import bcrypt from "bcryptjs";
 
+// Generate unique user ID
 const generateUserId = () => {
-  // Generates a random string that can serve as a unique ID
-  return 'user_' + Math.random().toString(36).substring(2, 15) + Date.now().toString(36);
+  return 'user_' + crypto.randomBytes(16).toString('hex');
 };
 
-
-// Updated to accept 'password' hash
-const createUser = async (userId, name, email, password, phoneNumber, gender, role, supervisor, creationTime, lastSignInTime) => {
-  // Add 'password' to the SQL query and values
-  const addSqlQuery = "INSERT INTO users (userId, name, email,phoneNumber, gender, role, supervisor, creationTime, lastSignInTime,password) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+// Create new user
+const createUser = async (
+  userId,
+  name,
+  email,
+  password,
+  phoneNumber,
+  gender,
+  role,
+  supervisor,
+  creationTime,
+  lastSignInTime
+) => {
+  const query = `
+    INSERT INTO users (
+      userId, name, email, password, phoneNumber, 
+      gender, role, supervisor, creationTime, lastSignInTime
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
   try {
-    // Pass the hashed password to the query
-    const [result] = await mySqlConnection.query(addSqlQuery, [userId, name, email, phoneNumber, gender, role, supervisor, creationTime, lastSignInTime,password]);
-    return result;
-  } catch (error) {
-    console.error("Create error:", error);
-    throw error;
-  }
-};
-
-// New function to find a user by their email for login
-const findUserByEmail = async (email) => {
-  const [rows] = await mySqlConnection.query("SELECT * FROM users WHERE email = ?", [email]);
-  // Return the first user found, or null if none
-  return rows[0]; 
-};
-
-// You can keep or remove this function, but it is not needed for password-based login
-const findUserByNameAndEmail = async (name, email) => {
-  const [rows] = await mySqlConnection.query("SELECT * FROM users WHERE name = ? AND email = ?", [name, email]);
-  return rows;
-};
-
-
-const viewUser = async () => {
-  const viewSqlQuery = "SELECT * FROM users";
-  try {
-    const [result] = await mySqlConnection.query(viewSqlQuery);
-    return result;
-  } catch (error) {
-    console.error("View error:", error);
-    throw error;
-  }
-};
-
-const getUserById = async (id) => {
-  const viewSqlQuery = "SELECT * FROM users where userId = ?";
-  try {
-    const [result] = await mySqlConnection.query(viewSqlQuery, [id]);
-    return result;
-  } catch (error) {
-    console.error("View error:", error);
-    throw error;
-  }
-};
-
-const updateUser = async (id, name, email, phoneNumber) => {
-  const updateSqlQuery = "UPDATE users SET name = ?, email=?, phoneNumber=? WHERE userId=?";
-  try {
-    const [result] = await mySqlConnection.query(updateSqlQuery, [
-      name,
-      email,
-      phoneNumber,
-      id
+    const [result] = await mySqlConnection.query(query, [
+      userId, name, email, password, phoneNumber,
+      gender, role, supervisor, creationTime, lastSignInTime
     ]);
     return result;
   } catch (error) {
-    console.error("Update error:", error);
+    console.error("Create user error:", error);
     throw error;
   }
 };
 
-const deleteUserModel = async (id) => {
-  const deleteSqlQuery = "DELETE FROM users WHERE userId=?";
+// Find user by email
+const findUserByEmail = async (email) => {
   try {
-    const [result] = await mySqlConnection.query(deleteSqlQuery, [id]);
+    const [rows] = await mySqlConnection.query(
+      "SELECT * FROM users WHERE email = ?",
+      [email]
+    );
+    return rows[0] || null;
+  } catch (error) {
+    console.error("Find user by email error:", error);
+    throw error;
+  }
+};
+
+// Find user by token and check expiry
+const findUserByToken = async (token) => {
+  try {
+    const now = new Date();
+    const [rows] = await mySqlConnection.query(
+      "SELECT * FROM users WHERE resetToken = ? AND resetTokenExpiry > ?",
+      [token, now]
+    );
+    return rows[0] || null;
+  } catch (error) {
+    console.error("Find user by token error:", error);
+    throw error;
+  }
+};
+
+// Set reset token and expiry
+const updateUserResetToken = async (email, token, expiry) => {
+  try {
+    const [result] = await mySqlConnection.query(
+      "UPDATE users SET resetToken = ?, resetTokenExpiry = ? WHERE email = ?",
+      [token, expiry, email]
+    );
     return result;
   } catch (error) {
-    console.error("Delete error:", error);
+    console.error("Update reset token error:", error);
     throw error;
   }
 };
 
+// Update password and clear reset token fields
+const updateUserPassword = async (userId, newPassword) => {
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+  try {
+    const [result] = await mySqlConnection.query(
+      "UPDATE users SET password = ?, resetToken = NULL, resetTokenExpiry = NULL WHERE userId = ?",
+      [hashedPassword, userId]
+    );
+    return result;
+  } catch (error) {
+    console.error("Update password error:", error);
+    throw error;
+  }
+};
 
-// Add the new function to your exports
+// Get all users
+const viewUser = async () => {
+  try {
+    const [result] = await mySqlConnection.query("SELECT * FROM users");
+    return result;
+  } catch (error) {
+    console.error("View users error:", error);
+    throw error;
+  }
+};
+
+// Get user by ID
+const getUserById = async (id) => {
+  try {
+    const [result] = await mySqlConnection.query(
+      "SELECT * FROM users WHERE userId = ?",
+      [id]
+    );
+    return result[0] || null;
+  } catch (error) {
+    console.error("Get user by ID error:", error);
+    throw error;
+  }
+};
+
+// Update user fields dynamically
+const updateUser = async (id, updates) => {
+  const fields = [];
+  const values = [];
+
+  for (const [key, value] of Object.entries(updates)) {
+    if (value !== undefined) {
+      fields.push(`${key} = ?`);
+      values.push(value);
+    }
+  }
+
+  if (fields.length === 0) {
+    throw new Error("No valid fields provided for update");
+  }
+
+  values.push(id);
+
+  try {
+    const [result] = await mySqlConnection.query(
+      `UPDATE users SET ${fields.join(", ")} WHERE userId = ?`,
+      values
+    );
+    return result;
+  } catch (error) {
+    console.error("Update user error:", error);
+    throw error;
+  }
+};
+
+// Delete user
+const deleteUserModel = async (id) => {
+  try {
+    const [result] = await mySqlConnection.query(
+      "DELETE FROM users WHERE userId = ?",
+      [id]
+    );
+    return result;
+  } catch (error) {
+    console.error("Delete user error:", error);
+    throw error;
+  }
+};
+
+// Export all functions
 export {
   createUser,
   viewUser,
   updateUser,
   deleteUserModel,
-  findUserByNameAndEmail,
+  findUserByEmail,
   getUserById,
   generateUserId,
-  findUserByEmail
+  findUserByToken,
+  updateUserResetToken,
+  updateUserPassword
 };
