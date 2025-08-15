@@ -55,7 +55,22 @@ const getProspectsWithAgents = async () => {
 };
 
 const updateProspect = async (id, phoneNumber, phoneNumberNormalized, interest, method, site, comment, remark, periodTime, date, dateNow) => {
-  const updateSqlQuery = "UPDATE prospects SET phoneNumber=?, phoneNumber_normalized=?, interest=?, method=?, site=?, comment=?, remark=?, periodTime=?, date=?, dateNow=? WHERE id=?";
+  const updateSqlQuery = `
+    UPDATE prospects 
+    SET 
+      phoneNumber = ?,
+      phoneNumber_normalized = ?,
+      interest = ?,
+      method = ?,
+      site = ?,
+      comment = ?,
+      remark = ?,
+      periodTime = ?,
+      date = ?,
+      dateNow = ?
+    WHERE id = ?
+  `;
+  
   try {
     const [result] = await mySqlConnection.query(updateSqlQuery, [
       phoneNumber,
@@ -65,14 +80,14 @@ const updateProspect = async (id, phoneNumber, phoneNumberNormalized, interest, 
       site,
       comment,
       remark,
-      periodTime,
-      date,
-      dateNow,
+      periodTime || null,
+      date || null,
+      dateNow || null,
       id
     ]);
     return result;
   } catch (error) {
-    console.error("Update error:", error);
+    console.error("SQL Error:", error);
     throw error;
   }
 };

@@ -9,6 +9,7 @@ import {
   createUser, // Import createUser from userModel for agent registration
   generateUserId // Import generateUserId from userModel
 } from "../Models/userModel.js";
+import { googleLogin } from "./userController.js";
 
 
 export const getSupervisorAgents = async (req, res, next) => {
@@ -73,7 +74,7 @@ export const getDashboardStats = async (req, res, next) => {
 
 export const registerAgent = async (req, res, next) => {
   const { supervisorId } = req.params;
-  const { name, email, phoneNumber, gender } = req.body;
+  const { name, email, phoneNumber, gender, password, is_active, login_method, google_id } = req.body;
 
   const userId = generateUserId(); // Use the imported helper function
   const creationTime = new Date();
@@ -89,7 +90,11 @@ export const registerAgent = async (req, res, next) => {
       'Sales Agent', // Role for registered agents
       supervisorId,
       creationTime,
-      lastSignInTime
+      lastSignInTime,
+      password,
+      is_active,
+      login_method,
+      google_id
     );
 
     res.status(201).json({

@@ -51,10 +51,10 @@ const getVisitsWithProspectsAndAgents = async () => {
   return rows;
 };
 
-const updateVisit = async (visitId, visitDate, officeVisit, siteVisit, visitDetails) => {
-  const sql = `UPDATE VisitsAndSales SET VisitDate=?, OfficeVisit=?, SiteVisit=?, VisitDetails=? WHERE VisitID=?`;
+const updateVisit = async (visitId, visitDate, officeVisit, siteVisit, visitDetails, remark) => {
+  const sql = `UPDATE VisitsAndSales SET VisitDate=?, OfficeVisit=?, SiteVisit=?, VisitDetails=?, remark=? WHERE VisitID=?`;
   try {
-    const [result] = await mySqlConnection.query(sql, [visitDate, officeVisit, siteVisit, visitDetails, visitId]);
+    const [result] = await mySqlConnection.query(sql, [visitDate, officeVisit, siteVisit, visitDetails, remark, visitId]);
     return result;
   } catch (error) {
     console.error("Update Visit Error:", error);

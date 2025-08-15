@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { User, Mail, Phone, Pencil, CircleAlert, X } from 'lucide-react';
+import { User, Mail, Phone, Pencil, CircleAlert, X, Lock } from 'lucide-react';
 
 // IMPORTANT: Update API_BASE_URL to point to your backend
 const API_BASE_URL = 'http://localhost:5000/api'; // Use relative path for proxy to work
@@ -33,13 +33,18 @@ const RoleBadge = ({ role }) => {
 
 const RegisterAgents = ({ isSidebarOpen }) => { // Accept isSidebarOpen prop
   // Hardcoded supervisorId for demonstration. In a real app, this would come from authentication.
-  const [supervisorId, setSupervisorId] = useState('supervisor-123');
+  const sID = localStorage.getItem('userId')
+  // const [supervisorId, setSupervisorId] = useState('supervisor-123');
   const [teamMembers, setTeamMembers] = useState([]);
   const [newMember, setNewMember] = useState({
     name: '',
     email: '',
     gender: '',
     phoneNumber: '',
+    password: '',
+    is_active: true,
+    login_method: 'email',
+    google_id: ''
   });
   const [isLoading, setIsLoading] = useState(true);
   const [message, setMessage] = useState('');
@@ -48,7 +53,7 @@ const RegisterAgents = ({ isSidebarOpen }) => { // Accept isSidebarOpen prop
   const fetchAgents = async () => {
     setIsLoading(true);
     try {
-      const response = await axios.get(`${API_BASE_URL}/${supervisorId}/agents`);
+      const response = await axios.get(`${API_BASE_URL}/${sID}/agents`);
       // FIX: Ensure teamMembers is always an array, even if response.data.data is undefined/null
       setTeamMembers(response.data.data || []);
       setMessage(''); // Clear any previous messages
@@ -62,10 +67,10 @@ const RegisterAgents = ({ isSidebarOpen }) => { // Accept isSidebarOpen prop
   };
 
   useEffect(() => {
-    if (supervisorId) {
+    if (sID) {
       fetchAgents();
     }
-  }, [supervisorId]);
+  }, [sID]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -74,7 +79,7 @@ const RegisterAgents = ({ isSidebarOpen }) => { // Accept isSidebarOpen prop
 
   const handleAddMember = async (e) => {
     e.preventDefault();
-    if (!newMember.name || !newMember.email || !newMember.gender || !newMember.phoneNumber) {
+    if (!newMember.name || !newMember.email || !newMember.gender || !newMember.phoneNumber || !newMember.password, !newMember.login_method, !newMember.is_active, !newMember.google_id) {
       setMessage('Please fill in all required fields.');
       return;
     }
@@ -83,10 +88,10 @@ const RegisterAgents = ({ isSidebarOpen }) => { // Accept isSidebarOpen prop
     setMessage('Adding new team member...');
 
     try {
-      const response = await axios.post(`${API_BASE_URL}/${supervisorId}/register`, newMember);
+      const response = await axios.post(`${API_BASE_URL}/${sID}/register`, newMember);
       if (response.data.success) {
         setMessage('Agent registered successfully!');
-        setNewMember({ name: '', email: '', gender: '', phoneNumber: '' }); // Reset form
+        setNewMember({ name: '', email: '', gender: '', phoneNumber: '', password: '', login_method: '', is_active: '', google_id: '' }); // Reset form
         fetchAgents(); // Refresh the list of agents
         setIsModalOpen(false); // Close modal on success
       } else {
@@ -197,100 +202,192 @@ const RegisterAgents = ({ isSidebarOpen }) => { // Accept isSidebarOpen prop
             </button>
             <h2 className="text-2xl font-semibold text-gray-700 mb-6">Add New Team Member</h2>
             <form onSubmit={handleAddMember}>
-              <div className="grid grid-cols-1 gap-6"> {/* Simplified grid for modal */}
-                {/* Name */}
-                <div>
-                  <label htmlFor="name" className="text-sm font-medium text-gray-700 flex items-center">
-                    <span className="text-red-500 mr-1">*</span>Name
-                  </label>
-                  <div className="mt-1 relative rounded-lg shadow-sm">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <User className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <input
-                      type="text"
-                      name="name"
-                      id="name"
-                      value={newMember.name}
-                      onChange={handleInputChange}
-                      className="focus:ring-[#F4A300] focus:border-[#F4A300] block w-full pl-10 pr-3 sm:text-sm border-gray-300 rounded-lg"
-                      placeholder="Enter full name"
-                    />
-                  </div>
-                </div>
+  <div className="grid grid-cols-1 gap-6">
+    {/* Name */}
+    <div>
+      <label htmlFor="name" className="text-sm font-medium text-gray-700 flex items-center">
+        <span className="text-red-500 mr-1">*</span>Name
+      </label>
+      <div className="mt-1 relative rounded-lg shadow-sm">
+        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <User className="h-5 w-5 text-gray-400" />
+        </div>
+        <input
+          type="text"
+          name="name"
+          id="name"
+          value={newMember.name}
+          onChange={handleInputChange}
+          className="focus:ring-[#F4A300] focus:border-[#F4A300] block w-full pl-10 pr-3 sm:text-sm border-gray-300 rounded-lg"
+          placeholder="Enter full name"
+          required
+        />
+      </div>
+    </div>
 
-                {/* Email */}
-                <div>
-                  <label htmlFor="email" className="text-sm font-medium text-gray-700 flex items-center">
-                    <span className="text-red-500 mr-1">*</span>Email
-                  </label>
-                  <div className="mt-1 relative rounded-lg shadow-sm">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Mail className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <input
-                      type="email"
-                      name="email"
-                      id="email"
-                      value={newMember.email}
-                      onChange={handleInputChange}
-                      className="focus:ring-[#F4A300] focus:border-[#F4A300] block w-full pl-10 pr-3 sm:text-sm border-gray-300 rounded-lg"
-                      placeholder="name@example.com"
-                    />
-                  </div>
-                </div>
+    {/* Email */}
+    <div>
+      <label htmlFor="email" className="text-sm font-medium text-gray-700 flex items-center">
+        <span className="text-red-500 mr-1">*</span>Email
+      </label>
+      <div className="mt-1 relative rounded-lg shadow-sm">
+        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Mail className="h-5 w-5 text-gray-400" />
+        </div>
+        <input
+          type="email"
+          name="email"
+          id="email"
+          value={newMember.email}
+          onChange={handleInputChange}
+          className="focus:ring-[#F4A300] focus:border-[#F4A300] block w-full pl-10 pr-3 sm:text-sm border-gray-300 rounded-lg"
+          placeholder="name@example.com"
+          required
+        />
+      </div>
+    </div>
 
-                {/* Gender */}
-                <div>
-                  <label htmlFor="gender" className="text-sm font-medium text-gray-700 flex items-center">
-                    <span className="text-red-500 mr-1">*</span>Gender
-                  </label>
-                  <div className="mt-1 relative rounded-lg shadow-sm">
-                    <select
-                      id="gender"
-                      name="gender"
-                      value={newMember.gender}
-                      onChange={handleInputChange}
-                      className="focus:ring-[#F4A300] focus:border-[#F4A300] block w-full pr-10 sm:text-sm border-gray-300 rounded-lg"
-                    >
-                      <option value="">Select Gender</option>
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
-                    </select>
-                  </div>
-                </div>
+    {/* Password */}
+    <div>
+      <label htmlFor="password" className="text-sm font-medium text-gray-700 flex items-center">
+        <span className="text-red-500 mr-1">*</span>Password
+      </label>
+      <div className="mt-1 relative rounded-lg shadow-sm">
+        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Lock className="h-5 w-5 text-gray-400" />
+        </div>
+        <input
+          type="password"
+          name="password"
+          id="password"
+          value={newMember.password}
+          onChange={handleInputChange}
+          className="focus:ring-[#F4A300] focus:border-[#F4A300] block w-full pl-10 pr-3 sm:text-sm border-gray-300 rounded-lg"
+          placeholder="Enter password"
+          required
+        />
+      </div>
+    </div>
 
-                {/* Phone Number */}
-                <div>
-                  <label htmlFor="phoneNumber" className="text-sm font-medium text-gray-700 flex items-center">
-                    <span className="text-red-500 mr-1">*</span>Phone Number
-                  </label>
-                  <div className="mt-1 relative rounded-lg shadow-sm">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Phone className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <input
-                      type="text"
-                      name="phoneNumber"
-                      id="phoneNumber"
-                      value={newMember.phoneNumber}
-                      onChange={handleInputChange}
-                      className="focus:ring-[#F4A300] focus:border-[#F4A300] block w-full pl-10 pr-3 sm:text-sm border-gray-300 rounded-lg"
-                      placeholder="Enter phone number"
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="mt-6">
-                <button
-                  type="submit"
-                  className="w-full bg-[#F4A300] text-white py-3 px-4 rounded-lg font-semibold hover:bg-orange-700 transition-colors duration-200"
-                  disabled={isLoading}
-                >
-                  {isLoading ? 'Adding...' : 'Add Team Member'}
-                </button>
-              </div>
-            </form>
+    {/* Gender */}
+    <div>
+      <label htmlFor="gender" className="text-sm font-medium text-gray-700 flex items-center">
+        <span className="text-red-500 mr-1">*</span>Gender
+      </label>
+      <div className="mt-1 relative rounded-lg shadow-sm">
+        <select
+          id="gender"
+          name="gender"
+          value={newMember.gender}
+          onChange={handleInputChange}
+          className="focus:ring-[#F4A300] focus:border-[#F4A300] block w-full pr-10 sm:text-sm border-gray-300 rounded-lg"
+          required
+        >
+          <option value="">Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+        </select>
+      </div>
+    </div>
+
+    {/* Phone Number */}
+    <div>
+      <label htmlFor="phoneNumber" className="text-sm font-medium text-gray-700 flex items-center">
+        <span className="text-red-500 mr-1">*</span>Phone Number
+      </label>
+      <div className="mt-1 relative rounded-lg shadow-sm">
+        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+          <Phone className="h-5 w-5 text-gray-400" />
+        </div>
+        <input
+          type="text"
+          name="phoneNumber"
+          id="phoneNumber"
+          value={newMember.phoneNumber}
+          onChange={handleInputChange}
+          className="focus:ring-[#F4A300] focus:border-[#F4A300] block w-full pl-10 pr-3 sm:text-sm border-gray-300 rounded-lg"
+          placeholder="Enter phone number"
+          required
+        />
+      </div>
+    </div>
+
+    {/* Login Method */}
+    <div>
+      <label htmlFor="login_method" className="text-sm font-medium text-gray-700 flex items-center">
+        <span className="text-red-500 mr-1">*</span>Login Method
+      </label>
+      <div className="mt-1 relative rounded-lg shadow-sm">
+        <select
+          id="login_method"
+          name="login_method"
+          value={newMember.login_method}
+          onChange={handleInputChange}
+          className="focus:ring-[#F4A300] focus:border-[#F4A300] block w-full pr-10 sm:text-sm border-gray-300 rounded-lg"
+          required
+        >
+          <option value="">Select Login Method</option>
+          <option value="email">Email</option>
+          <option value="google">Google</option>
+        </select>
+      </div>
+    </div>
+
+    {/* Google ID (Conditional) */}
+    {newMember.login_method === 'google' && (
+      <div>
+        <label htmlFor="google_id" className="text-sm font-medium text-gray-700 flex items-center">
+          Google ID
+        </label>
+        <div className="mt-1 relative rounded-lg shadow-sm">
+          <input
+            type="text"
+            name="google_id"
+            id="google_id"
+            value={newMember.google_id}
+            onChange={handleInputChange}
+            className="focus:ring-[#F4A300] focus:border-[#F4A300] block w-full pl-3 pr-3 sm:text-sm border-gray-300 rounded-lg"
+            placeholder="Enter Google ID"
+          />
+        </div>
+      </div>
+    )}
+
+    {/* Active Status */}
+    <div className="flex items-center">
+      <label htmlFor="is_active" className="text-sm font-medium text-gray-700 mr-3">
+        Active Status
+      </label>
+      <div className="relative inline-block w-10 mr-2 align-middle select-none">
+        <input
+          type="checkbox"
+          name="is_active"
+          id="is_active"
+          checked={newMember.is_active}
+          onChange={(e) => setNewMember({...newMember, is_active: e.target.checked})}
+          className="toggle-checkbox absolute block w-6 h-6 rounded-full bg-white border-4 appearance-none cursor-pointer focus:ring-[#F4A300]"
+        />
+        <label
+          htmlFor="is_active"
+          className={`toggle-label block overflow-hidden h-6 rounded-full cursor-pointer ${newMember.is_active ? 'bg-[#F4A300]' : 'bg-gray-300'}`}
+        ></label>
+      </div>
+      <span className="text-sm text-gray-500">
+        {newMember.is_active ? 'Active' : 'Inactive'}
+      </span>
+    </div>
+  </div>
+
+  <div className="mt-6">
+    <button
+      type="submit"
+      className="w-full bg-[#F4A300] text-white py-3 px-4 rounded-lg font-semibold hover:bg-orange-700 transition-colors duration-200"
+      disabled={isLoading}
+    >
+      {isLoading ? 'Adding...' : 'Add Team Member'}
+    </button>
+  </div>
+</form>
           </div>
         </div>
       )}
