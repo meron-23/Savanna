@@ -1,8 +1,10 @@
 // Controllers/supervisorController.js
 import {
-  getAgentsBySupervisor,
-  getSupervisorDashboardStats,
-  getAgentPerformance
+    getAgentsBySupervisor,
+    getSupervisorDashboardStats,
+    getAgentPerformance,
+    getUnassignedAgents, // New import
+    assignSupervisorToAgent // New import
 } from "../Models/supervisorModel.js";
 
 import {
@@ -14,9 +16,10 @@ import { googleLogin } from "./userController.js";
 
 export const getSupervisorAgents = async (req, res, next) => {
   const { supervisorId } = req.params;
+  const name = 'kendall';
 
   try {
-    const agents = await getAgentsBySupervisor(supervisorId);
+    const agents = await getAgentsBySupervisor(name);
     res.status(200).json({ success: true, data: agents });
   } catch (error) {
     console.error(error);
@@ -106,4 +109,38 @@ export const registerAgent = async (req, res, next) => {
     console.error(error);
     res.status(500).json({ success: false, message: "Internal server error" });
   }
+};
+
+// New controller to get a list of unassigned agents
+export const getUnassignedAgentsList = async (req, res, next) => {
+    try {
+        const agents = await getUnassignedAgents();
+        res.status(200).json({ success: true, data: agents });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: "Internal server error" });
+    }
+};
+
+// New controller to assign a supervisor to an agent
+export const assignAgent = async (req, res, next) => {
+    const { supervisorId } = req.params;
+    const { agentId } = req.body;
+
+    if (!agentId) {
+        return res.status(400).json({ success: false, message: "Agent ID is required." });
+    }
+
+    try {
+        await assignSupervisorToAgent(agentId, supervisorId);
+        res.status(200).json({ success: true, message: "Agent assigned successfully!" });
+    } catch (error) {
+        console.error(error);
+        // Handle specific error from model
+        if (error.message.includes("already has a supervisor")) {
+            res.status(409).json({ success: false, message: error.message });
+        } else {
+            res.status(500).json({ success: false, message: "Internal server error" });
+        }
+    }
 };

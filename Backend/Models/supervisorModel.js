@@ -2,7 +2,8 @@
 import mySqlConnection from "../Config/db.js";
 
 const getAgentsBySupervisor = async (supervisorId) => {
-  const query = "SELECT * FROM users WHERE supervisor = ? AND role = 'Sales Agent'";
+  console.log(supervisorId)
+  const query = "SELECT * FROM users WHERE supervisor = ? AND role = 'Agent'";
   try {
     const [result] = await mySqlConnection.query(query, [supervisorId]);
     return result;
@@ -75,8 +76,55 @@ const getAgentPerformance = async (supervisorId) => {
   }
 };
 
+const getUnassignedAgents = async () => {
+    const query = "SELECT userId, name, email, phoneNumber FROM users WHERE role = 'Agent' AND supervisor IS NULL";
+    try {
+        const [result] = await mySqlConnection.query(query);
+        return result;
+    } catch (error) {
+        console.error("Error fetching unassigned agents:", error);
+        throw error;
+    }
+};
+
+const getSupervisorName = async (supervisorId) => {
+  console.log(supervisorId)
+    const query = "SELECT name FROM users WHERE userId = ?";
+    try {
+        const [result] = await mySqlConnection.query(query, [supervisorId]);
+        return result.length > 0 ? result[0].name : null;
+    } catch (error) {
+        console.error("Error fetching supervisor name:", error);
+        throw error;
+    }
+};
+
+const assignSupervisorToAgent = async (agentId, supervisorId) => {
+    // Get the supervisor's name before assigning
+    const supervisorName = await getSupervisorName(supervisorId);
+    if (!supervisorName) {
+        throw new Error("Supervisor not found.");
+    }
+
+    const query = "UPDATE users SET supervisor = ? WHERE userId = ? AND supervisor IS NULL";
+    try {
+        const [result] = await mySqlConnection.query(query, [supervisorName, agentId]); // Use supervisorName here
+        if (result.affectedRows === 0) {
+            throw new Error("Agent not found or already has a supervisor.");
+        }
+        return result;
+    } catch (error) {
+        console.error("Error assigning supervisor to agent:", error);
+        throw error;
+    }
+};
+
+
 export {
-  getAgentsBySupervisor,
-  getSupervisorDashboardStats,
-  getAgentPerformance
+    getAgentsBySupervisor,
+    getSupervisorDashboardStats,
+    getAgentPerformance,
+    getUnassignedAgents,
+    getSupervisorName,
+    assignSupervisorToAgent
 };

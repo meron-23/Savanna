@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import { FiUser, FiSend, FiX, FiSearch, FiRefreshCw } from 'react-icons/fi';
+
+// IMPORTANT: Update API_BASE_URL and a hardcoded supervisor ID
+// In a real application, these would come from your authentication context.
+const API_BASE_URL = 'http://localhost:5000/api';
+const CURRENT_SUPERVISOR_ID = "supervisor-123"; // Use the actual user ID from your backend
+const CURRENT_SUPERVISOR_NAME = "Meron Muluye"; // Use the actual user name
 
 const SupervisorLeads = () => {
   // State management
   const [leads, setLeads] = useState([]);
-  const [allUsers, setAllUsers] = useState([]);
+  const [agents, setAgents] = useState([]);
   const [selectedLeads, setSelectedLeads] = useState([]);
   const [selectedAgent, setSelectedAgent] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
@@ -13,12 +20,30 @@ const SupervisorLeads = () => {
   const [statusFilter, setStatusFilter] = useState('new');
   const [sourceFilter, setSourceFilter] = useState('');
 
-  // --- Placeholder for the current supervisor's ID ---
-  // In a real application, this would be retrieved from a user context
-  // after successful login.
-  const currentSupervisorId = "Meron Muluye"; 
+  // Fetch data on component mount and refresh
+  // const fetchData = async () => {
+  //   try {
+  //     setIsLoading(true);
+  //     setError(null);
+  //     const response = await axios.get(`${API_BASE_URL}/supervisors/${CURRENT_SUPERVISOR_ID}/agents`);
+  //     const { leads: fetchedLeads, agents: fetchedAgents } = response.data;
+      
+  //     setLeads(fetchedLeads || []);
+  //     setAgents(fetchedAgents || []);
+      
+  //   } catch (err) {
+  //     console.error("Fetch error:", err);
+  //     setError("Failed to fetch data. Please check the backend connection.");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
 
-  // Fetch data on component mount and when statusFilter changes
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
+
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -29,24 +54,24 @@ const SupervisorLeads = () => {
         const leadsResponse = await fetch(`http://localhost:5000/api/allLeads`);
         if (!leadsResponse.ok) throw new Error('Failed to fetch leads');
         const leadsData = await leadsResponse.json();
-        
+        console.log(leadsData);
+        setLeads(leadsData.data || []);
+
         // Fetch all users
         const usersResponse = await fetch('http://localhost:5000/api/users');
         if (!usersResponse.ok) throw new Error('Failed to fetch users');
         const usersData = await usersResponse.json();
+        
+        // Handle different API response structures
         const users = usersData.data || usersData.users || [];
-        
-        // Filter leads based on supervisor's agents
-        const supervisorAgents = users.filter(user => user.role === 'SalesAgent' && user.supervisor_id === currentSupervisorId);
-        const agentIds = supervisorAgents.map(agent => agent.id);
-        
-        // The supervisor can see all their agents' leads, plus unassigned leads
-        const relevantLeads = leadsData.data.filter(lead => 
-          !lead.assigned_to || agentIds.includes(lead.assigned_to)
-        );
-        
-        setLeads(relevantLeads);
-        setAllUsers(users);
+        const filteredUsers = users.filter((user) => {
+          return user.role === 'Agent'
+        })
+        console.log("Filtered Users", filteredUsers);
+        console.log("Fetched Users:", users);
+        setAgents(filteredUsers);
+
+        console.log("selectedAgent", selectedAgent)
         
       } catch (err) {
         console.error("Fetch error:", err);
@@ -59,13 +84,10 @@ const SupervisorLeads = () => {
     fetchData();
   }, [statusFilter]);
 
-  // Filter agents locally based on the current supervisor's ID
-  const agents = allUsers.filter(user => user.role === 'SalesAgent' && user.supervisor_id === currentSupervisorId);
-
   // Filter leads based on search term and filters
   const filteredLeads = leads.filter(lead => {
     const matchesSearch = (lead.name && lead.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
-                        (lead.phone && lead.phone.includes(searchTerm));
+      (lead.phone && lead.phone.includes(searchTerm));
     const matchesStatus = statusFilter === 'all' || lead.status === statusFilter;
     const matchesSource = !sourceFilter || lead.source === sourceFilter;
     return matchesSearch && matchesStatus && matchesSource;
@@ -94,35 +116,43 @@ const SupervisorLeads = () => {
 
   // Handle lead assignment
   const handleAssign = async () => {
-    if (selectedLeads.length === 0 || !selectedAgent) return;
+    if (selectedLeads.length === 0 || !selectedAgent) {
+      setError("Please select at least one lead and an agent.");
+      return;
+    }
 
     try {
       setIsLoading(true);
       setError(null);
+
+      // console.log("selected Agent: ", selectedAgent);
 
       const assignmentPromises = selectedLeads.map(lead => 
         fetch(`http://localhost:5000/api/leads/${lead.id}/status`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            status: 'assigned',
+            status: 'new',
             assigned_to: selectedAgent
           })
         })
       );
 
       const responses = await Promise.all(assignmentPromises);
-      const allSuccessful = responses.every(response => response.ok);
+      const allSuccessful = responses.every(response => response.status === 200);
       
-      if (!allSuccessful) throw new Error('Some assignments failed');
+      if (!allSuccessful) {
+        throw new Error('Some assignments failed');
+      }
 
+      // Update local state
       const assignedLeadIds = selectedLeads.map(lead => lead.id);
-      setLeads(prevLeads => prevLeads.filter(lead => !assignedLeadIds.includes(lead.id)));
-      setSelectedLeads([]);
+      setLeads(leads.filter(lead => !assignedLeadIds.includes(lead.id)));
       setSelectedAgent('');
+      setSelectedLeads([]);
       
     } catch (err) {
-      setError(err.message);
+      setError(err.response?.data?.message || err.message || 'An unexpected error occurred during assignment.');
     } finally {
       setIsLoading(false);
     }
@@ -134,12 +164,17 @@ const SupervisorLeads = () => {
     setSourceFilter('');
     setSelectedLeads([]);
     setSelectedAgent('');
-    setIsLoading(true); // This will trigger the useEffect to fetch data again
-    setError(null);
+    fetchData();
   };
 
   // Check if all filtered leads are currently selected
   const allLeadsSelected = filteredLeads.length > 0 && selectedLeads.length === filteredLeads.length;
+
+  // Format source for display
+  const formatSource = (source) => {
+    if (!source) return 'Unknown';
+    return source.split('_').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  };
 
   // Loading state
   if (isLoading) return (
@@ -161,25 +196,16 @@ const SupervisorLeads = () => {
     </div>
   );
 
-  // Format source for display
-  const formatSource = (source) => {
-    if (!source) return 'Unknown';
-    return source
-      .split('_')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-  };
-
   return (
     <div className="p-4 md:p-6">
       <h1 className="text-2xl font-bold mb-6">Supervisor Dashboard</h1>
-      <p className="text-sm text-gray-500 mb-6">Viewing leads for: <span className="font-semibold">{currentSupervisorId}</span></p>
+      <p className="text-sm text-gray-500 mb-6">Viewing leads for: <span className="font-semibold">{CURRENT_SUPERVISOR_NAME}</span></p>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Leads List Column */}
         <div className="lg:col-span-2 bg-white rounded-lg shadow-md p-4">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
-            <h2 className="text-lg font-semibold">Available Leads</h2>
+            <h2 className="text-lg font-semibold">Leads ({filteredLeads.length})</h2>
             
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
               <div className="relative w-full sm:w-64">
@@ -223,7 +249,7 @@ const SupervisorLeads = () => {
           <div className="overflow-y-auto" style={{ maxHeight: '500px' }}>
             {filteredLeads.length > 0 ? (
               <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
+                <thead className="bg-gray-50 sticky top-0">
                   <tr>
                     <th className="w-10 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       <input
@@ -269,7 +295,6 @@ const SupervisorLeads = () => {
                             lead.source === 'survey' ? 'bg-green-100 text-green-800' :
                             lead.source === 'referral' ? 'bg-yellow-100 text-yellow-800' :
                             lead.source === 'website' ? 'bg-indigo-100 text-indigo-800' :
-                            lead.source === 'event' ? 'bg-pink-100 text-pink-800' :
                             'bg-gray-100 text-gray-800'
                           }`}>
                             {formatSource(lead.source)}
@@ -354,7 +379,7 @@ const SupervisorLeads = () => {
                   >
                     <option value="">Select Agent</option>
                     {agents.map(agent => (
-                      <option key={agent.id} value={agent.id}>
+                      <option key={agent.userId} value={agent.userId}>
                         {agent.name || 'Unnamed Agent'}
                       </option>
                     ))}

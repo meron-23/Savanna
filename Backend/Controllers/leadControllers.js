@@ -122,8 +122,8 @@ export const updateLeadController = async (req, res) => {
 export const updateLeadStatusController = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
-    const result = await updateLeadStatus(id, status);
+    const { status, assigned_to } = req.body;
+    const result = await updateLeadStatus(id, status, assigned_to);
     if (result.affectedRows === 0) {
       return res.status(404).json({ 
         success: false, 

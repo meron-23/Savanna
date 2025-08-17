@@ -6,7 +6,8 @@ const AssignLeads = () => {
   const [leads, setLeads] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [selectedLeads, setSelectedLeads] = useState([]);
-  const [selectedSupervisorId, setSelectedSupervisorId] = useState(''); // Now stores ID instead of name
+  const [selectedSupervisorId, setSelectedSupervisorId] = useState('');
+   // Now stores ID instead of name
   const [selectedAgent, setSelectedAgent] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
@@ -41,6 +42,7 @@ const AssignLeads = () => {
         const leadsResponse = await fetch(`http://localhost:5000/api/allLeads`);
         if (!leadsResponse.ok) throw new Error('Failed to fetch leads');
         const leadsData = await leadsResponse.json();
+        console.log(leadsData);
         setLeads(leadsData.data || []);
 
         // Fetch all users
@@ -52,6 +54,7 @@ const AssignLeads = () => {
         const users = usersData.data || usersData.users || [];
         console.log("Fetched Users:", users);
         setAllUsers(users);
+        // console.log("Selected Supervisor ID:", selectedSupervisorId);
         
       } catch (err) {
         console.error("Fetch error:", err);
@@ -127,6 +130,9 @@ const AssignLeads = () => {
           })
         })
       );
+
+      console.log(selectedAgent);
+      console.log(selectedSupervisorId);
 
       // Execute all assignments
       const responses = await Promise.all(assignmentPromises);
