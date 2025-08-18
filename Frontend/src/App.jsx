@@ -11,6 +11,7 @@ import Login from './page/Login'
 import { Settings } from 'lucide-react';
 import Setting from './page/Settings';
 import ForgotPassword from './components/ForgotPassword';
+import Admin from './page/admin/AdminDasboard';
 
 
 
@@ -24,6 +25,7 @@ function App() {
           <Route path="/dashboard" element={<ManagerLayout/>} />
           <Route path="/profile" element={<ProfilePage />} /> */}
           <Route path="/" element={<Login />} />
+          <Route path="/admin" element={<Admin />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/settings" element={<Setting />} />
