@@ -1,6 +1,4 @@
 // routes.js
-
-import express from 'express';
 import { addProspect, bulkAddProspects, deleteProspect, fetchProspectsWithAgents, getProspect, putProspect } from '../Controllers/prospectController.js';
 import { addUser, deleteUser, fetchUserById, getUser, loginUser, logoutUser, putUser, verifyToken, googleLogin} from '../Controllers/userController.js';
 import {
@@ -11,6 +9,7 @@ import {
 } from '../Controllers/supervisorController.js';
 import { addVisit, getVisits, putVisit, deleteVisitRecord, fetchVisitsWithProspectsAndAgents } from "../Controllers/visitsAndSalesController.js";
 import { createLeadController, deleteLeadController, getAllLeadsController, getFullLeadDetailsController, getLeadByIdController, getLeadsByProspectIdController, getLeadsWithProspectInfoController, updateLeadController, updateLeadStatusController } from '../Controllers/leadControllers.js';
+import express from 'express';
 
 const router = express.Router();
 
