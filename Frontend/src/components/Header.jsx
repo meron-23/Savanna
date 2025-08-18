@@ -85,7 +85,7 @@ const Header = ({ isMobile, toggleSidebar, isSidebarOpen, user }) => {
                 lead.agent_role === 'Supervisor' && lead.agent_id === userId && lead.status === 'new';
             }
             // For sales agents: only show their own leads
-            else {
+            else if (userRole === 'Sales Agent' || userRole === 'Agent') {
               return lead.agent_id === userId && 
                 lead.agent_role === 'Sales Agent' || lead.agent_role === 'Agent' && lead.status === 'new';
             }

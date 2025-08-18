@@ -12,7 +12,7 @@ const AuthForm = () => {
   const [successMessage, setSuccessMessage] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const { setUser, setRole } = useContext(UserContext);
+  const { setUser, setRole, role } = useContext(UserContext);
 
   const [formData, setFormData] = useState({
     email: '',
@@ -48,7 +48,12 @@ const AuthForm = () => {
           localStorage.setItem('userId', response.data.user.userId);
           setUser(response.data.user.name);
           setRole(response.data.user.role);
-          navigate('/dashboard');
+
+          if (role === "Admin") {
+            navigate('/admin')
+          } else if (role === "Agent" || role === "Sales Agent" || role === "Manager" || role === "Supervisor") {
+            navigate('/dashboard');
+          }
         }
       } else {
         setError(response.data.message || 'An unknown error occurred.');
@@ -96,7 +101,11 @@ const googleLogin = useGoogleLogin({
         localStorage.setItem('userId', backendResponse.data.user.userId);
         setUser(backendResponse.data.user.name);
         setRole(backendResponse.data.user.role);
-        navigate('/dashboard');
+        if (role === "Admin") {
+          navigate('/admin')
+        } else if (role === "Agent" || role === "Sales Agent" || role === "Manager" || role === "Supervisor") {
+          navigate('/dashboard');
+        }
       } else {
         setError(backendResponse.data.message || 'Account not registered');
       }
