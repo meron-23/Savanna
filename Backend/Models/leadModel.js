@@ -72,10 +72,10 @@ const updateLead = async (id, updates) => {
   }
 };
 
-const updateLeadStatus = async (id, status) => {
-  const updateSqlQuery = "UPDATE leads SET status = ? WHERE id = ?";
+const updateLeadStatus = async (id, status, assigned_to) => {
+  const updateSqlQuery = "UPDATE leads SET status = ?, user_id = ? WHERE id = ?";
   try {
-    const [result] = await mySqlConnection.query(updateSqlQuery, [status, id]);
+    const [result] = await mySqlConnection.query(updateSqlQuery, [status, assigned_to, id]);
     return result;
   } catch (error) {
     console.error("Update lead status error:", error);
@@ -136,17 +136,6 @@ const getFullLeadDetails = async () => {
       l.status,
       l.date_added,
       
-      p.id AS prospect_id,
-      p.name AS prospect_name,
-      p.phoneNumber AS prospect_phone,
-      p.interest AS prospect_interest,
-      p.method,
-      p.site,
-      p.comment,
-      p.remark,
-      p.periodTime,
-      p.date AS prospect_date,
-      
       u.userId AS agent_id,
       u.name AS agent_name,
       u.email AS agent_email,
@@ -154,8 +143,7 @@ const getFullLeadDetails = async () => {
       u.role AS agent_role,
       u.supervisor
     FROM leads l
-    JOIN prospects p ON l.prospect_id = p.id
-    JOIN users u ON p.userId = u.userId
+    JOIN users u ON l.user_id = u.userId
     ORDER BY l.date_added DESC
   `;
   

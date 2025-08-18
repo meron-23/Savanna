@@ -38,10 +38,10 @@ export const fetchVisitsWithProspectsAndAgents = async (req, res) => {
 
 export const putVisit = async (req, res) => {
   const { visitId } = req.params;
-  const { visitDate, officeVisit, siteVisit, visitDetails } = req.body;
+  const { visitDate, officeVisit, siteVisit, visitDetails, remark } = req.body;
 
   try {
-    const result = await updateVisit(visitId, visitDate, officeVisit, siteVisit, visitDetails);
+    const result = await updateVisit(visitId, visitDate, officeVisit, siteVisit, visitDetails, remark);
     if (result.affectedRows === 0) {
       return res.status(404).json({ success: false, message: "Visit not found" });
     }

@@ -21,32 +21,68 @@ const SupervisorLeads = () => {
   const [sourceFilter, setSourceFilter] = useState('');
 
   // Fetch data on component mount and refresh
-  const fetchData = async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-
-      // We'll use a single endpoint to get all necessary data
-      // This assumes a backend endpoint that returns all leads and agents for a supervisor
-      const response = await axios.get(`${API_BASE_URL}/supervisors/${CURRENT_SUPERVISOR_ID}/agents`);
-
-      // Let's assume the response looks like: { leads: [...], agents: [...] }
-      const { leads: fetchedLeads, agents: fetchedAgents } = response.data;
+  // const fetchData = async () => {
+  //   try {
+  //     setIsLoading(true);
+  //     setError(null);
+  //     const response = await axios.get(`${API_BASE_URL}/supervisors/${CURRENT_SUPERVISOR_ID}/agents`);
+  //     const { leads: fetchedLeads, agents: fetchedAgents } = response.data;
       
-      setLeads(fetchedLeads || []);
-      setAgents(fetchedAgents || []);
+  //     setLeads(fetchedLeads || []);
+  //     setAgents(fetchedAgents || []);
       
-    } catch (err) {
-      console.error("Fetch error:", err);
-      setError("Failed to fetch data. Please check the backend connection.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  //   } catch (err) {
+  //     console.error("Fetch error:", err);
+  //     setError("Failed to fetch data. Please check the backend connection.");
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   fetchData();
+  // }, []);
+
 
   useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setIsLoading(true);
+        setError(null);
+
+        // Fetch leads
+        const leadsResponse = await fetch(`http://localhost:5000/api/allLeads`);
+        if (!leadsResponse.ok) throw new Error('Failed to fetch leads');
+        const leadsData = await leadsResponse.json();
+        console.log(leadsData);
+        setLeads(leadsData.data || []);
+
+        // Fetch all users
+        const usersResponse = await fetch('http://localhost:5000/api/users');
+        if (!usersResponse.ok) throw new Error('Failed to fetch users');
+        const usersData = await usersResponse.json();
+        
+        // Handle different API response structures
+        const users = usersData.data || usersData.users || [];
+        const filteredUsers = users.filter((user) => {
+          return user.role === 'Agent'
+        })
+        console.log("Filtered Users", filteredUsers);
+        console.log("Fetched Users:", users);
+        setAgents(filteredUsers);
+
+        console.log("selectedAgent", selectedAgent)
+        
+      } catch (err) {
+        console.error("Fetch error:", err);
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     fetchData();
-  }, []);
+  }, [statusFilter]);
 
   // Filter leads based on search term and filters
   const filteredLeads = leads.filter(lead => {
@@ -89,10 +125,16 @@ const SupervisorLeads = () => {
       setIsLoading(true);
       setError(null);
 
+      // console.log("selected Agent: ", selectedAgent);
+
       const assignmentPromises = selectedLeads.map(lead => 
-        axios.patch(`${API_BASE_URL}/leads/${lead.id}/status`, {
-          status: 'assigned',
-          assigned_to: selectedAgent // Agent's userId
+        fetch(`http://localhost:5000/api/leads/${lead.id}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            status: 'new',
+            assigned_to: selectedAgent
+          })
         })
       );
 
@@ -103,12 +145,11 @@ const SupervisorLeads = () => {
         throw new Error('Some assignments failed');
       }
 
-      // After successful assignment, refresh the data to get the latest state
-      fetchData();
-      
-      // Reset state
-      setSelectedLeads([]);
+      // Update local state
+      const assignedLeadIds = selectedLeads.map(lead => lead.id);
+      setLeads(leads.filter(lead => !assignedLeadIds.includes(lead.id)));
       setSelectedAgent('');
+      setSelectedLeads([]);
       
     } catch (err) {
       setError(err.response?.data?.message || err.message || 'An unexpected error occurred during assignment.');
@@ -338,7 +379,7 @@ const SupervisorLeads = () => {
                   >
                     <option value="">Select Agent</option>
                     {agents.map(agent => (
-                      <option key={agent.id} value={agent.id}>
+                      <option key={agent.userId} value={agent.userId}>
                         {agent.name || 'Unnamed Agent'}
                       </option>
                     ))}

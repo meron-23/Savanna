@@ -75,7 +75,7 @@ const Dashboard = () => {
         setIsProspectOpen(!isProspectOpen);
         break;
       case 'Leads':
-        if (role === 'SalesAgent') {
+        if (role === 'Sales Agent' || role === 'Agent') {
           setMainContent('Leads');
         } else {
           setMainContent('Dashboard'); // Fallback if role doesn't match
@@ -154,7 +154,7 @@ const Dashboard = () => {
       case 'ProfilePage':
         return <ProfilePage />;
       case 'Leads':
-        return role === 'SalesAgent' ? <AssignedLeadsTable /> : <SalesDashboard />; // Fallback for non-sales
+        return role === 'Sales Agent' || role === 'Agent' ? <AssignedLeadsTable /> : <SalesDashboard />; // Fallback for non-sales
         
       case 'Dashboard':
         switch (role) {
@@ -242,6 +242,7 @@ const Dashboard = () => {
           <main className="flex-1 p-4 md:p-8">
             <div className="flex-1 w-full">
               {renderMainContent()}
+              {console.log(role)}
             </div>
           </main>
         </div>

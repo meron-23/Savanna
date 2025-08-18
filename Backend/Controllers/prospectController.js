@@ -46,22 +46,52 @@ export const fetchProspectsWithAgents = async (req, res) => {
 
 export const putProspect = async (req, res, next) => {
   const { id } = req.params;
-  const { phoneNumber, interest, method, site, comment, remark, periodTime, date, dateNow } = req.body;
-  const phoneNumberNormalized = normalizePhoneNumber(phoneNumber);
-
-  if (!phoneNumberNormalized) {
-    return res.status(400).json({ error: 'Invalid phone number format' });
-  }
+  console.log('Received update request for ID:', id); // Debug log
+  console.log('Request body:', req.body); // Debug log
 
   try {
-    const updateRes = await updateProspect(id, phoneNumber, phoneNumberNormalized, interest, method, site, comment, remark, periodTime, date, dateNow);
-    if (updateRes.affectedRows === 0) {
-      return res.status(404).json({ success: false, message: "Propspect not found" });
+    const { phoneNumber, interest, method, site, comment, remark, periodTime, date, dateNow } = req.body;
+    const phoneNumberNormalized = normalizePhoneNumber(phoneNumber);
+
+    if (phoneNumber && !phoneNumberNormalized) {
+      console.log('Invalid phone number format:', phoneNumber); // Debug log
+      return res.status(400).json({ error: 'Invalid phone number format' });
     }
-    res.status(200).json({ success: true, message: "Propspect updated successfully" });
+
+    console.log('Normalized phone:', phoneNumberNormalized); // Debug log
+    
+    const updateRes = await updateProspect(
+      id, 
+      phoneNumber, 
+      phoneNumberNormalized, 
+      interest, 
+      method, 
+      site, 
+      comment, 
+      remark, 
+      periodTime, 
+      date, 
+      dateNow
+    );
+    
+    console.log('Update result:', updateRes); // Debug log
+    
+    if (updateRes.affectedRows === 0) {
+      console.log('No prospect found with ID:', id); // Debug log
+      return res.status(404).json({ success: false, message: "Prospect not found" });
+    }
+    
+    res.status(200).json({ 
+      success: true, 
+      message: "Prospect updated successfully" 
+    });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ success: false, message: "Internal server error" });
+    console.error("Detailed error:", error); // More detailed error logging
+    res.status(500).json({ 
+      success: false, 
+      message: "Internal server error",
+      error: error.message // Include the actual error message
+    });
   }
 };
 
