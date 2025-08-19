@@ -20,7 +20,7 @@ const SupervisorLeads = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null); // State for success message
-    const [statusFilter, setStatusFilter] = useState('new');
+    const [statusFilter, setStatusFilter] = useState('all');
     // sourceFilter state is still needed for parsing logic if 'source' column exists in CSV,
     // but the UI dropdown for it is removed as per previous request.
     const [sourceFilter, setSourceFilter] = useState(''); 

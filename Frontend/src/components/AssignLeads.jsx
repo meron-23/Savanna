@@ -21,7 +21,7 @@ const AssignLeads = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState(null); // State for success messages
-    const [statusFilter, setStatusFilter] = useState('new');
+    const [statusFilter, setStatusFilter] = useState('all');
     // sourceFilter state is kept for the parsing logic if 'source' column exists in CSV,
     // but its UI dropdown is removed as per your request.
     const [sourceFilter, setSourceFilter] = useState(''); 
@@ -480,9 +480,9 @@ const AssignLeads = () => {
                                         className="w-full p-2 border border-gray-300 rounded-md"
                                     >
                                         <option value="new">New</option>
-                                        <option value="contacted">Contacted</option>
+                                        {/* <option value="contacted">Contacted</option>
                                         <option value="interested">Interested</option>
-                                        <option value="assigned">Assigned</option> 
+                                        <option value="assigned">Assigned</option>  */}
                                         {/* <option value="followup">Follow-up</option> */}
                                     </select>
                                 </div>

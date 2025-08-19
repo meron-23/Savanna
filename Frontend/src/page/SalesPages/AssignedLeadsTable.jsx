@@ -51,6 +51,10 @@ const AssignedLeadsTable = () => {
           (lead) => lead.agent_id === currentUser.userId
         );
 
+        console.log(userLeads)
+        console.log(response.data.data)
+        console.log(currentUser.userId)
+
         setLeads(userLeads); // Update leads state
       } catch (err) {
         // Log and set error if fetching fails
@@ -79,7 +83,8 @@ const AssignedLeadsTable = () => {
     try {
       // Update lead status to 'contacted'
       await axios.patch(`http://localhost:5000/api/leads/${leadId}/status`, {
-        status: 'contacted'
+        status: 'contacted',
+        assigned_to: currentUser.userId
       });
 
       // Update the local state to reflect the status change
