@@ -10,6 +10,7 @@ import {
 import { addVisit, getVisits, putVisit, deleteVisitRecord, fetchVisitsWithProspectsAndAgents } from "../Controllers/visitsAndSalesController.js";
 import { createLeadController, deleteLeadController, getAllLeadsController, getFullLeadDetailsController, getLeadByIdController, getLeadsByProspectIdController, getLeadsWithProspectInfoController, updateLeadController, updateLeadStatusController } from '../Controllers/leadControllers.js';
 import express from 'express';
+// import { sendMessageController } from "../Controllers/msgController.js";
 
 const router = express.Router();
 
@@ -55,5 +56,7 @@ router.get("/leads/with-prospect/info", getLeadsWithProspectInfoController);
 router.put("/leads/:id", updateLeadController);
 router.patch("/leads/:id/status", updateLeadStatusController);
 router.delete("leads/:id", deleteLeadController);
+
+// router.post("/send", sendMessageController);
 
 export default router;

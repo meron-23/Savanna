@@ -87,9 +87,9 @@ const Dashboard = () => {
       case 'SiteVisits':
         setMainContent('SiteVisits');
         break;
-      case 'Sales': // This seems to refer to RegisterSalesData
-        setMainContent('Sales');
-        break;
+      // case 'Sales': // This seems to refer to RegisterSalesData
+      //   setMainContent('Sales');
+      //   break;
       case 'Dashboard': // This seems to refer to ManagerDashboard
         setMainContent('Dashboard');
         break;

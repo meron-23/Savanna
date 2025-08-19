@@ -13,8 +13,8 @@ import {
 // Create a new lead
 export const createLeadController = async (req, res) => {
   try {
-    const { prospect_id, name, phone, interest, status } = req.body;
-    const result = await createLead(prospect_id, name, phone, interest, status);
+    const { name, phone, interest, status, date_added, user_id } = req.body;
+    const result = await createLead(name, phone, interest, status, date_added, user_id );
     res.status(201).json({ 
       success: true, 
       message: "Lead created successfully", 

@@ -82,12 +82,12 @@ const Header = ({ isMobile, toggleSidebar, isSidebarOpen, user }) => {
             // For supervisors: show leads where supervisor ID matches OR agent_role is Supervisor
             if (userRole === 'Supervisor') {
               return lead.agent_id === userId || 
-                lead.agent_role === 'Supervisor' && lead.agent_id === userId && lead.status === 'new';
+                lead.agent_role === 'Supervisor' && lead.agent_id === userId && lead.status === 'assigned';
             }
             // For sales agents: only show their own leads
             else if (userRole === 'Sales Agent' || userRole === 'Agent') {
               return lead.agent_id === userId && 
-                lead.agent_role === 'Sales Agent' || lead.agent_role === 'Agent' && lead.status === 'new';
+                lead.agent_role === 'Sales Agent' || lead.agent_role === 'Agent' && lead.status === 'assigned';
             }
           });
 

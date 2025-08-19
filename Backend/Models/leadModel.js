@@ -1,14 +1,15 @@
 import mySqlConnection from "../Config/db.js";
 
-const createLead = async (prospectId, name, phone, interest, status) => {
-  const addSqlQuery = "INSERT INTO leads (prospect_id, name, phone, interest, status) VALUES (?, ?, ?, ?, ?)";
+const createLead = async (name, phone, interest, status, date_added, user_id) => {
+  const addSqlQuery = "INSERT INTO leads (name, phone, interest, status, date_added, user_id) VALUES (?, ?, ?, ?, ?, ?)";
   try {
     const [result] = await mySqlConnection.query(addSqlQuery, [
-      prospectId, 
       name, 
       phone, 
       interest, 
-      status || 'new' // Default to 'new' if not provided
+      status || 'new',
+      date_added,
+      user_id
     ]);
     return result;
   } catch (error) {
@@ -18,7 +19,15 @@ const createLead = async (prospectId, name, phone, interest, status) => {
 };
 
 const getAllLeads = async () => {
-  const viewSqlQuery = "SELECT * FROM leads";
+  const viewSqlQuery = `
+    SELECT 
+      leads.*, 
+      users.name as user_name,
+      users.email as user_email
+    FROM leads
+    LEFT JOIN users ON leads.user_id = users.userId
+  `;
+  
   try {
     const [result] = await mySqlConnection.query(viewSqlQuery);
     return result;
