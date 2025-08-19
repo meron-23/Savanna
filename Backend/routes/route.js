@@ -10,6 +10,7 @@ import {
 import { addVisit, getVisits, putVisit, deleteVisitRecord, fetchVisitsWithProspectsAndAgents } from "../Controllers/visitsAndSalesController.js";
 import { createLeadController, deleteLeadController, getAllLeadsController, getFullLeadDetailsController, getLeadByIdController, getLeadsByProspectIdController, getLeadsWithProspectInfoController, updateLeadController, updateLeadStatusController } from '../Controllers/leadControllers.js';
 import express from 'express';
+import { addMessage, approveMessageController, deleteMessageController, getAllMessagesController, getMessageByIdController, getMessagesByProspectIdController, getMessagesByUserIdController, updateCommentController, updateMessageController } from '../Controllers/msgController.js';
 // import { sendMessageController } from "../Controllers/msgController.js";
 
 const router = express.Router();
@@ -57,6 +58,15 @@ router.put("/leads/:id", updateLeadController);
 router.patch("/leads/:id/status", updateLeadStatusController);
 router.delete("leads/:id", deleteLeadController);
 
-// router.post("/send", sendMessageController);
+// Message Routes
+router.post('/messages', addMessage);
+router.get('/messages', getAllMessagesController);
+router.get('/messages/:messageId', getMessageByIdController);
+router.get('/messages/user/:userId', getMessagesByUserIdController);
+router.get('/messages/prospect/:prospectId', getMessagesByProspectIdController);
+router.put('/messages/:messageId', updateMessageController);
+router.put("/messages/approve/:messageId", approveMessageController);
+router.put('/messages/comment/:messageId', updateCommentController);
+router.delete('/messages/:messageId', deleteMessageController);
 
 export default router;
