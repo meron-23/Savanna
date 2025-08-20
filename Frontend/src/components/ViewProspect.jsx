@@ -358,7 +358,7 @@ const handleSendMessage = async (content) => {
     setCurrentProspectToMessage(null);
     
     // Show success message
-    setSuccessMessage('Message sent successfully! ✅');
+    setSuccessMessage('Message sent successfully!');
     setTimeout(() => setSuccessMessage(null), 5000);
 
     return result;

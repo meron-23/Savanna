@@ -59,21 +59,18 @@ const Header = ({ isMobile, toggleSidebar, isSidebarOpen, user }) => {
 
   const handleBellClick = () => {
     setIsModalOpen(true);
-    // When the bell is clicked, it means the user has seen the current notifications.
-    // So, reset the counts.
+    // When the bell is clicked, the user has seen the notifications.
+    // Resetting the counts is the intended behavior.
     setNewLeadsCount(0);
     setNewMessagesCount(0);
-    
+
     // Set the active tab based on user role
-    if (currentUser?.role === 'Manager') {
-      setActiveTab('messages');
+    if (currentUser?.role === 'Manager' || currentUser?.role === 'Supervisor') {
+        setActiveTab('messages');
     } else {
-      setActiveTab('leads');
+        setActiveTab('leads');
     }
-    // Also, update lastFetchedMessages/Leads to current view to prevent re-counting
-    // on next fetch if the modal is still open.
-    // This is handled implicitly by fetchMessages running and updating lastFetchedMessages later.
-  };
+};
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
@@ -151,26 +148,30 @@ const Header = ({ isMobile, toggleSidebar, isSidebarOpen, user }) => {
     if (!selectedMessage || !editText.trim()) return;
 
     try {
-      const response = await axios.put(`http://localhost:5000/api/messages/${selectedMessage.messageId}`, {
-        content: editText.trim()
-      });
+        const response = await axios.put(`http://localhost:5000/api/messages/${selectedMessage.messageId}`, {
+            content: editText.trim(),
+            status: 'edited' // Add a new 'edited' status
+        });
 
-      if (response.data.success) {
-        setMessages(messages.map(msg => 
-          msg.messageId === selectedMessage.messageId 
-            ? { ...msg, content: editText.trim() }
-            : msg
-        ));
-        
-        setIsEditModalOpen(false);
-        setSelectedMessage(null);
-        setEditText('');
-        fetchMessages(); // Re-fetch messages to update if content changes (less critical for badge, but good for data sync)
-      }
+        if (response.data.success) {
+            // Update the local state with the new content and status
+            setMessages(messages.map(msg => 
+                msg.messageId === selectedMessage.messageId 
+                ? { ...msg, content: editText.trim(), status: 'edited' }
+                : msg
+            ));
+            
+            setIsEditModalOpen(false);
+            setSelectedMessage(null);
+            setEditText('');
+            
+            // Re-fetch messages to update the notification badge for the manager
+            fetchMessages(); 
+        }
     } catch (error) {
-      console.error("Error updating message:", error);
+        console.error("Error updating message:", error);
     }
-  };
+};
 
   const handleCloseCommentModal = () => {
     setIsCommentModalOpen(false);
@@ -196,46 +197,50 @@ const Header = ({ isMobile, toggleSidebar, isSidebarOpen, user }) => {
     if (!currentUser) return;
 
     try {
-      const response = await axios.get('http://localhost:5000/api/messages');
-      
-      if (response.data && Array.isArray(response.data.data)) {
-        let allFetchedMessages = response.data.data;
+        const response = await axios.get('http://localhost:5000/api/messages');
         
-        // Filter messages for display in the modal based on status
-        let relevantMessagesForDisplay = allFetchedMessages.filter(msg => 
-            msg.status === 'new' || msg.status === 'commented' || msg.status === 'approved'
-        );
+        if (response.data && Array.isArray(response.data.data)) {
+            const allFetchedMessages = response.data.data;
+            
+            // --- Notification COUNTING Logic ---
+            let newMessagesCountForBadge = 0;
+            if (currentUser.role === 'Manager' || currentUser.role === 'Supervisor') {
+                // Managers and Supervisors count messages that are 'new', 'commented', or have been 'edited' by an agent
+                newMessagesCountForBadge = allFetchedMessages.filter(msg => 
+                    msg.status === 'new' || msg.status === 'commented' || msg.status === 'edited'
+                ).length;
+            } else if (currentUser.role === 'Sales Agent' || currentUser.role === 'Agent') {
+                // Agents only count messages that have been 'commented' on by a manager/supervisor
+                newMessagesCountForBadge = allFetchedMessages.filter(msg => 
+                    msg.status === 'commented' || msg.status === 'approved' &&
+                    (msg.userId == currentUser.userId || msg.agent_id == currentUser.userId)
+                ).length;
+            }
 
-        // Agents filter messages to only see their own (if they are agent)
-        if (currentUser.role === 'Sales Agent' || currentUser.role === 'Agent') {
-          relevantMessagesForDisplay = relevantMessagesForDisplay.filter(msg => {
-            const messageUserId = msg.userId || msg.user_id || msg.agentId || msg.agent_id;
-            return messageUserId == currentUser.userId;
-          });
+            // Only update the count if the modal is closed to prevent resetting it immediately after a refresh
+            if (!isModalOpen) {
+                setNewMessagesCount(newMessagesCountForBadge);
+            }
+
+            // --- DISPLAY Filtering Logic ---
+            let relevantMessagesForDisplay = [];
+            if (currentUser.role === 'Manager' || currentUser.role === 'Supervisor') {
+                // Managers and Supervisors see ALL messages
+                relevantMessagesForDisplay = allFetchedMessages;
+            } else if (currentUser.role === 'Sales Agent' || currentUser.role === 'Agent') {
+                // Agents only see their own messages that are 'commented' or 'approved'
+                relevantMessagesForDisplay = allFetchedMessages.filter(msg => 
+                    (msg.status === 'commented' || msg.status === 'approved') && 
+                    (msg.userId == currentUser.userId || msg.agent_id == currentUser.userId)
+                );
+            }
+            
+            setMessages(relevantMessagesForDisplay);
         }
-
-        // Calculate truly new unseen messages for the badge count
-        const trulyNewMessagesForBadge = allFetchedMessages.filter(newMsg =>
-            newMsg.status === 'new' &&
-            // Check if this new message was NOT in the last fetched batch of messages
-            !lastFetchedMessages.some(oldMsg => oldMsg.messageId === newMsg.messageId)
-        );
-
-        // Only update the notification count if the modal is not currently open.
-        // This prevents the count from increasing while the user is viewing notifications.
-        if (!isModalOpen && trulyNewMessagesForBadge.length > 0) {
-            setNewMessagesCount(prev => prev + trulyNewMessagesForBadge.length);
-        }
-
-        // Update the main messages state for display in the modal
-        setMessages(relevantMessagesForDisplay);
-        // Update lastFetchedMessages to the full, unfiltered list from the API for the next comparison
-        setLastFetchedMessages(allFetchedMessages); 
-      }
     } catch (error) {
-      console.error("Error fetching messages:", error);
+        console.error("Error fetching messages:", error);
     }
-  };
+};
 
   useEffect(() => {
     const fetchAssignedLeads = async () => {
@@ -294,19 +299,19 @@ const Header = ({ isMobile, toggleSidebar, isSidebarOpen, user }) => {
     const intervalId = setInterval(() => {
       fetchAssignedLeads();
       fetchMessages();
-    }, 30000); // Fetch every 30 seconds
+    }, 30000);
 
     return () => clearInterval(intervalId); // Clear interval on component unmount
-  }, [currentUser, lastFetchedLeads, lastFetchedMessages, isModalOpen]); // Added isModalOpen to dependencies
+  }, [currentUser, lastFetchedLeads, isModalOpen]); // Added isModalOpen to dependencies
 
 
   // Calculate total notifications based on user role
   let totalNotifications = 0;
   if (currentUser) {
     if (currentUser.role !== 'Manager') {
-      totalNotifications += newLeadsCount;
+      totalNotifications += newLeadsCount; // Managers don't get leads count
     }
-    totalNotifications += newMessagesCount;
+    totalNotifications += newMessagesCount; // Everyone gets messages count
   }
 
   return (
