@@ -56,4 +56,7 @@ router.put("/leads/:id", updateLeadController);
 router.patch("/leads/:id/status", updateLeadStatusController);
 router.delete("leads/:id", deleteLeadController);
 
+//message routes
+router.post("/send", sendMessageController);
+
 export default router;
