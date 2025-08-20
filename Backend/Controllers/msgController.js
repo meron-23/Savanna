@@ -119,10 +119,10 @@ export const getMessagesByProspectIdController = async (req, res) => {
 // Update message
 export const updateMessageController = async (req, res) => {
   const { messageId } = req.params;
-  const { content } = req.body;
+  const { content, status } = req.body;
 
   try {
-    const result = await updateMessage(content, messageId, );
+    const result = await updateMessage(content, status, messageId, );
     
     if (result.affectedRows === 0) {
       return res.status(404).json({ 

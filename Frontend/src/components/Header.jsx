@@ -526,7 +526,7 @@ const Header = ({ isMobile, toggleSidebar, isSidebarOpen, user }) => {
                                     Comment
                                   </button>
                                 )}
-                                {(currentUser?.role === 'Sales Agent' || currentUser?.role === 'Agent') && (
+                                {(currentUser?.role === 'Sales Agent' || currentUser?.role === 'Agent') && message.status !== 'approved' && (
                                   <button
                                     onClick={() => handleEditClick(message)}
                                     className="ml-2 px-3 py-1 bg-yellow-600 text-white text-xs rounded hover:bg-yellow-700"

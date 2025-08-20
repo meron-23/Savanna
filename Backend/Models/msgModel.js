@@ -62,10 +62,10 @@ const getMessagesByProspectId = async (prospectId) => {
 };
 
 // Update message
-const updateMessage = async (content, messageId) => {
-  const sql = `UPDATE messages SET content = ? WHERE messageId = ?`;
+const updateMessage = async (content, status, messageId) => {
+  const sql = `UPDATE messages SET content = ?, status = ? WHERE messageId = ?`;
   try {
-    const [result] = await mySqlConnection.query(sql, [content, messageId]);
+    const [result] = await mySqlConnection.query(sql, [content, status, messageId]);
     return result;
   } catch (error) {
     console.error("Update Message Error:", error);
