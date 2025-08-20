@@ -273,6 +273,11 @@ const SupervisorLeads = () => {
 
     // Handle lead selection
     const handleLeadSelect = (lead) => {
+        // Don't allow selection of contacted leads
+        if (lead.status === 'contacted') {
+            return;
+        }
+        
         setSelectedLeads(prev => {
             const isSelected = prev.some(l => l.id === lead.id);
             if (isSelected) {
@@ -565,23 +570,27 @@ const SupervisorLeads = () => {
                                 <thead className="bg-gray-50 sticky top-0">
                                     <tr>
                                         <th className="w-10 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            <input
-                                                type="checkbox"
-                                                checked={allLeadsSelected}
-                                                onChange={handleSelectAll}
-                                                className="form-checkbox h-4 w-4 text-[#F4A300] rounded"
-                                            />
+                                            {filteredLeads.some(lead => lead.status !== 'contacted') && (
+                                              <input
+                                                  type="checkbox"
+                                                  checked={allLeadsSelected}
+                                                  onChange={handleSelectAll}
+                                                  className="form-checkbox h-4 w-4 text-[#F4A300] rounded"
+                                              />
+                                            )}
                                         </th>
                                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
                                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Interest</th>
                                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assigned To</th> {/* Added Assigned To column */}
+                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Assigned To</th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
                                     {filteredLeads.map(lead => {
                                         const isSelected = selectedLeads.some(l => l.id === lead.id);
+                                        const isContacted = lead.status === 'contacted';
+                                        const isAssigned = lead.status === 'assigned'
                                         // Find the agent name if assigned
                                         const assignedAgent = lead.assigned_to ? agents.find(agent => agent.userId === lead.assigned_to) : null;
 
@@ -592,12 +601,14 @@ const SupervisorLeads = () => {
                                                 onClick={() => handleLeadSelect(lead)}
                                             >
                                                 <td className="w-10 px-4 py-4 whitespace-nowrap">
-                                                    <input
-                                                        type="checkbox"
-                                                        checked={isSelected}
-                                                        readOnly
-                                                        className="form-checkbox h-4 w-4 text-[#F4A300] rounded pointer-events-none"
-                                                    />
+                                                    {!isContacted && (
+                                                      <input
+                                                          type="checkbox"
+                                                          checked={isSelected}
+                                                          readOnly
+                                                          className="form-checkbox h-4 w-4 text-[#F4A300] rounded pointer-events-none"
+                                                      />
+                                                    )}
                                                 </td>
                                                 <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                                     {lead.name || 'N/A'}
@@ -629,8 +640,8 @@ const SupervisorLeads = () => {
                                                     </span>
                                                 </td>
                                                 <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                  {lead.status === 'assigned' 
-                                                      ? (agents.find(agent => agent.userId === lead.user_name)?.name || lead.user_name)
+                                                  {lead.status === 'assigned' || lead.status === 'contacted' 
+                                                      ? (assignedAgent?.name || lead.user_name || 'Unassigned')
                                                       : 'Unassigned'}
                                                 </td>
                                             </tr>

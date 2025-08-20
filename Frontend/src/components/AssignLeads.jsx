@@ -556,12 +556,14 @@ const AssignLeads = () => {
                                 <thead className="bg-gray-50 sticky top-0">
                                     <tr>
                                         <th className="w-10 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            <input
-                                                type="checkbox"
-                                                checked={allLeadsSelected}
-                                                onChange={handleSelectAll}
-                                                className="form-checkbox h-4 w-4 text-[#F4A300] rounded"
-                                            />
+                                            {filteredLeads.some(lead => lead.status !== 'contacted') && (
+                                              <input
+                                                  type="checkbox"
+                                                  checked={allLeadsSelected}
+                                                  onChange={handleSelectAll}
+                                                  className="form-checkbox h-4 w-4 text-[#F4A300] rounded"
+                                              />
+                                            )}
                                         </th>
                                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
                                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
@@ -573,6 +575,7 @@ const AssignLeads = () => {
                                 <tbody className="bg-white divide-y divide-gray-200">
                                     {filteredLeads.map(lead => {
                                         const isSelected = selectedLeads.some(l => l.id === lead.id);
+                                        const isContacted = lead.status === 'contacted';
                                         // Find the assigned user (supervisor or agent) name if assigned
                                         const assignedUser = lead.assigned_to ? allUsers.find(user => user.userId === lead.assigned_to) : null;
 
@@ -583,12 +586,14 @@ const AssignLeads = () => {
                                                 onClick={() => handleLeadSelect(lead)}
                                             >
                                                 <td className="w-10 px-4 py-4 whitespace-nowrap">
+                                                  {!isContacted && (
                                                     <input
                                                         type="checkbox"
                                                         checked={isSelected}
                                                         readOnly
                                                         className="form-checkbox h-4 w-4 text-[#F4A300] rounded pointer-events-none"
                                                     />
+                                                  )}
                                                 </td>
                                                 <td className="px-4 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
                                                     {lead.name || 'N/A'}
@@ -620,7 +625,7 @@ const AssignLeads = () => {
                                                     </span>
                                                 </td>
                                                 <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-500">
-                                                  {lead.status === 'assigned' 
+                                                  {lead.status === 'assigned' || lead.status === 'contacted'
                                                       ? (agents.find(agent => agent.userId === lead.user_name)?.name || lead.user_name)
                                                       : 'Unassigned'}
                                                 </td>
