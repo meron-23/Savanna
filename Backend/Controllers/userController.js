@@ -84,11 +84,11 @@ export const addUser = async (req, res, next) => {
 
 export const loginUser = async (req, res, next) => {
   const { email, password } = req.body;
-
+  console.log(email)
   try {
     // 1. Find the user by email
     const user = await findUserByEmail(email);
-    
+    console.log(user);
     if (!user) {
       return res.status(401).json({ 
         success: false, 

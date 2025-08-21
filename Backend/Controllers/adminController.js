@@ -22,7 +22,7 @@ export const getAllUsersController = async (req, res) => {
 
 export const createUserController = async (req, res) => {
   try {
-        const { name, email, phoneNumber, gender, role, supervisor } = req.body;
+        const { name, email, phoneNumber, gender, role, supervisor,password } = req.body;
     
         // Validate required fields
         if (!name || !email || !role) {
@@ -32,9 +32,9 @@ export const createUserController = async (req, res) => {
           });
         }
     
-        // Generate a random password if not provided
-        const randomPassword = '123456';
-        const hashedPassword = await argon2.hash(randomPassword);
+        // // Generate a random password if not provided
+        // const randomPassword = '123456';
+        const hashedPassword = await argon2.hash(password);
     
         const newUser = {
           userId: crypto.randomUUID().substring(0, 28),
